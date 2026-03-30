@@ -1,0 +1,27 @@
+# ADR-005: Dual Payment Strategy (Stripe + RevenueCat)
+
+- **Status:** Accepted
+- **Date:** 2026-03-30
+- **Context:** Need to sell Pro subscriptions across Web, Desktop, iOS, and Android.
+- **Decision:** Use **Stripe** for Web/Desktop and **RevenueCat** for Mobile.
+- **Rationale:**
+  - Apple and Google **require** in-app purchases for digital content on mobile
+  - Using Stripe on mobile would violate App Store / Play Store policies
+  - RevenueCat simplifies mobile subscription complexity:
+    - Receipt validation
+    - Subscription lifecycle management
+    - Cross-platform entitlement API
+    - Sandbox testing
+  - Stripe is the industry standard for web payments:
+    - Checkout sessions for frictionless payment
+    - Customer portal for self-service billing
+    - Webhooks for real-time subscription updates
+  - Alternative (Stripe only) rejected: violates App Store rules
+  - Alternative (RevenueCat only) rejected: RevenueCat web support is limited
+- **Consequences:**
+  - Two webhook endpoints to maintain (`/api/webhooks/stripe`, `/api/webhooks/revenuecat`)
+  - Unified subscription state in database (provider-agnostic `plan` field)
+  - User linking between providers via User ID
+  - Mobile pricing may differ slightly (Apple/Google take 15-30% commission)
+  - Must test both payment flows independently
+  - Pro status must be checked server-side (never trust client alone)

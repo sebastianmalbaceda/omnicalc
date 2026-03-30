@@ -1,0 +1,444 @@
+<!doctype html>
+
+<html class="scroll-smooth" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>OmniCalc - Professional Desktop &amp; Cloud Calculator</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'on-primary-container': '#fffbff',
+              'secondary-container': '#d0e1fb',
+              surface: '#f7f9fb',
+              'on-secondary-container': '#54647a',
+              'on-tertiary-container': '#000703',
+              'inverse-on-surface': '#eff1f3',
+              'surface-container-high': '#e6e8ea',
+              'tertiary-container': '#00885d',
+              'tertiary-fixed-dim': '#4edea3',
+              'secondary-fixed-dim': '#b7c8e1',
+              'primary-container': '#6063ee',
+              'surface-container-low': '#f2f4f6',
+              'on-primary-fixed': '#07006c',
+              'on-tertiary-fixed-variant': '#005236',
+              'on-secondary-fixed': '#0b1c30',
+              'surface-container-highest': '#e0e3e5',
+              'on-secondary': '#ffffff',
+              'primary-fixed': '#e1e0ff',
+              tertiary: '#006c49',
+              'on-primary-fixed-variant': '#2f2ebe',
+              'inverse-surface': '#2d3133',
+              'surface-tint': '#494bd6',
+              primary: '#4648d4',
+              'outline-variant': '#c7c4d7',
+              'on-error': '#ffffff',
+              'surface-dim': '#d8dadc',
+              'surface-container-lowest': '#ffffff',
+              'on-surface': '#191c1e',
+              'on-tertiary': '#ffffff',
+              'error-container': '#ffdad6',
+              'surface-bright': '#f7f9fb',
+              secondary: '#505f76',
+              'primary-fixed-dim': '#c0c1ff',
+              background: '#f7f9fb',
+              'on-primary': '#ffffff',
+              'inverse-primary': '#c0c1ff',
+              'on-tertiary-fixed': '#002113',
+              outline: '#767586',
+              'surface-container': '#eceef0',
+              'surface-variant': '#e0e3e5',
+              'secondary-fixed': '#d3e4fe',
+              'on-secondary-fixed-variant': '#38485d',
+              'on-surface-variant': '#464554',
+              'on-background': '#191c1e',
+              error: '#ba1a1a',
+              'on-error-container': '#93000a',
+              'tertiary-fixed': '#6ffbbe',
+            },
+            fontFamily: {
+              headline: ['Manrope'],
+              body: ['Inter'],
+              label: ['Inter'],
+            },
+            borderRadius: { DEFAULT: '1rem', lg: '2rem', xl: '3rem', full: '9999px' },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
+        vertical-align: middle;
+      }
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed"
+  >
+    <!-- TopNavBar -->
+    <header
+      class="fixed top-0 w-full z-50 flex justify-between items-center px-8 py-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-[0_20px_40px_rgba(99,102,241,0.05)] font-manrope text-sm tracking-tight"
+    >
+      <div class="flex items-center gap-8">
+        <span class="text-xl font-bold tracking-tighter text-indigo-600 dark:text-indigo-400"
+          >OmniCalc</span
+        >
+        <nav class="hidden md:flex items-center gap-6">
+          <a
+            class="text-indigo-600 dark:text-indigo-400 font-semibold border-b-2 border-indigo-600 transition-colors duration-200"
+            href="#"
+            >Features</a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-indigo-500 transition-colors duration-200"
+            href="#"
+            >Pricing</a
+          >
+        </nav>
+      </div>
+      <div class="flex items-center gap-4">
+        <button
+          class="px-5 py-2 rounded-DEFAULT bg-primary text-on-primary font-semibold scale-95 active:scale-90 transition-transform shadow-sm hover:surface-tint"
+        >
+          Get Started
+        </button>
+        <img
+          alt="User avatar and profile menu"
+          class="w-8 h-8 rounded-full object-cover border-2 border-primary-fixed"
+          data-alt="close-up portrait of a professional man with a neutral friendly expression against a clean studio background"
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyJD_esLsCs7Jdgc2oEZR5Oh-e0eFxsI811yyoJZvZqDvPiPuaP9LuBN_LsKeoOF0RyHL8IJ_e55swRB5z-hIYXYcMpR9OWWCZfgxsLlCYYmY6zArjWqbkm0jzuYTY0X_2hLupfUU_euzf11ygNhIarh7SNERTnpEG9QdODcwqzCCFpi_17Ewvicm-kuUj2rTHayEH6gwyS0_rMG4kpS0cgnURr3Dv2dj7yKX14netrDlTE6rcgAs7RltmIz0aVrRcnccGd9TtcM4"
+        />
+      </div>
+    </header>
+    <main class="pt-24 overflow-x-hidden">
+      <!-- Hero Section -->
+      <section
+        class="relative px-8 pt-20 pb-32 max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16"
+      >
+        <div class="flex-1 space-y-8">
+          <div
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary-container text-on-secondary-container text-xs font-bold tracking-widest uppercase"
+          >
+            <span class="material-symbols-outlined text-sm">bolt</span>
+            Next Gen Computation
+          </div>
+          <h1
+            class="font-headline text-6xl md:text-7xl font-extrabold tracking-tighter leading-[1.1] text-on-surface"
+          >
+            Calculations <br />
+            <span class="text-primary italic">Perfected</span>.
+          </h1>
+          <p class="text-lg text-on-surface-variant max-w-lg leading-relaxed">
+            A high-precision workspace for engineers, scientists, and analysts. Sync your cloud tape
+            across all devices with editorial precision.
+          </p>
+          <div class="flex flex-wrap gap-4 pt-4">
+            <button
+              class="px-8 py-4 bg-primary text-on-primary rounded-DEFAULT font-bold text-lg shadow-lg hover:surface-tint transition-all scale-100 active:scale-95"
+            >
+              Try for Free
+            </button>
+            <button
+              class="px-8 py-4 bg-surface-container-highest text-on-surface rounded-DEFAULT font-bold text-lg hover:bg-surface-container-high transition-all flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined">desktop_windows</span>
+              Download Desktop App
+            </button>
+          </div>
+        </div>
+        <!-- Calculator Mockup (Bento Style) -->
+        <div class="flex-1 w-full max-w-xl">
+          <div
+            class="glass-panel p-6 rounded-lg shadow-[0_40px_80px_rgba(70,72,212,0.1)] border border-white/40 relative overflow-hidden"
+          >
+            <!-- Calculator UI Mockup -->
+            <div class="bg-surface-container-lowest rounded-DEFAULT p-6 space-y-6">
+              <div class="flex justify-between items-center border-b border-surface-variant pb-4">
+                <span class="text-xs font-label uppercase tracking-widest opacity-50"
+                  >Cloud Tape • 12:45 PM</span
+                >
+                <div class="flex gap-1">
+                  <div class="w-2 h-2 rounded-full bg-error/40"></div>
+                  <div class="w-2 h-2 rounded-full bg-tertiary/40"></div>
+                  <div class="w-2 h-2 rounded-full bg-primary/40"></div>
+                </div>
+              </div>
+              <div class="space-y-2 text-right">
+                <div class="text-sm text-on-surface-variant font-mono">256.40 * 1.15</div>
+                <div class="text-4xl font-headline font-bold text-primary">294.86</div>
+              </div>
+              <div class="grid grid-cols-4 gap-3">
+                <!-- Numpad Mockup -->
+                <div
+                  class="aspect-square bg-surface-container-low rounded-lg flex items-center justify-center font-bold text-secondary"
+                >
+                  C
+                </div>
+                <div
+                  class="aspect-square bg-surface-container-low rounded-lg flex items-center justify-center font-bold text-secondary"
+                >
+                  ()
+                </div>
+                <div
+                  class="aspect-square bg-surface-container-low rounded-lg flex items-center justify-center font-bold text-secondary"
+                >
+                  %
+                </div>
+                <div
+                  class="aspect-square bg-primary-container text-white rounded-lg flex items-center justify-center font-bold"
+                >
+                  ÷
+                </div>
+                <div
+                  class="aspect-square bg-white shadow-sm rounded-lg flex items-center justify-center font-bold"
+                >
+                  7
+                </div>
+                <div
+                  class="aspect-square bg-white shadow-sm rounded-lg flex items-center justify-center font-bold"
+                >
+                  8
+                </div>
+                <div
+                  class="aspect-square bg-white shadow-sm rounded-lg flex items-center justify-center font-bold"
+                >
+                  9
+                </div>
+                <div
+                  class="aspect-square bg-primary-container text-white rounded-lg flex items-center justify-center font-bold"
+                >
+                  ×
+                </div>
+                <div
+                  class="aspect-square bg-white shadow-sm rounded-lg flex items-center justify-center font-bold"
+                >
+                  4
+                </div>
+                <div
+                  class="aspect-square bg-white shadow-sm rounded-lg flex items-center justify-center font-bold"
+                >
+                  5
+                </div>
+                <div
+                  class="aspect-square bg-white shadow-sm rounded-lg flex items-center justify-center font-bold"
+                >
+                  6
+                </div>
+                <div
+                  class="aspect-square bg-primary-container text-white rounded-lg flex items-center justify-center font-bold"
+                >
+                  -
+                </div>
+                <div
+                  class="aspect-square bg-white shadow-sm rounded-lg flex items-center justify-center font-bold"
+                >
+                  1
+                </div>
+                <div
+                  class="aspect-square bg-white shadow-sm rounded-lg flex items-center justify-center font-bold"
+                >
+                  2
+                </div>
+                <div
+                  class="aspect-square bg-white shadow-sm rounded-lg flex items-center justify-center font-bold"
+                >
+                  3
+                </div>
+                <div
+                  class="aspect-square bg-primary-container text-white rounded-lg flex items-center justify-center font-bold"
+                >
+                  +
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Features Grid -->
+      <section class="bg-surface-container-low py-32 px-8">
+        <div class="max-w-7xl mx-auto">
+          <div class="mb-20 space-y-4">
+            <h2 class="text-4xl font-headline font-extrabold tracking-tight">
+              Precision in every pixel.
+            </h2>
+            <p class="text-on-surface-variant max-w-2xl">
+              We re-engineered the calculator from the ground up for modern workflows.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="bg-white p-8 rounded-lg shadow-sm hover:shadow-xl transition-shadow group">
+              <div
+                class="w-12 h-12 bg-primary-fixed rounded-lg flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform"
+              >
+                <span class="material-symbols-outlined">cloud_sync</span>
+              </div>
+              <h3 class="text-xl font-bold mb-4">Cloud Sync</h3>
+              <p class="text-on-surface-variant leading-relaxed">
+                Access your computation history and custom variables from any device, instantly
+                synced.
+              </p>
+            </div>
+            <!-- Feature 2 -->
+            <div class="bg-white p-8 rounded-lg shadow-sm hover:shadow-xl transition-shadow group">
+              <div
+                class="w-12 h-12 bg-tertiary-fixed rounded-lg flex items-center justify-center text-tertiary mb-6 group-hover:scale-110 transition-transform"
+              >
+                <span class="material-symbols-outlined">science</span>
+              </div>
+              <h3 class="text-xl font-bold mb-4">Scientific Mode</h3>
+              <p class="text-on-surface-variant leading-relaxed">
+                Advanced trigonometry, calculus, and matrix operations designed for clarity and
+                speed.
+              </p>
+            </div>
+            <!-- Feature 3 -->
+            <div class="bg-white p-8 rounded-lg shadow-sm hover:shadow-xl transition-shadow group">
+              <div
+                class="w-12 h-12 bg-secondary-fixed rounded-lg flex items-center justify-center text-secondary mb-6 group-hover:scale-110 transition-transform"
+              >
+                <span class="material-symbols-outlined">functions</span>
+              </div>
+              <h3 class="text-xl font-bold mb-4">Precise Math</h3>
+              <p class="text-on-surface-variant leading-relaxed">
+                Floating-point accuracy that meets the highest engineering standards. No rounding
+                errors.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- TypeScript Section -->
+      <section class="py-32 px-8 relative overflow-hidden">
+        <div class="absolute inset-0 bg-primary/5 -skew-y-3 origin-right"></div>
+        <div
+          class="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-12"
+        >
+          <div class="max-w-xl">
+            <h2 class="text-4xl font-headline font-extrabold tracking-tight mb-6">
+              Powered by TypeScript.
+            </h2>
+            <p class="text-lg text-on-surface-variant leading-relaxed">
+              Built on a type-safe architecture to ensure 100% calculation reliability. OmniCalc
+              leverages the robustness of TypeScript to deliver a seamless, crash-free experience on
+              Web and Desktop.
+            </p>
+            <div class="mt-8 flex items-center gap-4">
+              <div class="flex -space-x-3">
+                <img
+                  class="w-10 h-10 rounded-full border-2 border-white object-cover"
+                  data-alt="professional headshot of a developer smiling warmly"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIiwddVyY_41BdZwZn4_YjfyNzYPSKKoVEgpRfJlzT_CoyMRwkHsMLUtBePOsppJvVaBulLLH4KHXuPQu6nuHHne9yVXD_0HuU_0gM4_WWTPD6OjeqpIouSoMy_OjFlv_iZv_uCDszODW7IvRY87F1aiARKRY21usiKIU0573KFvB9N8vHfEKZc6iQL7XsTK4Ffb1m-Fm8Pjz2j4nfZzxvRy-CCdJvBSu7PwU-8F5LWK7WY2Y_BRXtFW5KGKVmfhtRpOxiBG7zbW4"
+                />
+                <img
+                  class="w-10 h-10 rounded-full border-2 border-white object-cover"
+                  data-alt="portrait of a tech professional woman in a modern office"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKrg7HkPNjkDBv85uG1oCLLjqoKjvWfqUpinDb5eHAI-ZpKA5IrmGKo3liPWeMyeWnT3EAifDakTJ590kKMDbuejmr9j5xS4hbRq18J00owtmdq4PkGW9bGS8vJd5qskkRQvqs1Ukym5H2D_brqIRUCReWSysxtF7Si9nbGvZwKBE2R0Qr1xv8QnDRe9yFmqNnnpVqn1UbrntC-ZF0AbsSGEfmG2d15BeyCTibEg137usBB-Q9UtZW8_R1TA3KxkfcowgT-P35xr0"
+                />
+                <img
+                  class="w-10 h-10 rounded-full border-2 border-white object-cover"
+                  data-alt="close-up of a smiling software engineer with glasses"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDW9_pzs-c2eTEYqg59Ut6p7cc3-9Xqy3i-arfD3yOYhxn9GkoBO_hFXCwCq3dBGeJm676875dy8amd7zWg6Dg0Y1LdAbhffF8MJ_d9K1sip9S-y2ErSo7athN4ALgIJ2nXtAQM-BOwQERKL1gcjVNw7TBG5c05wNaVIY7VNPbDqCG7qkL0gjsyo2NrXzvqqlrTWOis1itZPWBD-QaJvtWQK1wrjXW19MmE_z6mL76kLt1q5pLjDeU6kqDjHVI0UOgn9ykOkxLmnfI"
+                />
+              </div>
+              <span class="text-sm font-label text-secondary font-medium italic"
+                >Trusted by 50,000+ developers worldwide</span
+              >
+            </div>
+          </div>
+          <div
+            class="bg-surface-container-highest p-12 rounded-xl flex items-center justify-center aspect-square md:aspect-auto md:h-64 md:w-64 border border-outline-variant/30"
+          >
+            <svg class="w-32 h-32 text-primary" fill="currentColor" viewbox="0 0 24 24">
+              <path
+                d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0H1.125zm17.363 15.23c.307.166.58.347.819.546.455.388.819.96 1.01 1.64.191.683.213 1.565.068 2.598l-.009.143c-.104.979-.472 1.748-1.103 2.307-.63.558-1.42.837-2.37.837-.822 0-1.554-.215-2.195-.644-.64-.429-1.134-1.002-1.48-1.721l-.035-.073.078-.045c.45-.258.746-.429.888-.513l.042-.025.025.041c.24.405.53.714.871.926.341.21.727.314 1.157.314.541 0 .973-.147 1.297-.441.324-.294.49-.683.497-1.168V19.33c-.007-.472-.175-.855-.503-1.149-.328-.293-.771-.44-1.328-.44-.351 0-.693.066-1.024.2l-.03.013-.013-.03c-.144-.312-.217-.763-.217-1.353V10.74h1.246v5.407c0 .412.115.714.346.905.23.192.518.287.863.287.314 0 .611-.06.891-.181zM11.53 10.74v1.246H9.31v9.593H8.056v-9.593H5.828V10.74h5.702z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+      </section>
+      <!-- CTA Section -->
+      <section class="py-32 px-8">
+        <div
+          class="max-w-5xl mx-auto bg-primary text-on-primary rounded-xl p-12 md:p-20 text-center space-y-8 relative overflow-hidden shadow-2xl"
+        >
+          <div
+            class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"
+          ></div>
+          <div
+            class="absolute bottom-0 left-0 w-64 h-64 bg-black/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"
+          ></div>
+          <h2 class="text-4xl md:text-5xl font-headline font-extrabold relative z-10 leading-tight">
+            Ready to calculate with <br />
+            professional precision?
+          </h2>
+          <p class="text-primary-fixed max-w-xl mx-auto text-lg relative z-10 opacity-90">
+            Join thousands of engineers who have upgraded their computation workspace with OmniCalc.
+          </p>
+          <div class="flex flex-wrap justify-center gap-4 relative z-10 pt-4">
+            <button
+              class="px-10 py-4 bg-white text-primary rounded-full font-bold text-lg hover:bg-primary-fixed transition-all shadow-lg"
+            >
+              Start Free Trial
+            </button>
+            <button
+              class="px-10 py-4 border-2 border-primary-fixed text-on-primary rounded-full font-bold text-lg hover:bg-primary-container transition-all"
+            >
+              Contact Sales
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- Footer -->
+    <footer
+      class="w-full flex flex-col items-center gap-6 px-8 bg-slate-50 dark:bg-slate-950 full-width py-12 border-t border-slate-200/50 dark:border-slate-800/50"
+    >
+      <div
+        class="flex flex-wrap justify-center gap-12 font-inter text-xs uppercase tracking-widest text-slate-400"
+      >
+        <a class="hover:text-indigo-500 opacity-80 hover:opacity-100 transition-opacity" href="#"
+          >Privacy</a
+        >
+        <a class="hover:text-indigo-500 opacity-80 hover:opacity-100 transition-opacity" href="#"
+          >Terms</a
+        >
+        <a class="hover:text-indigo-500 opacity-80 hover:opacity-100 transition-opacity" href="#"
+          >Github</a
+        >
+        <a class="hover:text-indigo-500 opacity-80 hover:opacity-100 transition-opacity" href="#"
+          >Support</a
+        >
+      </div>
+      <div class="text-slate-400 font-inter text-xs uppercase tracking-widest">
+        © 2024 OmniCalc. Powered by TypeScript.
+      </div>
+    </footer>
+  </body>
+</html>

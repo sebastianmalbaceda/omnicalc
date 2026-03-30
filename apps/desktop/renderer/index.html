@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="theme-color" content="#f7f9fb" />
+    <title>OmniCalc</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="root" class="app">
+      <!-- Header -->
+      <div class="header">
+        <button id="btn-theme" class="theme-toggle">🌙</button>
+      </div>
+
+      <!-- Display -->
+      <div class="display">
+        <div id="display-expression" class="display-expression"></div>
+        <div id="display-value" class="display-value">0</div>
+      </div>
+
+      <!-- Keypads -->
+      <div class="keypads">
+        <!-- Scientific Keypad Row -->
+        <div class="scientific-keypad">
+          <button class="btn btn-function btn-fn" data-fn="sin">sin</button>
+          <button class="btn btn-function btn-fn" data-fn="cos">cos</button>
+          <button class="btn btn-function btn-fn" data-fn="tan">tan</button>
+          <button class="btn btn-function btn-fn" data-fn="log">log</button>
+          <button class="btn btn-function btn-fn" data-fn="ln">ln</button>
+        </div>
+        <div class="scientific-keypad">
+          <button class="btn btn-function btn-fn" data-fn="sqrt">√</button>
+          <button class="btn btn-function btn-fn" data-fn="square">x²</button>
+          <button class="btn btn-function btn-fn" data-fn="factorial">n!</button>
+          <button class="btn btn-function btn-fn" data-fn="reciprocal">1/x</button>
+          <button class="btn btn-op" data-op="^">xⁿ</button>
+        </div>
+
+        <!-- Memory Row -->
+        <div class="row">
+          <button id="btn-mc" class="btn btn-memory">MC</button>
+          <button id="btn-mr" class="btn btn-memory">MR</button>
+          <button id="btn-m-plus" class="btn btn-memory">M+</button>
+        </div>
+
+        <!-- Numeric Keypad -->
+        <div class="numeric-keypad">
+          <div class="row">
+            <button class="btn btn-secondary btn-digit" data-digit="7">7</button>
+            <button class="btn btn-secondary btn-digit" data-digit="8">8</button>
+            <button class="btn btn-secondary btn-digit" data-digit="9">9</button>
+            <button class="btn btn-operator btn-op" data-op="/">÷</button>
+            <button id="btn-backspace" class="btn btn-secondary">⌫</button>
+          </div>
+          <div class="row">
+            <button class="btn btn-secondary btn-digit" data-digit="4">4</button>
+            <button class="btn btn-secondary btn-digit" data-digit="5">5</button>
+            <button class="btn btn-secondary btn-digit" data-digit="6">6</button>
+            <button class="btn btn-operator btn-op" data-op="*">×</button>
+            <button id="btn-toggle-sign" class="btn btn-secondary">±</button>
+          </div>
+          <div class="row">
+            <button class="btn btn-secondary btn-digit" data-digit="1">1</button>
+            <button class="btn btn-secondary btn-digit" data-digit="2">2</button>
+            <button class="btn btn-secondary btn-digit" data-digit="3">3</button>
+            <button class="btn btn-operator btn-op" data-op="-">−</button>
+            <button id="btn-clear" class="btn btn-secondary">C</button>
+          </div>
+          <div class="row">
+            <button class="btn btn-secondary btn-digit" data-digit="0">0</button>
+            <button id="btn-decimal" class="btn btn-secondary">.</button>
+            <button class="btn btn-operator btn-op" data-op="%">%</button>
+            <button class="btn btn-operator btn-op" data-op="+">+</button>
+            <button id="btn-equals" class="btn btn-primary">=</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="./index.ts"></script>
+  </body>
+</html>

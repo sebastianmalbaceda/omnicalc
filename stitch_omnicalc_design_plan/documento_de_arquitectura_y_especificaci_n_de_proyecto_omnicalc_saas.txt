@@ -1,0 +1,309 @@
+Documento de Arquitectura y Especificación de Proyecto: OmniCalc SaaS
+Prefacio Arquitectónico: Viabilidad del Ecosistema TypeScript Multiplataforma
+Antes de detallar las especificaciones del proyecto, es crucial responder a la incógnita planteada: ¿Qué tan fácil es hacer una aplicación multiplataforma permaneciendo 100% en TypeScript (React + Expo + Tauri) y cuál es el paso lógico?
+
+La respuesta realista en el panorama del desarrollo actual es: La escritura del código (lógica e interfaz) es sumamente fácil y fluida; la complejidad radica en la "fontanería" (configuración de compiladores y ecosistemas de cada sistema operativo).
+
+¿Cuándo es ideal? Para aplicaciones de gestión, SaaS, herramientas de productividad (como esta calculadora), donde la interfaz gráfica y la conexión a bases de datos son el 90% del trabajo. TypeScript es el rey aquí.
+
+¿Cuándo se rompe este paradigma? Cuando la aplicación necesita acceso profundo a hardware de bajo nivel (ej. drivers bluetooth personalizados, procesamiento de video en tiempo real, renderizado 3D pesado). En esos casos, el puente entre JavaScript y los componentes nativos crea cuellos de botella y es necesario migrar a Kotlin/Swift o C++/Rust.
+
+El Paso Lógico de Construcción:
+
+Paso 1: Definición estricta de datos y tipos (Interfaces TypeScript, Esquemas de Base de Datos).
+
+Paso 2: Construcción de la UI universal en Expo (Web y Móvil simultáneamente).
+
+Paso 3: Conexión de la lógica de negocio (Autenticación y Base de Datos).
+
+Paso 4: Integración de pasarelas de pago.
+
+Paso 5: Empaquetado final de la versión web mediante Tauri para generar los ejecutables de escritorio.
+
+Para un proyecto destacado de portafolio en GitHub, este enfoque demuestra un dominio absoluto de la arquitectura moderna: maximización de la reutilización de código y eficiencia en la entrega de productos.
+
+1. Visión General del Proyecto
+Nombre del Proyecto: OmniCalc
+Naturaleza: SaaS / Aplicación de Productividad Multiplataforma.
+Objetivo Principal: Construir una calculadora moderna, multiplataforma y conectada a la nube, que sirva como demostración técnica de nivel "Senior" para un portafolio de GitHub. Demostrará la capacidad de estructurar un monorepo, gestionar estado global, implementar autenticación segura, modelar bases de datos relacionales y procesar pagos integrados en un flujo B2C (Business to Consumer).
+Plataformas Objetivo: Web (Responsive), iOS, Android, Windows (.exe), macOS (.dmg), Linux (.AppImage).
+
+2. Arquitectura Tecnológica (El Stack)
+El proyecto utilizará un stack consolidado para garantizar la estabilidad y demostrar buenas prácticas de ingeniería de software.
+
+2.1. Core y Frontend (El Monorepo)
+Lenguaje: TypeScript estricto.
+
+Framework Principal: Expo (React Native) con Expo Router para el enrutamiento universal (Móvil y Web).
+
+Contenedor de Escritorio: Tauri (Rust base). Tomará el build web generado por Expo y lo empaquetará como una aplicación de escritorio nativa, garantizando un consumo mínimo de RAM.
+
+UI y Estilos: NativeWind (Tailwind CSS para React Native) combinado con Gluestack UI. Esto asegura que la calculadora se vea idéntica y profesional en un iPhone, en Chrome y en Windows.
+
+Gestión de Estado: Zustand. Manejará la lógica matemática de la calculadora (inputs, memoria, operaciones) y el estado de la sesión del usuario de forma predecible y sin re-renderizados innecesarios.
+
+2.2. Backend y "Fontanería" SaaS
+Base de Datos: PostgreSQL alojado en Neon (Serverless). Ideal para escalar desde 0 hasta millones de peticiones sin gestionar infraestructura.
+
+ORM: Drizzle ORM. Para un tipado perfecto de extremo a extremo (End-to-End Type Safety) entre la base de datos y la interfaz de usuario en TypeScript.
+
+Autenticación: Better Auth. Gestionará sesiones, cookies y tokens JWT de forma agnóstica al framework. Se implementará inicio de sesión con Email/Contraseña y OAuth (Google/GitHub).
+
+API / Lógica de Servidor: Next.js (API Routes) o Hono actuando como Backend for Frontend (BFF) para interactuar de forma segura con la base de datos y Stripe.
+
+2.3. Monetización
+Plataformas Web y Escritorio: Stripe Checkout y Stripe Customer Portal para la gestión de la suscripción mensual/anual al plan "Pro".
+
+Plataformas Móviles: RevenueCat SDK. Imprescindible para conectar con las compras In-App de Apple App Store y Google Play, cumpliendo con las normativas de ambas plataformas y sincronizando el estado "Pro" con nuestra base de datos central.
+
+3. Especificaciones de Interfaz de Usuario (UI/UX)
+La aplicación debe irradiar profesionalismo. El diseño será minimalista, inspirado en el diseño neomórfico o glassmorphism moderno, con transiciones fluidas.
+
+3.1. Landing Page (Solo Web)
+Hero Section: Propuesta de valor clara ("La única calculadora que necesitarás en todos tus dispositivos"). Botones de "Usar gratis" (redirige a la app web) y "Descargar" (detecta el SO y ofrece el binario de Tauri, o enlaces a las App Stores).
+
+Features: Explicación de la sincronización en la nube, el historial de cálculos (cinta de papel digital) y la evolución a calculadora científica.
+
+Pricing: Tabla comparativa Free vs Pro.
+
+3.2. Pantallas de Autenticación
+Modal o pantalla dedicada de Login/Registro.
+
+Diseño limpio con opciones de "Continuar con Google/GitHub" o formulario de email.
+
+Recuperación de contraseña.
+
+3.3. Interfaz Principal de la Calculadora
+La interfaz se adaptará dinámicamente al tamaño de la pantalla (Responsive Design):
+
+Pantalla Móvil (Retrato):
+
+Display numérico grande en la parte superior.
+
+Teclado numérico y operaciones básicas (Free).
+
+Si es Pro: Un botón para alternar (o deslizar) hacia el panel de funciones científicas (seno, coseno, logaritmos, exponentes).
+
+Pantalla Escritorio / Tablet (Apaisado):
+
+Free: Calculadora básica centrada.
+
+Pro: La interfaz se expande revelando un panel izquierdo con el "Historial de Cálculos" (Cinta virtual) y el teclado científico se acopla junto al teclado numérico básico.
+
+3.4. Menú de Usuario / Ajustes
+Accesible mediante un icono de perfil o engranaje:
+
+Estado de la Cuenta: Muestra si es Free o Pro.
+
+Botón de Upgrade: Call to Action brillante para abrir el modal de pago.
+
+Temas (Themes): Selector de Modo Claro, Modo Oscuro o Tema de Sistema. (Funcionalidad bloqueada o limitada en la versión Free).
+
+Cerrar sesión.
+
+4. Lógica de Negocio y Funcionalidades (SaaS)
+El diferenciador de este proyecto es la transición de un estado a otro mediante un modelo de suscripción, gestionado centralmente en la base de datos.
+
+4.1. Funcionalidad Core (Calculadora)
+Precisión Matemática: Uso de librerías como decimal.js o bignumber.js para evitar los errores de coma flotante nativos de JavaScript (ej. 0.1 + 0.2 = 0.30000000000000004).
+
+Memoria: Funciones estándar M+, M-, MR, MC.
+
+4.2. Plan Free (Gratuito)
+Operaciones aritméticas básicas (+, -, *, /, %, +/-).
+
+Uso anónimo (sin registro) permitido en local.
+
+Si el usuario se registra (Free): Sincronización básica de preferencias (tema claro/oscuro por defecto).
+
+Anuncios o banners sutiles invitando a actualizar a Pro.
+
+4.3. Plan Pro (Suscripción o Pago Único)
+Desbloqueo Científico: Funciones trigonométricas, logarítmicas, raíces complejas, factoriales, constantes (π, e).
+
+Historial Sincronizado (Cloud Tape): Cada cálculo que finaliza al presionar = se guarda en la base de datos. El usuario puede abrir la app en el móvil, hacer una cuenta, y ver ese mismo cálculo en la app de escritorio en tiempo real.
+
+Temas Premium: Desbloqueo de paletas de colores personalizadas.
+
+Sin anuncios / Muros de pago.
+
+5. Diseño del Modelo de Datos (Drizzle ORM)
+Para respaldar esta lógica de SaaS, la base de datos PostgreSQL debe ser estructurada de la siguiente manera:
+
+TypeScript
+// Tabla de Usuarios (Gestionada en conjunto con Better Auth)
+Table users {
+  id UUID [primary key]
+  email VARCHAR [unique, not null]
+  name VARCHAR
+  avatar_url VARCHAR
+  created_at TIMESTAMP
+  // Integración SaaS
+  stripe_customer_id VARCHAR [unique]
+  plan VARCHAR [default: 'free'] // 'free' | 'pro'
+  subscription_status VARCHAR // 'active', 'canceled', 'past_due'
+}
+
+// Tabla de Historial de Cálculos (Funcionalidad Pro)
+Table calculations {
+  id UUID [primary key]
+  user_id UUID [ref: > users.id, not null]
+  expression VARCHAR [not null] // ej: "25 * (4 + 6)"
+  result VARCHAR [not null] // ej: "250"
+  created_at TIMESTAMP [default: now()]
+  device_origin VARCHAR // 'web', 'ios', 'android', 'desktop'
+}
+
+// Tabla de Preferencias de Usuario
+Table user_settings {
+  user_id UUID [ref: > users.id, primary key]
+  theme VARCHAR [default: 'system']
+  haptic_feedback BOOLEAN [default: true]
+}
+
+6. Gestión del Estado Global (Zustand)
+En una calculadora, el manejo del estado es la parte más crítica del Frontend. No se puede depender del estado local de React (useState) porque la lógica matemática debe estar completamente separada de los componentes visuales para facilitar las pruebas (testing) y el mantenimiento.
+
+Se utilizará Zustand para crear stores independientes y modulares:
+
+6.1. useCalculatorStore (Motor Matemático)
+Este store manejará exclusivamente la lógica de la calculadora en memoria temporal:
+
+currentValue (String): Lo que se muestra actualmente en pantalla. Se guarda como string para manejar los ceros a la izquierda y los puntos decimales antes de evaluar.
+
+previousValue (String | null): El operando anterior guardado al presionar un operador (+, -, *, /).
+
+operator (String | null): El operador matemático activo.
+
+memoryValue (String): El valor almacenado (M+, M-).
+
+isScientificMode (Boolean): Define si el teclado avanzado está visible (depende del estado de suscripción).
+
+Acciones: inputNumber(num), inputOperator(op), calculate(), clear(), toggleSign(), applyScientificFunction(funcName).
+
+6.2. useAuthStore (Sesión y Suscripción)
+Mantiene el estado de la sesión del usuario sincronizado con Better Auth:
+
+user (Object | null): Datos básicos (nombre, email).
+
+isAuthenticated (Boolean).
+
+isPro (Boolean): El flag de validación (True/False) que condiciona la UI. Si es false, useCalculatorStore bloquea la ejecución de funciones científicas y no renderiza el historial de la nube.
+
+7. Arquitectura de Pagos y Sincronización Multiplataforma
+Dado que OmniCalc es un SaaS puro distribuido en todas las plataformas, el flujo de pagos es la principal fuente de complejidad legal y técnica. Se requiere una arquitectura híbrida para no ser baneado de las tiendas de Apple y Google.
+
+7.1. Flujo Web y Desktop (Stripe)
+El usuario en Web o en la app de Tauri (Desktop) hace clic en "Mejorar a Pro".
+
+La aplicación llama al backend (Next.js/Hono) para crear una sesión de Stripe Checkout.
+
+El usuario paga con tarjeta.
+
+Stripe Webhook: Envía un evento al servidor confirmando el pago. El servidor actualiza la tabla users marcando plan = 'pro'.
+
+El cliente hace refetch del estado y la calculadora se expande a modo científico.
+
+7.2. Flujo Móvil (RevenueCat)
+El usuario en iOS o Android (Expo) hace clic en "Mejorar a Pro".
+
+La aplicación invoca el SDK de RevenueCat para mostrar la pasarela nativa (FaceID / Google Pay).
+
+Apple/Google procesan el pago y se quedan con su comisión (15-30%).
+
+RevenueCat Webhook: RevenueCat detecta el pago nativo y envía un evento a nuestro servidor backend (Neon).
+
+El servidor actualiza la misma tabla users marcando plan = 'pro'.
+
+Si el usuario inicia sesión en la Web mañana, ya será "Pro" porque la fuente de verdad es centralizada.
+
+8. Estructura del Monorepo y Paquetes
+Para garantizar la escalabilidad y una experiencia de desarrollo fluida (DX), el proyecto se organizará en un monorepo gestionado por Turborepo.
+
+Plaintext
+omnicalc-workspace/
+├── apps/
+│   ├── web/                # Next.js (Landing Page + Web App + API de Webhooks)
+│   ├── mobile/             # Expo (App para iOS y Android)
+│   └── desktop/            # Tauri + React (Consume paquetes UI, empaqueta como nativo)
+├── packages/
+│   ├── ui/                 # NativeWind + Gluestack (Botones, Displays, Teclados)
+│   ├── core-math/          # Lógica pura en TypeScript (decimal.js, parseo de fórmulas)
+│   ├── db/                 # Drizzle ORM (Esquemas de Neon Postgres, migraciones)
+│   └── tsconfig/           # Configuraciones base de TypeScript
+└── package.json
+Justificación: Separar core-math en un paquete aislado asegura que la lógica de la calculadora pueda ser testeada exhaustivamente con Unit Tests (Vitest) sin depender de React o componentes visuales.
+
+9. Estrategia de CI/CD y Despliegue
+La automatización de este proyecto es clave para que un desarrollador individual pueda mantenerlo en producción.
+
+Backend y Base de Datos: Vercel + Railway / Neon. Al hacer push a la rama main en GitHub, Vercel despliega automáticamente la app web (Next.js) y las API routes.
+
+Escritorio (Desktop): GitHub Actions. Se configurará un flujo de trabajo que, al generar un Release Tag en GitHub (ej. v1.2.0), compilará automáticamente los instaladores de Tauri para Windows y macOS, adjuntándolos al release para su descarga.
+
+Móvil (iOS/Android): Expo EAS. Se usará el servicio en la nube de Expo para generar los binarios y enviarlos directamente a TestFlight (Apple) o Google Play Console. Los OTA updates (Over-The-Air) de Expo permitirán corregir bugs matemáticos o de UI sin requerir que el usuario actualice la app en la tienda.
+
+10. Directrices para Generación Asistida por IA (Vibecoding Rules)
+Para garantizar que el código generado por IA (Cursor, Copilot) sea de nivel profesional y no requiera refactorizaciones masivas, se debe incluir este archivo .cursorrules en la raíz del proyecto:
+
+Matemáticas Seguras: "Bajo ninguna circunstancia utilices operadores aritméticos nativos de JavaScript (+, -, *, /) para cálculos de coma flotante. Implementa y utiliza estrictamente la librería decimal.js en todo el paquete core-math".
+
+Prioridad UI Compartida: "Cualquier componente visual nuevo debe ser creado en packages/ui utilizando NativeWind. No crees componentes visuales directamente dentro de apps/web o apps/mobile a menos que sean layouts estructurales específicos de la plataforma".
+
+Manejo del Offline-First: "Al escribir lógica de sincronización del historial (useCalculatorStore), asegúrate de guardar el cálculo localmente primero. Luego, ejecuta la mutación al servidor en segundo plano (usando TanStack Query). Si el usuario no tiene internet, la app no debe bloquearse."
+
+Seguridad de Tipos: "Drizzle ORM y Zustand deben compartir tipos inferidos. No dupliques interfaces de TypeScript si ya están definidas en el esquema de la base de datos."
+
+11. Manejo de Errores y Casos Límite (Edge Cases)
+Una calculadora profesional no puede cerrarse inesperadamente (crash) bajo ninguna circunstancia matemática.
+
+División por Cero: El motor core-math debe atrapar este error e instruir a Zustand a mostrar el string "Error" en el currentValue, deshabilitando temporalmente el teclado hasta que se presione Clear (C).
+
+Desbordamiento (Overflow): Límite estricto de caracteres en el display (ej. 16 dígitos). Si un cálculo supera este límite, debe transicionar automáticamente a notación científica (ej. 1.5e+25).
+
+Sincronización Fallida (Cloud Tape): Si el servidor de Neon no responde al intentar guardar el historial de un usuario Pro, el estado de Zustand mantendrá el cálculo en una cola "pendiente" de subida (pending_sync: true) que se reintentará con exponential backoff.
+
+12. Fases de Ejecución del Proyecto (Roadmap)
+Este es el orden cronológico exacto para construir OmniCalc desde cero:
+
+Fase 1: El Núcleo Matemático (Semana 1)
+
+Configuración del monorepo Turborepo.
+
+Desarrollo del paquete core-math con decimal.js.
+
+Pruebas unitarias al 100% de cobertura sobre las operaciones, precedencia matemática y notación científica.
+
+Fase 2: Interfaz Universal (Semana 2)
+
+Creación de botones, display y layouts usando NativeWind en packages/ui.
+
+Implementación de Zustand para conectar el core-math a la UI.
+
+Pruebas visuales en entorno Web y simulador de iOS (Expo) simultáneamente.
+
+Fase 3: Infraestructura SaaS (Semana 3)
+
+Diseño e implementación de la base de datos Neon con Drizzle ORM.
+
+Implementación de Better Auth para el registro de usuarios.
+
+Conexión del historial de cálculos (Zustand -> API -> PostgreSQL).
+
+Fase 4: Monetización (Semana 4)
+
+Configuración de los Webhooks de Stripe para Web/Desktop.
+
+Configuración del SDK de RevenueCat en el proyecto móvil.
+
+Sincronización de eventos de pago con la tabla users (campo is_pro).
+
+Fase 5: Empaquetado Desktop y Lanzamiento (Semana 5)
+
+Configuración de Tauri envolviendo la aplicación Web.
+
+Configuración de GitHub Actions para el empaquetado final.
+
+Creación de la Landing Page pública y publicación oficial.
+
+[FIN DEL DOCUMENTO DE ARQUITECTURA. El diseño de "OmniCalc SaaS" está finalizado y estructurado para su desarrollo.]

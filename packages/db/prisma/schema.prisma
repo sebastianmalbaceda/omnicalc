@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Users ────────────────────────────────────────────────────────────────────
+// Managed in conjunction with Better Auth
+model User {
+  id                   String    @id @default(uuid())
+  email                String    @unique
+  name                 String?
+  avatarUrl            String?   @map("avatar_url")
+  emailVerified        Boolean   @default(false) @map("email_verified")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  // Subscription fields
+  plan                 String    @default("free") // 'free' | 'pro'
+  stripeCustomerId     String?   @unique @map("stripe_customer_id")
+  revenuecatUserId     String?   @unique @map("revenuecat_user_id")
+  subscriptionStatus   String?   @map("subscription_status")
+  subscriptionProvider String?   @map("subscription_provider") // 'stripe' | 'revenuecat'
+  currentPeriodEnd     DateTime? @map("current_period_end")
+  cancelAtPeriodEnd    Boolean   @default(false) @map("cancel_at_period_end")
+
+  // Relations
+  calculations Calculation[]
+  settings     UserSettings?
+  sessions     Session[]
+  accounts     Account[]
+
+  @@map("users")
+}
+
+// ─── Better Auth: Sessions ────────────────────────────────────────────────────
+model Session {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// ─── Better Auth: OAuth Accounts ──────────────────────────────────────────────
+model Account {
+  id                String    @id @default(uuid())
+  userId            String    @map("user_id")
+  accountId         String    @map("account_id")
+  providerId        String    @map("provider_id") // 'credential' | 'google' | 'github'
+  accessToken       String?   @map("access_token")
+  refreshToken      String?   @map("refresh_token")
+  accessTokenExpiresAt DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  scope             String?
+  idToken           String?   @map("id_token")
+  password          String?
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("accounts")
+}
+
+// ─── Better Auth: Email Verification ──────────────────────────────────────────
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("verifications")
+}
+
+// ─── Calculation History (Cloud Tape — Pro) ───────────────────────────────────
+model Calculation {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  expression   String
+  result       String
+  createdAt    DateTime @default(now()) @map("created_at")
+  deviceOrigin String?  @map("device_origin") // 'web' | 'ios' | 'android' | 'desktop'
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("calculations")
+}
+
+// ─── User Settings ────────────────────────────────────────────────────────────
+model UserSettings {
+  userId            String  @id @map("user_id")
+  theme             String  @default("system") // 'light' | 'dark' | 'system'
+  angleUnit         String  @default("degrees") @map("angle_unit") // 'degrees' | 'radians'
+  thousandsSeparator Boolean @default(false) @map("thousands_separator")
+  decimalPlaces     Int     @default(10) @map("decimal_places")
+  hapticFeedback    Boolean @default(true) @map("haptic_feedback")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
+}

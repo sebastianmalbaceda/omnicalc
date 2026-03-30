@@ -1,0 +1,22 @@
+# ADR-003: decimal.js for Math Engine
+
+- **Status:** Accepted
+- **Date:** 2026-03-30
+- **Context:** Calculator must avoid native JS floating-point errors (0.1 + 0.2 ≠ 0.3).
+- **Decision:** Use **decimal.js** for all arithmetic in `packages/core-math`.
+- **Rationale:**
+  - Arbitrary precision arithmetic eliminates IEEE 754 errors
+  - Battle-tested library (10M+ weekly downloads)
+  - Supports all required operations (trig, log, exp, factorial)
+  - Chainable API for readable code
+  - Well-documented with TypeScript types
+  - Alternatives considered:
+    - `big.js` — simpler but lacks scientific functions
+    - `mathjs` — too heavy (full CAS), brings unnecessary dependencies
+    - `bignumber.js` — same author as decimal.js, fewer features
+- **Consequences:**
+  - All math functions accept/return **strings** (not numbers) to preserve precision
+  - Native JS operators (`+`, `-`, `*`, `/`) banned in `core-math`
+  - Every function must be pure (no side effects)
+  - 100% test coverage required for the math package
+  - CI enforced: linting rules prevent native arithmetic in `core-math`

@@ -1,0 +1,48 @@
+{
+  "name": "omnicalc",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:web": "turbo dev --filter=@omnicalc/web",
+    "dev:mobile": "turbo dev --filter=@omnicalc/mobile",
+    "dev:desktop": "turbo dev --filter=@omnicalc/desktop",
+    "build": "turbo build",
+    "test": "turbo test",
+    "test:e2e": "turbo test:e2e",
+    "lint": "eslint . && prettier --check .",
+    "lint:fix": "eslint --fix . && prettier --write .",
+    "type-check": "turbo type-check",
+    "db:generate": "pnpm --filter @omnicalc/db exec prisma generate",
+    "db:migrate": "pnpm --filter @omnicalc/db exec prisma migrate dev",
+    "db:studio": "pnpm --filter @omnicalc/db exec prisma studio",
+    "clean": "turbo clean && rimraf node_modules",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0",
+    "typescript": "^5.7.0",
+    "eslint": "^9.22.0",
+    "@eslint/js": "^9.22.0",
+    "typescript-eslint": "^8.27.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-jsx-a11y": "^6.10.0",
+    "prettier": "^3.5.0",
+    "husky": "^9.1.0",
+    "lint-staged": "^15.4.0",
+    "rimraf": "^6.0.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
+  }
+}

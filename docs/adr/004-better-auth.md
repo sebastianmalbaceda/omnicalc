@@ -1,0 +1,21 @@
+# ADR-004: Better Auth over NextAuth/Clerk
+
+- **Status:** Accepted
+- **Date:** 2026-03-30
+- **Context:** Need authentication supporting email/password, OAuth (Google, GitHub), and session management.
+- **Decision:** Use **Better Auth** over NextAuth or Clerk.
+- **Rationale:**
+  - Framework-agnostic — works with Hono, not tied to Next.js
+  - Self-hosted — full control over user data and sessions
+  - No vendor lock-in or per-user pricing (Clerk charges per MAU)
+  - TypeScript-first with excellent type safety
+  - Built-in support for: email/password, OAuth, sessions, RBAC
+  - Active development with growing community
+  - NextAuth is tightly coupled to Next.js (we use Hono)
+  - Clerk has great DX but introduces vendor dependency and ongoing cost
+- **Consequences:**
+  - Auth tables stored in our Neon PostgreSQL database
+  - We manage our own auth infrastructure (sessions, tokens)
+  - Must configure OAuth providers manually (Google, GitHub)
+  - `BETTER_AUTH_SECRET` required in environment
+  - Session validation middleware in Hono routes

@@ -1,0 +1,260 @@
+<!doctype html>
+
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Welcome to OmniCalc | Onboarding</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              secondary: '#505f76',
+              surface: '#f7f9fb',
+              'on-secondary': '#ffffff',
+              'on-surface': '#191c1e',
+              'on-error-container': '#93000a',
+              'on-tertiary-fixed': '#002113',
+              'secondary-fixed': '#d3e4fe',
+              'on-primary-fixed': '#07006c',
+              'on-tertiary-container': '#000703',
+              'on-secondary-fixed': '#0b1c30',
+              'on-primary-container': '#fffbff',
+              'tertiary-container': '#00885d',
+              'outline-variant': '#c7c4d7',
+              background: '#f7f9fb',
+              'error-container': '#ffdad6',
+              'on-background': '#191c1e',
+              tertiary: '#006c49',
+              'surface-container-low': '#f2f4f6',
+              'surface-tint': '#494bd6',
+              'on-secondary-container': '#54647a',
+              primary: '#4648d4',
+              'surface-container-lowest': '#ffffff',
+              'secondary-fixed-dim': '#b7c8e1',
+              'on-tertiary-fixed-variant': '#005236',
+              'surface-variant': '#e0e3e5',
+              'primary-fixed-dim': '#c0c1ff',
+              'on-tertiary': '#ffffff',
+              error: '#ba1a1a',
+              'on-error': '#ffffff',
+              'surface-dim': '#d8dadc',
+              'surface-container-high': '#e6e8ea',
+              'primary-container': '#6063ee',
+              'tertiary-fixed-dim': '#4edea3',
+              'inverse-surface': '#2d3133',
+              'on-primary-fixed-variant': '#2f2ebe',
+              'inverse-on-surface': '#eff1f3',
+              'surface-bright': '#f7f9fb',
+              'primary-fixed': '#e1e0ff',
+              'tertiary-fixed': '#6ffbbe',
+              'inverse-primary': '#c0c1ff',
+              outline: '#767586',
+              'surface-container': '#eceef0',
+              'secondary-container': '#d0e1fb',
+              'on-primary': '#ffffff',
+              'on-secondary-fixed-variant': '#38485d',
+              'on-surface-variant': '#464554',
+              'surface-container-highest': '#e0e3e5',
+            },
+            fontFamily: {
+              headline: ['Manrope'],
+              body: ['Inter'],
+              label: ['Inter'],
+            },
+            borderRadius: { DEFAULT: '1rem', lg: '2rem', xl: '3rem', full: '9999px' },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+    </style>
+  </head>
+  <body class="bg-surface font-body text-on-surface selection:bg-primary/20">
+    <!-- Note: TopAppBar, SideNavBar, and BottomNavBar are suppressed for Onboarding flow as per "Shell Visibility & Relevance" rule. -->
+    <main class="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+      <!-- Background Ambient Glows -->
+      <div
+        class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"
+      ></div>
+      <div
+        class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-tertiary/5 rounded-full blur-[120px]"
+      ></div>
+      <div class="max-w-4xl w-full z-10">
+        <!-- Central Hero Card: OmniCalc Glass Style -->
+        <div
+          class="glass-card rounded-xl p-8 md:p-12 shadow-[0_20px_40px_rgba(70,72,212,0.05)] flex flex-col items-center text-center"
+        >
+          <!-- Brand Anchor -->
+          <div class="mb-8">
+            <span class="text-3xl font-black text-primary tracking-tighter font-headline"
+              >OmniCalc</span
+            >
+          </div>
+          <div class="mb-4">
+            <h1
+              class="text-4xl md:text-5xl font-extrabold font-headline tracking-tight text-on-surface mb-4"
+            >
+              Welcome to OmniCalc
+            </h1>
+            <p class="text-lg text-secondary max-w-xl mx-auto">
+              Precision at your fingertips. Let's get you acquainted with your new high-performance
+              workspace in three simple steps.
+            </p>
+          </div>
+          <!-- Onboarding Steps: Asymmetric Bento Grid Style -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6 w-full mt-12 text-left">
+            <!-- Step 1: Your first calculation -->
+            <div
+              class="md:col-span-7 bg-white dark:bg-slate-950 rounded-lg p-8 shadow-sm group hover:translate-y-[-4px] transition-all duration-300"
+            >
+              <div class="flex items-start gap-6">
+                <div
+                  class="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary"
+                >
+                  <span class="material-symbols-outlined" data-icon="calculate">calculate</span>
+                </div>
+                <div>
+                  <span
+                    class="text-primary font-bold text-xs uppercase tracking-widest font-headline mb-2 block"
+                    >Step 01</span
+                  >
+                  <h3 class="text-xl font-bold font-headline mb-2 text-on-surface">
+                    Your first calculation
+                  </h3>
+                  <p class="text-sm text-secondary leading-relaxed">
+                    Start typing in the main engine. OmniCalc supports natural language inputs and
+                    complex scientific notation with real-time results.
+                  </p>
+                </div>
+              </div>
+              <div
+                class="mt-6 h-32 w-full rounded-md overflow-hidden bg-surface-container relative"
+              >
+                <img
+                  class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500"
+                  data-alt="Close-up of a sleek digital interface showing mathematical equations with elegant glowing typography on a dark background"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQsn2MluF_qpfnW442vzdvvm029SjJFQrvGRepz_psNaOVQuBl_fJMamxB-ePOSS4T47vbSjA0NGrKsjZ2NkGSytclbQvoknxpyZgU5dqJzOAB5NlHkoM0Qkhvw6-GAWVIl-Br80ynxq8xoWix2VXkvwOWIfZldw8XuaVR0WsPa--ECqHxgdeswysnZfH6oyUj9Hy6-xJZlLxlpaef52cYmtUPw1lsdiwMsdHB6fr1fH1mzuMDD6qPQ_DMNmMttNZX4-Ohc7XQ6Jw"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent"></div>
+              </div>
+            </div>
+            <!-- Step 2: Saving to the cloud -->
+            <div
+              class="md:col-span-5 bg-surface-container-low rounded-lg p-8 shadow-sm group hover:translate-y-[-4px] transition-all duration-300 flex flex-col justify-between"
+            >
+              <div>
+                <div
+                  class="flex-shrink-0 w-12 h-12 rounded-full bg-tertiary/10 flex items-center justify-center text-tertiary mb-6"
+                >
+                  <span class="material-symbols-outlined" data-icon="cloud_done">cloud_done</span>
+                </div>
+                <span
+                  class="text-tertiary font-bold text-xs uppercase tracking-widest font-headline mb-2 block"
+                  >Step 02</span
+                >
+                <h3 class="text-xl font-bold font-headline mb-2 text-on-surface">
+                  Saving to the cloud
+                </h3>
+                <p class="text-sm text-secondary leading-relaxed">
+                  Never lose a tape. Your history and custom functions sync across all your devices
+                  automatically.
+                </p>
+              </div>
+              <div class="mt-8 flex justify-end">
+                <div
+                  class="w-16 h-16 rounded-full bg-tertiary/5 border border-tertiary/10 flex items-center justify-center group-hover:rotate-12 transition-transform"
+                >
+                  <span class="material-symbols-outlined text-tertiary text-3xl" data-icon="sync"
+                    >sync</span
+                  >
+                </div>
+              </div>
+            </div>
+            <!-- Step 3: Exploring formulas -->
+            <div
+              class="md:col-span-12 bg-indigo-50/50 rounded-lg p-8 shadow-sm group hover:translate-y-[-4px] transition-all duration-300"
+            >
+              <div class="flex flex-col md:flex-row items-center gap-8">
+                <div
+                  class="flex-shrink-0 w-24 h-24 rounded-2xl bg-white shadow-lg flex items-center justify-center text-primary"
+                >
+                  <span class="material-symbols-outlined text-5xl" data-icon="functions"
+                    >functions</span
+                  >
+                </div>
+                <div class="text-center md:text-left">
+                  <span
+                    class="text-primary font-bold text-xs uppercase tracking-widest font-headline mb-2 block"
+                    >Step 03</span
+                  >
+                  <h3 class="text-2xl font-bold font-headline mb-2 text-on-surface">
+                    Exploring formulas
+                  </h3>
+                  <p class="text-base text-secondary leading-relaxed max-w-2xl">
+                    Access our extensive library of pre-built formulas for Physics, Finance, and
+                    Engineering. Or create your own custom variables to use in any session.
+                  </p>
+                </div>
+                <div class="ml-auto flex gap-2">
+                  <span
+                    class="px-3 py-1 rounded-full bg-white text-[10px] font-bold text-primary uppercase border border-primary/10"
+                    >Physics</span
+                  >
+                  <span
+                    class="px-3 py-1 rounded-full bg-white text-[10px] font-bold text-primary uppercase border border-primary/10"
+                    >Finance</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Primary Action -->
+          <div class="mt-12 w-full flex flex-col items-center gap-4">
+            <button
+              class="bg-primary text-on-primary font-headline font-bold py-4 px-12 rounded-DEFAULT shadow-lg shadow-primary/20 hover:bg-primary-container hover:scale-[1.02] active:scale-95 transition-all duration-300 w-full md:w-auto"
+            >
+              Get Started
+            </button>
+            <button
+              class="text-secondary font-label text-sm font-medium hover:text-primary transition-colors py-2 px-6"
+            >
+              Skip for now
+            </button>
+          </div>
+        </div>
+        <!-- Footer Note -->
+        <p class="mt-8 text-center text-slate-400 text-xs font-label uppercase tracking-[0.2em]">
+          Scientific Engine v4.2 Precision Active • Secure Connection Established
+        </p>
+      </div>
+    </main>
+  </body>
+</html>

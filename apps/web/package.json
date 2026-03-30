@@ -1,0 +1,26 @@
+{
+  "name": "@omnicalc/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "hono dev src/index.ts",
+    "build": "hono build src/index.ts",
+    "start": "node dist/index.js",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@omnicalc/core-math": "workspace:*",
+    "@omnicalc/db": "workspace:*",
+    "@prisma/client": "^6.19.2",
+    "better-auth": "^1.5.6",
+    "hono": "^4.6.0",
+    "stripe": "^21.0.1"
+  },
+  "devDependencies": {
+    "@omnicalc/tsconfig": "workspace:*",
+    "@types/node": "^22.0.0",
+    "rimraf": "^6.0.0",
+    "typescript": "^5.7.0"
+  }
+}

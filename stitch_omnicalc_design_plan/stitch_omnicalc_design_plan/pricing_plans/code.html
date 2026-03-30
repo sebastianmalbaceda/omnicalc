@@ -1,0 +1,346 @@
+<!doctype html>
+
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'on-primary-container': '#fffbff',
+              'secondary-container': '#d0e1fb',
+              surface: '#f7f9fb',
+              'on-secondary-container': '#54647a',
+              'on-tertiary-container': '#000703',
+              'inverse-on-surface': '#eff1f3',
+              'surface-container-high': '#e6e8ea',
+              'tertiary-container': '#00885d',
+              'tertiary-fixed-dim': '#4edea3',
+              'secondary-fixed-dim': '#b7c8e1',
+              'primary-container': '#6063ee',
+              'surface-container-low': '#f2f4f6',
+              'on-primary-fixed': '#07006c',
+              'on-tertiary-fixed-variant': '#005236',
+              'on-secondary-fixed': '#0b1c30',
+              'surface-container-highest': '#e0e3e5',
+              'on-secondary': '#ffffff',
+              'primary-fixed': '#e1e0ff',
+              tertiary: '#006c49',
+              'on-primary-fixed-variant': '#2f2ebe',
+              'inverse-surface': '#2d3133',
+              'surface-tint': '#494bd6',
+              primary: '#4648d4',
+              'outline-variant': '#c7c4d7',
+              'on-error': '#ffffff',
+              'surface-dim': '#d8dadc',
+              'surface-container-lowest': '#ffffff',
+              'on-surface': '#191c1e',
+              'on-tertiary': '#ffffff',
+              'error-container': '#ffdad6',
+              'surface-bright': '#f7f9fb',
+              secondary: '#505f76',
+              'primary-fixed-dim': '#c0c1ff',
+              background: '#f7f9fb',
+              'on-primary': '#ffffff',
+              'inverse-primary': '#c0c1ff',
+              'on-tertiary-fixed': '#002113',
+              outline: '#767586',
+              'surface-container': '#eceef0',
+              'surface-variant': '#e0e3e5',
+              'secondary-fixed': '#d3e4fe',
+              'on-secondary-fixed-variant': '#38485d',
+              'on-surface-variant': '#464554',
+              'on-background': '#191c1e',
+              error: '#ba1a1a',
+              'on-error-container': '#93000a',
+              'tertiary-fixed': '#6ffbbe',
+            },
+            fontFamily: {
+              headline: ['Manrope'],
+              body: ['Inter'],
+              label: ['Inter'],
+            },
+            borderRadius: { DEFAULT: '1rem', lg: '2rem', xl: '3rem', full: '9999px' },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed"
+  >
+    <!-- TopNavBar -->
+    <nav
+      class="fixed top-0 w-full z-50 flex justify-between items-center px-8 py-4 bg-white/80 backdrop-blur-xl shadow-[0_20px_40px_rgba(99,102,241,0.05)]"
+    >
+      <div class="flex items-center gap-8">
+        <span class="text-xl font-bold tracking-tighter text-indigo-600">OmniCalc</span>
+        <div class="hidden md:flex items-center gap-6">
+          <a
+            class="font-manrope text-sm tracking-tight text-slate-500 hover:text-indigo-500 transition-colors duration-200"
+            href="#"
+            >Features</a
+          >
+          <a
+            class="font-manrope text-sm tracking-tight text-indigo-600 font-semibold border-b-2 border-indigo-600 hover:text-indigo-500 transition-colors duration-200"
+            href="#"
+            >Pricing</a
+          >
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <button
+          class="font-manrope text-sm tracking-tight px-6 py-2 bg-primary text-white rounded-full font-semibold scale-95 active:scale-90 transition-transform hover:bg-primary-container"
+        >
+          Get Started
+        </button>
+      </div>
+    </nav>
+    <main class="pt-32 pb-24 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
+      <!-- Hero Section -->
+      <header class="text-center mb-20">
+        <span
+          class="font-label text-xs uppercase tracking-[0.2em] text-primary font-bold mb-4 block"
+          >Flexible Plans</span
+        >
+        <h1
+          class="font-headline text-5xl md:text-6xl font-extrabold tracking-tight text-on-surface mb-6"
+        >
+          Calculations Without <span class="text-primary italic">Boundaries.</span>
+        </h1>
+        <p class="max-w-2xl mx-auto text-on-surface-variant text-lg leading-relaxed">
+          Choose the workspace that fits your workflow. From simple daily math to complex
+          cloud-synced scientific engineering.
+        </p>
+      </header>
+      <!-- Pricing Cards Bento -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+        <!-- Free Plan -->
+        <div
+          class="relative group p-8 rounded-xl bg-surface-container-low transition-all duration-300 hover:translate-y-[-4px]"
+        >
+          <div class="flex justify-between items-start mb-12">
+            <div>
+              <h3 class="font-headline text-2xl font-bold mb-2">Free</h3>
+              <p class="text-on-surface-variant text-sm">Essential tools for everyone.</p>
+            </div>
+            <div class="text-right">
+              <span class="font-headline text-4xl font-extrabold">$0</span>
+              <span class="text-on-surface-variant block text-xs">Forever</span>
+            </div>
+          </div>
+          <ul class="space-y-5 mb-12">
+            <li class="flex items-center gap-3 text-on-surface-variant">
+              <span
+                class="material-symbols-outlined text-primary scale-90"
+                style="font-variation-settings: 'FILL' 1"
+                >check_circle</span
+              >
+              <span class="text-sm">Basic math operations</span>
+            </li>
+            <li class="flex items-center gap-3 text-on-surface-variant">
+              <span
+                class="material-symbols-outlined text-primary scale-90"
+                style="font-variation-settings: 'FILL' 1"
+                >check_circle</span
+              >
+              <span class="text-sm">Local storage only</span>
+            </li>
+            <li class="flex items-center gap-3 text-on-surface-variant">
+              <span
+                class="material-symbols-outlined text-primary scale-90"
+                style="font-variation-settings: 'FILL' 1"
+                >check_circle</span
+              >
+              <span class="text-sm">Standard light/dark theme</span>
+            </li>
+            <li class="flex items-center gap-3 text-slate-400 opacity-60">
+              <span class="material-symbols-outlined scale-90">cancel</span>
+              <span class="text-sm line-through">Cloud Sync &amp; History</span>
+            </li>
+          </ul>
+          <button
+            class="w-full py-4 rounded-xl border-2 border-outline-variant font-semibold text-on-surface-variant hover:bg-white hover:text-primary transition-all active:scale-[0.98]"
+          >
+            Continue Free
+          </button>
+        </div>
+        <!-- Pro Plan -->
+        <div
+          class="relative group p-8 rounded-xl bg-white shadow-[0_32px_64px_rgba(70,72,212,0.12)] ring-1 ring-primary/10 flex flex-col justify-between transition-all duration-300 hover:translate-y-[-4px]"
+        >
+          <div
+            class="absolute -top-4 right-8 bg-tertiary text-white px-4 py-1 rounded-full text-xs font-bold tracking-wider uppercase"
+          >
+            Recommended
+          </div>
+          <div>
+            <div class="flex justify-between items-start mb-12">
+              <div>
+                <h3 class="font-headline text-2xl font-bold mb-2 text-primary">Pro</h3>
+                <p class="text-on-surface-variant text-sm">Power for advanced workflows.</p>
+              </div>
+              <div class="text-right">
+                <div class="flex items-center gap-1 justify-end">
+                  <span class="font-headline text-4xl font-extrabold text-on-surface">$4.99</span>
+                </div>
+                <span class="text-primary font-medium block text-xs">per month / $49 yr</span>
+              </div>
+            </div>
+            <ul class="space-y-5 mb-12">
+              <li class="flex items-center gap-3 text-on-surface">
+                <span
+                  class="material-symbols-outlined text-tertiary scale-90"
+                  style="font-variation-settings: 'FILL' 1"
+                  >verified</span
+                >
+                <span class="text-sm font-medium">Scientific Mode (Complex Math)</span>
+              </li>
+              <li class="flex items-center gap-3 text-on-surface">
+                <span
+                  class="material-symbols-outlined text-tertiary scale-90"
+                  style="font-variation-settings: 'FILL' 1"
+                  >cloud_done</span
+                >
+                <span class="text-sm font-medium">Cloud Sync (Cross-device History)</span>
+              </li>
+              <li class="flex items-center gap-3 text-on-surface">
+                <span
+                  class="material-symbols-outlined text-tertiary scale-90"
+                  style="font-variation-settings: 'FILL' 1"
+                  >palette</span
+                >
+                <span class="text-sm font-medium">Unlimited Premium Themes</span>
+              </li>
+              <li class="flex items-center gap-3 text-on-surface">
+                <span
+                  class="material-symbols-outlined text-tertiary scale-90"
+                  style="font-variation-settings: 'FILL' 1"
+                  >ad_off</span
+                >
+                <span class="text-sm font-medium">Ad-free Experience</span>
+              </li>
+              <li class="flex items-center gap-3 text-on-surface">
+                <span
+                  class="material-symbols-outlined text-tertiary scale-90"
+                  style="font-variation-settings: 'FILL' 1"
+                  >support_agent</span
+                >
+                <span class="text-sm font-medium">Priority 24/7 Support</span>
+              </li>
+            </ul>
+          </div>
+          <button
+            class="w-full py-4 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:bg-primary-container transition-all active:scale-[0.98]"
+          >
+            Upgrade to Pro
+          </button>
+        </div>
+      </div>
+      <!-- Security Badges Section -->
+      <section class="mt-24 pt-12 border-t border-slate-200/50 flex flex-col items-center">
+        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-8">
+          Secure Payments Guaranteed By
+        </p>
+        <div
+          class="flex flex-wrap justify-center items-center gap-12 opacity-60 grayscale hover:grayscale-0 transition-all"
+        >
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-2xl">payments</span>
+            <span class="font-headline font-bold text-xl tracking-tighter">Stripe</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-2xl">receipt_long</span>
+            <span class="font-headline font-bold text-xl tracking-tighter">RevenueCat</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-2xl">security</span>
+            <span class="font-headline font-bold text-xl tracking-tighter">256-bit SSL</span>
+          </div>
+        </div>
+      </section>
+      <!-- FAQ Quick View -->
+      <section class="mt-32">
+        <h2 class="font-headline text-3xl font-bold text-center mb-16">
+          Frequently Asked Questions
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+          <div class="p-6 rounded-xl bg-surface-container-lowest">
+            <h4 class="font-headline font-bold mb-2">Can I switch plans later?</h4>
+            <p class="text-sm text-on-surface-variant">
+              Yes, you can upgrade to Pro or downgrade to Free at any time from your settings panel.
+            </p>
+          </div>
+          <div class="p-6 rounded-xl bg-surface-container-lowest">
+            <h4 class="font-headline font-bold mb-2">Does the Cloud Sync work offline?</h4>
+            <p class="text-sm text-on-surface-variant">
+              OmniCalc saves your history locally and syncs to the cloud as soon as you are back
+              online.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- Footer -->
+    <footer
+      class="w-full flex flex-col items-center gap-6 px-8 py-12 bg-slate-50 border-t border-slate-200/50"
+    >
+      <div class="flex flex-wrap justify-center gap-8">
+        <a
+          class="font-inter text-xs uppercase tracking-widest text-slate-400 hover:text-indigo-500 transition-opacity opacity-80 hover:opacity-100"
+          href="#"
+          >Privacy</a
+        >
+        <a
+          class="font-inter text-xs uppercase tracking-widest text-slate-400 hover:text-indigo-500 transition-opacity opacity-80 hover:opacity-100"
+          href="#"
+          >Terms</a
+        >
+        <a
+          class="font-inter text-xs uppercase tracking-widest text-slate-400 hover:text-indigo-500 transition-opacity opacity-80 hover:opacity-100"
+          href="#"
+          >Github</a
+        >
+        <a
+          class="font-inter text-xs uppercase tracking-widest text-slate-400 hover:text-indigo-500 transition-opacity opacity-80 hover:opacity-100"
+          href="#"
+          >Support</a
+        >
+      </div>
+      <div class="mt-4">
+        <span class="font-inter text-xs uppercase tracking-widest text-slate-400"
+          >© 2024 OmniCalc. Powered by TypeScript.</span
+        >
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "extends": "@omnicalc/tsconfig/node.json",
+  "compilerOptions": {
+    "outDir": "./dist/main",
+    "rootDir": "./main",
+    "declaration": false,
+    "sourceMap": true,
+    "declarationMap": false
+  },
+  "include": ["main/**/*"],
+  "exclude": ["node_modules", "dist", "renderer"]
+}

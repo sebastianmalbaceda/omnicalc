@@ -1,0 +1,540 @@
+<!doctype html>
+
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              secondary: '#505f76',
+              surface: '#f7f9fb',
+              'on-secondary': '#ffffff',
+              'on-surface': '#191c1e',
+              'on-error-container': '#93000a',
+              'on-tertiary-fixed': '#002113',
+              'secondary-fixed': '#d3e4fe',
+              'on-primary-fixed': '#07006c',
+              'on-tertiary-container': '#000703',
+              'on-secondary-fixed': '#0b1c30',
+              'on-primary-container': '#fffbff',
+              'tertiary-container': '#00885d',
+              'outline-variant': '#c7c4d7',
+              background: '#f7f9fb',
+              'error-container': '#ffdad6',
+              'on-background': '#191c1e',
+              tertiary: '#006c49',
+              'surface-container-low': '#f2f4f6',
+              'surface-tint': '#494bd6',
+              'on-secondary-container': '#54647a',
+              primary: '#4648d4',
+              'surface-container-lowest': '#ffffff',
+              'secondary-fixed-dim': '#b7c8e1',
+              'on-tertiary-fixed-variant': '#005236',
+              'surface-variant': '#e0e3e5',
+              'primary-fixed-dim': '#c0c1ff',
+              'on-tertiary': '#ffffff',
+              error: '#ba1a1a',
+              'on-error': '#ffffff',
+              'surface-dim': '#d8dadc',
+              'surface-container-high': '#e6e8ea',
+              'primary-container': '#6063ee',
+              'tertiary-fixed-dim': '#4edea3',
+              'inverse-surface': '#2d3133',
+              'on-primary-fixed-variant': '#2f2ebe',
+              'inverse-on-surface': '#eff1f3',
+              'surface-bright': '#f7f9fb',
+              'primary-fixed': '#e1e0ff',
+              'tertiary-fixed': '#6ffbbe',
+              'inverse-primary': '#c0c1ff',
+              outline: '#767586',
+              'surface-container': '#eceef0',
+              'secondary-container': '#d0e1fb',
+              'on-primary': '#ffffff',
+              'on-secondary-fixed-variant': '#38485d',
+              'on-surface-variant': '#464554',
+              'surface-container-highest': '#e0e3e5',
+            },
+            fontFamily: {
+              headline: ['Manrope'],
+              body: ['Inter'],
+              label: ['Inter'],
+            },
+            borderRadius: { DEFAULT: '1rem', lg: '2rem', xl: '3rem', full: '9999px' },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-surface text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed"
+  >
+    <!-- TopAppBar -->
+    <header
+      class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl fixed top-0 w-full flex justify-between items-center px-8 h-20 z-50 shadow-sm shadow-indigo-500/5 shadow-[0_20px_40px_rgba(70,72,212,0.05)]"
+    >
+      <div class="flex items-center gap-8">
+        <span
+          class="text-2xl font-black text-indigo-600 dark:text-indigo-400 tracking-tighter font-['Manrope']"
+          >OmniCalc</span
+        >
+        <nav class="hidden md:flex items-center gap-6 h-full pt-1">
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-indigo-500 transition-colors font-['Manrope'] tracking-tight font-semibold py-2"
+            href="#"
+            >Calculators</a
+          >
+          <a
+            class="text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 transition-colors font-['Manrope'] tracking-tight font-semibold py-2"
+            href="#"
+            >Formulas</a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-indigo-500 transition-colors font-['Manrope'] tracking-tight font-semibold py-2"
+            href="#"
+            >Tape</a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-indigo-500 transition-colors font-['Manrope'] tracking-tight font-semibold py-2"
+            href="#"
+            >Sync</a
+          >
+        </nav>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="relative hidden sm:block">
+          <span
+            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            >search</span
+          >
+          <input
+            class="bg-surface-container-high border-none rounded-full pl-10 pr-4 py-2 text-sm w-64 focus:ring-2 focus:ring-primary/30 transition-all"
+            placeholder="Search formulas..."
+            type="text"
+          />
+        </div>
+        <button
+          class="p-2 rounded-full hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20 transition-all duration-300"
+        >
+          <span class="material-symbols-outlined text-slate-600">account_circle</span>
+        </button>
+        <button
+          class="p-2 rounded-full hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20 transition-all duration-300"
+        >
+          <span class="material-symbols-outlined text-slate-600">settings</span>
+        </button>
+      </div>
+    </header>
+    <!-- SideNavBar -->
+    <aside
+      class="hidden lg:flex flex-col h-screen fixed left-0 top-0 pt-24 bg-slate-50 dark:bg-slate-900 w-64 tonal-shift bg-slate-100 dark:bg-slate-800/50 z-40"
+    >
+      <div class="px-6 mb-8">
+        <h2 class="text-indigo-600 font-bold font-['Manrope'] text-sm tracking-wide">
+          Scientific Engine
+        </h2>
+        <p class="text-slate-400 text-xs mt-1">v4.2 Precision Active</p>
+      </div>
+      <nav class="flex-1 space-y-1">
+        <a
+          class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 m-2 flex items-center gap-3 px-4 py-3 font-['Manrope'] text-sm font-medium hover:translate-x-1 transition-transform duration-200"
+          href="#"
+        >
+          <span class="material-symbols-outlined">dashboard</span> Dashboard
+        </a>
+        <a
+          class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 m-2 flex items-center gap-3 px-4 py-3 font-['Manrope'] text-sm font-medium hover:translate-x-1 transition-transform duration-200"
+          href="#"
+        >
+          <span class="material-symbols-outlined">receipt_long</span> Tape History
+        </a>
+        <a
+          class="bg-white dark:bg-slate-950 text-indigo-600 dark:text-indigo-400 shadow-sm rounded-full m-2 flex items-center gap-3 px-4 py-3 font-['Manrope'] text-sm font-medium"
+          href="#"
+        >
+          <span class="material-symbols-outlined">functions</span> Formula Library
+        </a>
+        <a
+          class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 m-2 flex items-center gap-3 px-4 py-3 font-['Manrope'] text-sm font-medium hover:translate-x-1 transition-transform duration-200"
+          href="#"
+        >
+          <span class="material-symbols-outlined">cloud_sync</span> Cloud Sync
+        </a>
+        <a
+          class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 m-2 flex items-center gap-3 px-4 py-3 font-['Manrope'] text-sm font-medium hover:translate-x-1 transition-transform duration-200"
+          href="#"
+        >
+          <span class="material-symbols-outlined">settings</span> Settings
+        </a>
+      </nav>
+      <div class="p-4 mt-auto">
+        <div class="bg-primary/5 rounded-2xl p-4 border border-primary/10">
+          <p class="text-xs font-bold text-primary mb-2 uppercase tracking-widest">Premium Power</p>
+          <button
+            class="w-full bg-primary text-white py-2 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform"
+          >
+            Upgrade to Pro
+          </button>
+        </div>
+      </div>
+    </aside>
+    <!-- Main Content Canvas -->
+    <main class="lg:pl-64 pt-20 pb-24 min-h-screen">
+      <div class="max-w-7xl mx-auto px-6 py-12">
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div>
+            <span class="text-primary font-bold tracking-[0.2em] text-xs uppercase mb-2 block"
+              >Curation Hub</span
+            >
+            <h1
+              class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter text-on-surface"
+            >
+              Formula Library
+            </h1>
+          </div>
+          <div class="flex gap-3">
+            <button
+              class="flex items-center gap-2 px-5 py-2.5 bg-surface-container-lowest text-on-surface font-semibold rounded-full shadow-sm hover:shadow-md transition-all"
+            >
+              <span class="material-symbols-outlined text-primary">add</span>
+              <span>New Formula</span>
+            </button>
+            <button
+              class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white font-semibold rounded-full shadow-lg shadow-primary/20 hover:bg-primary-container transition-all"
+            >
+              <span class="material-symbols-outlined">auto_awesome</span>
+              <span>AI Assistant</span>
+            </button>
+          </div>
+        </div>
+        <!-- Category Grid (Asymmetric Layout) -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-12">
+          <!-- Physics Featured -->
+          <div
+            class="md:col-span-8 group cursor-pointer relative overflow-hidden rounded-lg bg-surface-container-lowest shadow-[0_20px_40px_rgba(70,72,212,0.03)] p-8 border border-white/50"
+          >
+            <div class="flex justify-between items-start relative z-10">
+              <div>
+                <div
+                  class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 mb-6"
+                >
+                  <span class="material-symbols-outlined">architecture</span>
+                </div>
+                <h3 class="text-2xl font-bold font-headline mb-2">Physics &amp; Dynamics</h3>
+                <p class="text-secondary max-w-sm">
+                  From classical mechanics to quantum electrodynamics. 142 equations verified.
+                </p>
+              </div>
+              <span
+                class="text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
+                >Most Popular</span
+              >
+            </div>
+            <div class="mt-12 flex gap-4 relative z-10">
+              <span class="px-4 py-2 bg-surface text-xs font-bold rounded-full">Kinematics</span>
+              <span class="px-4 py-2 bg-surface text-xs font-bold rounded-full"
+                >Thermodynamics</span
+              >
+              <span class="px-4 py-2 bg-surface text-xs font-bold rounded-full">Relativity</span>
+            </div>
+            <div
+              class="absolute right-0 bottom-0 opacity-10 group-hover:opacity-20 transition-opacity"
+            >
+              <span
+                class="material-symbols-outlined text-[12rem]"
+                style="font-variation-settings: 'wght' 200"
+                >rocket_launch</span
+              >
+            </div>
+          </div>
+          <!-- Chemistry Side -->
+          <div
+            class="md:col-span-4 bg-tertiary text-white rounded-lg p-8 flex flex-col justify-between relative overflow-hidden shadow-lg"
+          >
+            <div class="relative z-10">
+              <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mb-6">
+                <span class="material-symbols-outlined">science</span>
+              </div>
+              <h3 class="text-xl font-bold font-headline mb-2">Molecular Chemistry</h3>
+              <p class="text-white/80 text-sm">
+                Stoichiometry, thermodynamic constants, and redox reactions.
+              </p>
+            </div>
+            <div class="relative z-10 mt-8">
+              <button class="text-white text-xs font-bold flex items-center gap-2 group">
+                Explore Catalog
+                <span
+                  class="material-symbols-outlined group-hover:translate-x-1 transition-transform"
+                  >arrow_forward</span
+                >
+              </button>
+            </div>
+            <div class="absolute -right-4 -bottom-4 opacity-10">
+              <span class="material-symbols-outlined text-[10rem]">science</span>
+            </div>
+          </div>
+          <!-- Finance -->
+          <div class="md:col-span-4 glass-card rounded-lg p-6 border border-white/50 shadow-sm">
+            <div
+              class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center mb-4"
+            >
+              <span class="material-symbols-outlined">payments</span>
+            </div>
+            <h3 class="text-lg font-bold font-headline mb-1">Quantitative Finance</h3>
+            <p class="text-secondary text-sm mb-4">
+              Black-Scholes, ROI projection, and yield curves.
+            </p>
+            <div class="pt-4 border-t border-slate-100 flex justify-between items-center">
+              <span class="text-xs font-medium text-slate-400">88 Formulas</span>
+              <span class="material-symbols-outlined text-slate-300">chevron_right</span>
+            </div>
+          </div>
+          <!-- Engineering -->
+          <div class="md:col-span-4 glass-card rounded-lg p-6 border border-white/50 shadow-sm">
+            <div
+              class="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center mb-4"
+            >
+              <span class="material-symbols-outlined">construction</span>
+            </div>
+            <h3 class="text-lg font-bold font-headline mb-1">Structural Engineering</h3>
+            <p class="text-secondary text-sm mb-4">
+              Stress tensors, fluid dynamics, and beam deflection.
+            </p>
+            <div class="pt-4 border-t border-slate-100 flex justify-between items-center">
+              <span class="text-xs font-medium text-slate-400">215 Formulas</span>
+              <span class="material-symbols-outlined text-slate-300">chevron_right</span>
+            </div>
+          </div>
+          <!-- Mathematics (Pure) -->
+          <div class="md:col-span-4 glass-card rounded-lg p-6 border border-white/50 shadow-sm">
+            <div
+              class="w-10 h-10 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center mb-4"
+            >
+              <span class="material-symbols-outlined">functions</span>
+            </div>
+            <h3 class="text-lg font-bold font-headline mb-1">Pure Mathematics</h3>
+            <p class="text-secondary text-sm mb-4">
+              Complex analysis, number theory, and topology.
+            </p>
+            <div class="pt-4 border-t border-slate-100 flex justify-between items-center">
+              <span class="text-xs font-medium text-slate-400">340 Formulas</span>
+              <span class="material-symbols-outlined text-slate-300">chevron_right</span>
+            </div>
+          </div>
+        </div>
+        <!-- Saved / Recent Section -->
+        <div class="mb-8 flex items-center justify-between">
+          <h2 class="text-xl font-bold font-headline flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">bookmark</span>
+            My Pro Workspace
+          </h2>
+          <button class="text-primary text-sm font-bold hover:underline">View All</button>
+        </div>
+        <!-- Horizontal Scrolling Bento Cards -->
+        <div class="flex gap-6 overflow-x-auto pb-8 scrollbar-hide -mx-6 px-6">
+          <!-- Formula Card 1 -->
+          <div
+            class="min-w-[320px] bg-white rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.02)] border border-slate-100 hover:-translate-y-1 transition-all"
+          >
+            <div class="flex justify-between items-start mb-6">
+              <span
+                class="text-[10px] font-bold text-primary px-2 py-1 bg-primary/5 rounded uppercase"
+                >Verified</span
+              >
+              <button class="text-slate-300 hover:text-red-400 transition-colors">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1"
+                  >favorite</span
+                >
+              </button>
+            </div>
+            <h4 class="font-bold text-lg mb-1">Schrödinger Equation</h4>
+            <p class="text-slate-400 text-xs mb-4">Quantum Mechanics • Updated 2h ago</p>
+            <div
+              class="bg-surface-container-low rounded-xl p-4 flex items-center justify-center h-24 mb-4"
+            >
+              <code class="text-primary font-mono text-sm italic">iħ(∂/∂t)Ψ = ĤΨ</code>
+            </div>
+            <div class="flex justify-between items-center">
+              <button class="text-xs font-bold text-slate-600 flex items-center gap-1">
+                <span class="material-symbols-outlined text-base">edit</span> Edit
+              </button>
+              <button
+                class="bg-primary-container text-white px-4 py-2 rounded-lg text-xs font-bold"
+              >
+                Use Now
+              </button>
+            </div>
+          </div>
+          <!-- Formula Card 2 -->
+          <div
+            class="min-w-[320px] bg-white rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.02)] border border-slate-100 hover:-translate-y-1 transition-all"
+          >
+            <div class="flex justify-between items-start mb-6">
+              <span
+                class="text-[10px] font-bold text-tertiary px-2 py-1 bg-tertiary/5 rounded uppercase"
+                >Pro Template</span
+              >
+              <button class="text-slate-300 hover:text-red-400 transition-colors">
+                <span class="material-symbols-outlined">favorite</span>
+              </button>
+            </div>
+            <h4 class="font-bold text-lg mb-1">Black-Scholes Model</h4>
+            <p class="text-slate-400 text-xs mb-4">Finance • Updated 1d ago</p>
+            <div
+              class="bg-surface-container-low rounded-xl p-4 flex items-center justify-center h-24 mb-4"
+            >
+              <code class="text-primary font-mono text-xs italic">C = S₀N(d₁) - Ke⁻ʳᵀN(d₂)</code>
+            </div>
+            <div class="flex justify-between items-center">
+              <button class="text-xs font-bold text-slate-600 flex items-center gap-1">
+                <span class="material-symbols-outlined text-base">edit</span> Edit
+              </button>
+              <button
+                class="bg-primary-container text-white px-4 py-2 rounded-lg text-xs font-bold"
+              >
+                Use Now
+              </button>
+            </div>
+          </div>
+          <!-- Formula Card 3 -->
+          <div
+            class="min-w-[320px] bg-white rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.02)] border border-slate-100 hover:-translate-y-1 transition-all"
+          >
+            <div class="flex justify-between items-start mb-6">
+              <span
+                class="text-[10px] font-bold text-secondary px-2 py-1 bg-secondary/5 rounded uppercase"
+                >Draft</span
+              >
+              <button class="text-slate-300 hover:text-red-400 transition-colors">
+                <span class="material-symbols-outlined">favorite</span>
+              </button>
+            </div>
+            <h4 class="font-bold text-lg mb-1">Manning Equation</h4>
+            <p class="text-slate-400 text-xs mb-4">Engineering • Created 3d ago</p>
+            <div
+              class="bg-surface-container-low rounded-xl p-4 flex items-center justify-center h-24 mb-4"
+            >
+              <code class="text-primary font-mono text-sm italic">V = (k/n) R_h^(2/3) S^(1/2)</code>
+            </div>
+            <div class="flex justify-between items-center">
+              <button class="text-xs font-bold text-slate-600 flex items-center gap-1">
+                <span class="material-symbols-outlined text-base">edit</span> Edit
+              </button>
+              <button
+                class="bg-primary-container text-white px-4 py-2 rounded-lg text-xs font-bold"
+              >
+                Use Now
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Promotional Banner -->
+        <div
+          class="relative bg-indigo-900 rounded-3xl p-8 md:p-12 overflow-hidden mt-12 flex flex-col md:flex-row items-center gap-12"
+        >
+          <div class="relative z-10 text-center md:text-left">
+            <h2 class="text-3xl font-extrabold text-white font-headline mb-4">
+              Integrate directly with LabView
+            </h2>
+            <p class="text-indigo-200 text-lg mb-8 max-w-lg">
+              OmniCalc Pro now supports live data streaming and formula export for scientific
+              hardware. Precision is our standard.
+            </p>
+            <button
+              class="bg-white text-indigo-900 px-8 py-3 rounded-full font-bold shadow-xl hover:bg-indigo-50 transition-colors"
+            >
+              Get API Documentation
+            </button>
+          </div>
+          <div
+            class="relative w-full md:w-1/2 aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+          >
+            <img
+              class="w-full h-full object-cover"
+              data-alt="high-tech laboratory interior with glowing control panels, futuristic scientific equipment, and blue ambient lighting in a sleek workspace"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpJZbE47xaT7C0XhOIjZgXr85eXYCOAFiSdGxKRxYvk5yz5pquLdcEzNTv3vy26J9PjvDC3HkudK_0rS1b799zKR0uVd43qi14tt98bUI03JHF9HXsNzl5onh4acC7h8N4LiSxFXqK9j-v-Vr1kHbd7htRkZbkC8uumGjEyTA8seXRrw7bppZSEm7yKYURMChcA8F-5VM_SqpFyfFSXEIpQM-TdN9PXo9shLLDDMJBjdIZm5aZqs8Ao7B_sEw1BXxzXxg6IOdPaII"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-indigo-900/40 to-transparent"></div>
+          </div>
+          <!-- Abstract blobs for depth -->
+          <div
+            class="absolute -top-24 -right-24 w-64 h-64 bg-primary blur-[100px] opacity-30"
+          ></div>
+          <div
+            class="absolute -bottom-24 -left-24 w-64 h-64 bg-tertiary blur-[100px] opacity-30"
+          ></div>
+        </div>
+      </div>
+    </main>
+    <!-- BottomNavBar (Mobile) -->
+    <nav
+      class="fixed lg:hidden bottom-0 w-full z-50 flex justify-around items-center px-6 pb-6 pt-2 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-[0_-10px_30px_rgba(70,72,212,0.1)] rounded-t-[2rem]"
+    >
+      <a
+        class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-indigo-500 transition-all"
+        href="#"
+      >
+        <span class="material-symbols-outlined">home</span>
+        <span class="font-['Manrope'] text-[10px] font-bold uppercase tracking-widest mt-1"
+          >Home</span
+        >
+      </a>
+      <a
+        class="flex flex-col items-center justify-center bg-indigo-600 text-white rounded-full w-12 h-12 -mt-6 shadow-lg shadow-indigo-500/40 scale-110"
+        href="#"
+      >
+        <span class="material-symbols-outlined">menu_book</span>
+        <!-- Hidden text for active state but maintaining label context -->
+      </a>
+      <a
+        class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-indigo-500 transition-all"
+        href="#"
+      >
+        <span class="material-symbols-outlined">history</span>
+        <span class="font-['Manrope'] text-[10px] font-bold uppercase tracking-widest mt-1"
+          >History</span
+        >
+      </a>
+      <a
+        class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-indigo-500 transition-all"
+        href="#"
+      >
+        <span class="material-symbols-outlined">person</span>
+        <span class="font-['Manrope'] text-[10px] font-bold uppercase tracking-widest mt-1"
+          >Account</span
+        >
+      </a>
+    </nav>
+  </body>
+</html>

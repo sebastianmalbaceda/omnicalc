@@ -1,0 +1,22 @@
+# ADR-002: Electron over Tauri for Desktop
+
+- **Status:** Accepted
+- **Date:** 2026-03-30
+- **Context:** Need a desktop framework for Windows, macOS, and Linux with React UI.
+- **Decision:** Use **Electron 34** over Tauri.
+- **Rationale:**
+  - Electron allows full code sharing with the web app (same React + Vite)
+  - Much larger ecosystem and community (VS Code, Slack, Discord use Electron)
+  - Better debugging tools (Chrome DevTools built-in)
+  - Tauri's Rust backend adds a separate language to the stack
+  - Tauri v2 is stable but the ecosystem is still smaller
+  - Team can move faster with a single-language (TypeScript) stack
+- **Trade-offs:**
+  - Larger bundle size than Tauri (~150MB vs ~10MB)
+  - Higher memory usage than Tauri
+  - Mitigated by: calculator app is lightweight, memory not a concern
+- **Consequences:**
+  - Use Electron Forge for packaging and distribution
+  - Auto-updates via `electron-updater` + GitHub Releases
+  - Main/Renderer process architecture (IPC for native APIs)
+  - CI must build for all 3 platforms (matrix build)

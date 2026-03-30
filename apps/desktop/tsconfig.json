@@ -1,0 +1,8 @@
+{
+  "extends": "@omnicalc/tsconfig/react.json",
+  "compilerOptions": {
+    "outDir": "./dist"
+  },
+  "include": ["main", "renderer", "preload.ts"],
+  "exclude": ["node_modules", "dist", "out"]
+}

@@ -1,0 +1,75 @@
+# ========================================
+# OmniCalc — .agentignore
+# ========================================
+# Files hidden from AI agents to optimize context window
+# and protect sensitive information.
+
+# ----- Secrets & Credentials -----
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.cert
+secrets/
+
+# ----- Dependencies -----
+node_modules/
+.pnpm-store/
+
+# ----- Build Output -----
+dist/
+build/
+out/
+.next/
+.turbo/
+web-build/
+coverage/
+test-results/
+playwright-report/
+
+# ----- Large/Binary Files -----
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+*.woff
+*.woff2
+*.ttf
+*.eot
+*.mp4
+*.webm
+*.exe
+*.dmg
+*.AppImage
+*.snap
+*.deb
+*.rpm
+*.tgz
+
+# ----- Platform-specific (generated) -----
+ios/
+android/
+apps/desktop/release/
+
+# ----- IDE & OS -----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ----- Prisma (generated) -----
+packages/db/prisma/migrations/
+
+# ----- Stitch Design Plan (reference only) -----
+stitch_omnicalc_design_plan/
+
+# ----- Lock files -----
+pnpm-lock.yaml
+
+# ----- Reference docs (already distilled into project docs) -----
+PROJECT_DOCUMENTATION_2026.md
+TECH_STACK.md
+Documento-de-Arquitectura-y-Especificación-de-Proyecto-OmniCalc-SaaS.txt

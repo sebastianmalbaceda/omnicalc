@@ -1,0 +1,522 @@
+Documento de Arquitectura y Especificación de Proyecto: OmniCalc SaaS
+======================================================================
+Última actualización: 2026-03-30
+Estado: FINALIZADO — Decisiones de stack aprobadas.
+
+Prefacio Arquitectónico: Viabilidad del Ecosistema TypeScript Multiplataforma
+------------------------------------------------------------------------------
+Antes de detallar las especificaciones del proyecto, es crucial responder a la
+incógnita planteada: ¿Qué tan fácil es hacer una aplicación multiplataforma
+permaneciendo 100% en TypeScript (React + Expo + Electron) y cuál es el paso lógico?
+
+La respuesta realista en el panorama del desarrollo actual es: La escritura del
+código (lógica e interfaz) es sumamente fácil y fluida; la complejidad radica
+en la "fontanería" (configuración de compiladores y ecosistemas de cada sistema
+operativo).
+
+¿Cuándo es ideal? Para aplicaciones de gestión, SaaS, herramientas de
+productividad (como esta calculadora), donde la interfaz gráfica y la conexión
+a bases de datos son el 90% del trabajo. TypeScript es el rey aquí.
+
+¿Cuándo se rompe este paradigma? Cuando la aplicación necesita acceso profundo
+a hardware de bajo nivel (ej. drivers bluetooth personalizados, procesamiento
+de video en tiempo real, renderizado 3D pesado). En esos casos, el puente entre
+JavaScript y los componentes nativos crea cuellos de botella y es necesario
+migrar a Kotlin/Swift o C++/Rust.
+
+El Paso Lógico de Construcción:
+
+Paso 1: Definición estricta de datos y tipos (Interfaces TypeScript, Esquemas
+        de Base de Datos con Prisma).
+
+Paso 2: Construcción de la UI universal en Expo (Web y Móvil simultáneamente).
+
+Paso 3: Conexión de la lógica de negocio (Autenticación con Better Auth y
+        Base de Datos PostgreSQL vía Prisma).
+
+Paso 4: Integración de pasarelas de pago (Stripe Web/Desktop + RevenueCat Móvil).
+
+Paso 5: Empaquetado de la versión desktop mediante Electron para generar los
+        ejecutables de escritorio (Windows, macOS, Linux).
+
+Para un proyecto destacado de portafolio en GitHub, este enfoque demuestra un
+dominio absoluto de la arquitectura moderna: maximización de la reutilización
+de código y eficiencia en la entrega de productos.
+
+1. Visión General del Proyecto
+-------------------------------
+Nombre del Proyecto: OmniCalc
+Naturaleza: SaaS / Aplicación de Productividad Multiplataforma.
+Objetivo Principal: Construir una calculadora moderna, multiplataforma y
+conectada a la nube, que sirva como demostración técnica de nivel "Senior"
+para un portafolio de GitHub. Demostrará la capacidad de estructurar un
+monorepo, gestionar estado global, implementar autenticación segura, modelar
+bases de datos relacionales y procesar pagos integrados en un flujo B2C
+(Business to Consumer).
+Plataformas Objetivo: Web (Responsive), iOS, Android, Windows (.exe),
+macOS (.dmg), Linux (.AppImage).
+
+2. Arquitectura Tecnológica (El Stack Definitivo)
+--------------------------------------------------
+El proyecto utilizará un stack consolidado seleccionado por adopción industrial,
+estabilidad y facilidad de mantenimiento para equipos 100% TypeScript.
+
+DECISIONES FINALES TOMADAS (2026-03-30):
+  - ORM: Prisma 6 (en lugar de Drizzle) → Mayor adopción, mejor DX, Prisma Studio
+  - Desktop: Electron 34 (en lugar de Tauri) → Stack 100% TS, ecosistema maduro
+  - BFF: Hono 4 (en lugar de Next.js API Routes) → Ligero, desacoplado, sin sobrearquitectura
+  - Linting: ESLint + Prettier + Husky (en lugar de Biome) → Estándar de la industria,
+    ecosistema de plugins maduro, máxima adopción
+  - Licencia: Propietaria con derechos de autor (en lugar de MIT)
+  - Diseño: "Editorial Precision" glassmorphism (inspirado en plan de Stitch)
+
+2.1. Core y Frontend (El Monorepo)
+Lenguaje: TypeScript 5.7+ estricto.
+
+Framework Principal: Expo SDK 52 (React Native) con Expo Router para el
+enrutamiento universal (Móvil y Web).
+
+Contenedor de Escritorio: Electron 34 + React (Vite). Permite reutilizar
+componentes React y mantener el stack 100% en TypeScript. Ecosistema maduro
+con soporte de Chrome DevTools integrado, auto-updates vía electron-updater,
+y empaquetado multiplataforma con Electron Forge.
+
+UI y Estilos: NativeWind 4 (Tailwind CSS para React Native) combinado con
+Gluestack UI. Esto asegura que la calculadora se vea idéntica y profesional
+en un iPhone, en Chrome y en Windows.
+
+Gestión de Estado: Zustand 5. Manejará la lógica matemática de la calculadora
+(inputs, memoria, operaciones) y el estado de la sesión del usuario de forma
+predecible y sin re-renderizados innecesarios.
+
+Data Fetching: TanStack Query 5. Para sincronización de datos entre cliente
+y servidor, caché inteligente, y reintentos automáticos (offline-first).
+
+2.2. Backend y "Fontanería" SaaS
+Base de Datos: PostgreSQL 16 alojado en Neon (Serverless). Ideal para escalar
+desde 0 hasta millones de peticiones sin gestionar infraestructura.
+
+ORM: Prisma 6. Para un tipado perfecto de extremo a extremo (End-to-End Type
+Safety) entre la base de datos y la interfaz de usuario en TypeScript.
+Prisma fue elegido sobre Drizzle por su mayor adopción, ecosistema maduro
+(Prisma Studio, migraciones declarativas), y mejor experiencia de desarrollo.
+Ver: docs/adr/001-prisma-over-drizzle.md
+
+Autenticación: Better Auth. Gestionará sesiones, cookies y tokens JWT de forma
+agnóstica al framework. Se implementará inicio de sesión con Email/Contraseña
+y OAuth (Google/GitHub). Elegido por ser self-hosted, sin costes por usuario,
+y con control total de los datos de autenticación.
+Ver: docs/adr/004-better-auth.md
+
+API / Lógica de Servidor: Hono 4 actuando como Backend for Frontend (BFF).
+Elegido sobre Next.js API Routes por ser más ligero, desacoplado de Vercel,
+y evitar sobrearquitectura. Hono se adapta mejor al tipo de proyecto.
+
+Email Transaccional: Resend. Para correos de verificación, recuperación de
+contraseña y notificaciones de suscripción.
+
+2.3. Monetización
+Plataformas Web y Escritorio: Stripe Checkout y Stripe Customer Portal para
+la gestión de la suscripción mensual ($3.99/mes) o anual ($29.99/año) al
+plan "Pro".
+
+Plataformas Móviles: RevenueCat SDK. Imprescindible para conectar con las
+compras In-App de Apple App Store y Google Play, cumpliendo con las normativas
+de ambas plataformas y sincronizando el estado "Pro" con nuestra base de datos
+central. Apple/Google retienen 15-30% de comisión.
+Ver: docs/adr/005-dual-payment-strategy.md
+
+2.4. Calidad de Código y DevOps
+Linting: ESLint con configuración flat (eslint.config.js). Elegido sobre Biome
+por ser el estándar más adoptado de la industria, con ecosistema de plugins
+maduro (type-aware rules, react-hooks, accesibilidad).
+
+Formateo: Prettier. El formateador estándar, garantiza consistencia visual
+del código sin debates de estilo.
+
+Git Hooks: Husky 9 + lint-staged. Ejecuta ESLint y Prettier automáticamente
+en pre-commit, bloqueando commits con errores.
+
+Testing: Vitest 3 (unit tests) + Playwright (E2E web) + Maestro (E2E móvil).
+
+CI/CD: GitHub Actions (lint + test + type-check en cada PR).
+
+Monitoreo: Sentry (error tracking en todas las plataformas).
+
+2.5. Tabla Resumen del Stack
+
+| Capa               | Tecnología                    | Propósito                          |
+|---------------------|-------------------------------|------------------------------------|
+| Lenguaje           | TypeScript 5.7+ (strict)      | Todo el proyecto                   |
+| Runtime            | Node.js 22 LTS               | Backend y tooling                  |
+| Package Manager    | pnpm 9+                      | Gestión de dependencias            |
+| Monorepo           | Turborepo                    | Orquestación de builds             |
+| Mobile + Web       | Expo SDK 52 + Expo Router    | iOS, Android, Web                  |
+| Desktop            | Electron 34 + React (Vite)   | Windows, macOS, Linux              |
+| UI                 | NativeWind 4 + Gluestack UI  | Componentes compartidos            |
+| Estado             | Zustand 5                    | Estado global                      |
+| Data Fetching      | TanStack Query 5             | Sincronización server/client       |
+| Backend (BFF)      | Hono 4                       | API routes                         |
+| ORM                | Prisma 6                     | Acceso a base de datos             |
+| Base de Datos      | PostgreSQL 16 (Neon)         | Persistencia                       |
+| Auth               | Better Auth                  | Autenticación                      |
+| Pagos (Web/Desktop)| Stripe                       | Suscripciones                      |
+| Pagos (Mobile)     | RevenueCat                   | In-App Purchases                   |
+| Email              | Resend                       | Emails transaccionales             |
+| Math               | decimal.js                   | Aritmética de precisión            |
+| Linting            | ESLint + Prettier             | Calidad de código                  |
+| Git Hooks          | Husky 9 + lint-staged        | Pre-commit checks                  |
+| Testing            | Vitest 3 + Playwright + Maestro| Unit + E2E                       |
+| CI/CD              | GitHub Actions + Expo EAS    | Integración continua               |
+| Monitoreo          | Sentry                       | Error tracking                     |
+
+3. Especificaciones de Interfaz de Usuario (UI/UX)
+----------------------------------------------------
+La aplicación debe irradiar profesionalismo. El diseño será minimalista,
+siguiendo el sistema de diseño "Editorial Precision" — glassmorphism moderno
+con Electric Violet (#4648D4) como color primario, tipografía Manrope (headings)
++ Inter (body), y transiciones fluidas.
+
+Reglas de diseño clave:
+- "No-Line Rule": No usar bordes de 1px para separar secciones. Usar
+  diferencias tonales de superficie para crear jerarquía visual.
+- Asimetría intencional: Padding no siempre simétrico para interés visual.
+- Layering tonal: Fondos con cambios sutiles de color para implicar profundidad.
+- Micro-animaciones: Todos los elementos interactivos con transiciones suaves.
+
+Ver: docs/design-system.md para tokens completos.
+
+3.1. Landing Page (Solo Web)
+Hero Section: Propuesta de valor clara ("La única calculadora que necesitarás
+en todos tus dispositivos"). Botones de "Usar gratis" (redirige a la app web)
+y "Descargar" (detecta el SO y ofrece el ejecutable de Electron, o enlaces a
+las App Stores).
+
+Features: Explicación de la sincronización en la nube, el historial de cálculos
+(cinta de papel digital) y la evolución a calculadora científica.
+
+Pricing: Tabla comparativa Free vs Pro.
+
+3.2. Pantallas de Autenticación
+Modal o pantalla dedicada de Login/Registro.
+Diseño limpio con opciones de "Continuar con Google/GitHub" o formulario de email.
+Recuperación de contraseña.
+
+3.3. Interfaz Principal de la Calculadora
+La interfaz se adaptará dinámicamente al tamaño de la pantalla (Responsive Design):
+
+Pantalla Móvil (Retrato):
+  Display numérico grande en la parte superior.
+  Teclado numérico y operaciones básicas (Free).
+  Si es Pro: Un botón para alternar (o deslizar) hacia el panel de funciones
+  científicas (seno, coseno, logaritmos, exponentes).
+
+Pantalla Escritorio / Tablet (Apaisado):
+  Free: Calculadora básica centrada.
+  Pro: La interfaz se expande revelando un panel izquierdo con el "Historial
+  de Cálculos" (Cinta virtual) y el teclado científico se acopla junto al
+  teclado numérico básico.
+
+3.4. Menú de Usuario / Ajustes
+Accesible mediante un icono de perfil o engranaje:
+  Estado de la Cuenta: Muestra si es Free o Pro.
+  Botón de Upgrade: Call to Action brillante para abrir el modal de pago.
+  Temas (Themes): Selector de Modo Claro, Modo Oscuro o Tema de Sistema.
+  Cerrar sesión.
+
+4. Lógica de Negocio y Funcionalidades (SaaS)
+-----------------------------------------------
+El diferenciador de este proyecto es la transición de un estado a otro mediante
+un modelo de suscripción, gestionado centralmente en la base de datos.
+
+4.1. Funcionalidad Core (Calculadora)
+Precisión Matemática: Uso de decimal.js para evitar los errores de coma flotante
+nativos de JavaScript (ej. 0.1 + 0.2 = 0.30000000000000004). Todas las funciones
+matemáticas son puras y están aisladas en packages/core-math.
+Ver: docs/math-engine.md, docs/adr/003-decimal-js-for-math.md
+
+Memoria: Funciones estándar M+, M-, MR, MC.
+
+4.2. Plan Free (Gratuito)
+Operaciones aritméticas básicas (+, -, *, /, %, +/-).
+Uso anónimo (sin registro) permitido en local.
+Si el usuario se registra (Free): Sincronización básica de preferencias.
+Banners sutiles invitando a actualizar a Pro.
+
+4.3. Plan Pro (Suscripción — $3.99/mes o $29.99/año)
+Desbloqueo Científico: Funciones trigonométricas, logarítmicas, raíces
+complejas, factoriales, constantes (π, e).
+Historial Sincronizado (Cloud Tape): Cada cálculo que finaliza al presionar =
+se guarda en la base de datos. El usuario puede abrir la app en el móvil,
+hacer una cuenta, y ver ese mismo cálculo en la app de escritorio.
+Temas Premium: Desbloqueo de paletas de colores personalizadas.
+Sin anuncios / Muros de pago.
+
+5. Diseño del Modelo de Datos (Prisma ORM)
+--------------------------------------------
+Para respaldar esta lógica de SaaS, la base de datos PostgreSQL (Neon) debe
+ser estructurada de la siguiente manera usando Prisma schema:
+
+// Tabla de Usuarios (Gestionada en conjunto con Better Auth)
+model User {
+  id                 String   @id @default(uuid())
+  email              String   @unique
+  name               String?
+  avatarUrl          String?  @map("avatar_url")
+  createdAt          DateTime @default(now()) @map("created_at")
+  stripeCustomerId   String?  @unique @map("stripe_customer_id")
+  revenuecatUserId   String?  @unique @map("revenuecat_user_id")
+  plan               String   @default("free")    // 'free' | 'pro'
+  subscriptionStatus String?  @map("subscription_status")
+  subscriptionProvider String? @map("subscription_provider") // 'stripe' | 'revenuecat'
+  currentPeriodEnd   DateTime? @map("current_period_end")
+  cancelAtPeriodEnd  Boolean  @default(false) @map("cancel_at_period_end")
+
+  calculations Calculation[]
+  settings     UserSettings?
+
+  @@map("users")
+}
+
+// Tabla de Historial de Cálculos (Funcionalidad Pro)
+model Calculation {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  expression   String                        // ej: "25 * (4 + 6)"
+  result       String                        // ej: "250"
+  createdAt    DateTime @default(now()) @map("created_at")
+  deviceOrigin String?  @map("device_origin") // 'web', 'ios', 'android', 'desktop'
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("calculations")
+}
+
+// Tabla de Preferencias de Usuario
+model UserSettings {
+  userId            String  @id @map("user_id")
+  theme             String  @default("system")
+  angleUnit         String  @default("degrees")
+  thousandsSeparator Boolean @default(false) @map("thousands_separator")
+  decimalPlaces     Int     @default(10) @map("decimal_places")
+  hapticFeedback    Boolean @default(true) @map("haptic_feedback")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
+}
+
+6. Gestión del Estado Global (Zustand)
+----------------------------------------
+En una calculadora, el manejo del estado es la parte más crítica del Frontend.
+No se puede depender del estado local de React (useState) porque la lógica
+matemática debe estar completamente separada de los componentes visuales para
+facilitar las pruebas (testing) y el mantenimiento.
+
+Se utilizará Zustand 5 para crear stores independientes y modulares:
+
+6.1. useCalculatorStore (Motor Matemático)
+Este store manejará exclusivamente la lógica de la calculadora en memoria temporal:
+
+  display (String): Lo que se muestra actualmente en pantalla.
+  expression (String): La expresión completa (para historial).
+  previousValue (String): El operando anterior.
+  currentValue (String): El operando actual / buffer de input.
+  operator (Operator | null): El operador matemático activo.
+  waitingForOperand (Boolean): Si espera un nuevo operando.
+  memory (String): El valor almacenado (M+, M-).
+  history (HistoryEntry[]): Historial de cálculos (local).
+
+  Acciones: inputNumber(num), inputOperator(op), calculate(), clear(),
+  toggleSign(), percentage(), applyScientificFunction(funcName).
+
+6.2. useAuthStore (Sesión y Suscripción)
+Mantiene el estado de la sesión del usuario sincronizado con Better Auth:
+
+  user (Object | null): Datos básicos (nombre, email, plan).
+  isAuthenticated (Boolean).
+  isPro (Boolean): El flag de validación que condiciona la UI.
+  Si isPro es false, useCalculatorStore bloquea la ejecución de funciones
+  científicas y no renderiza el historial de la nube.
+
+7. Arquitectura de Pagos y Sincronización Multiplataforma
+-----------------------------------------------------------
+Dado que OmniCalc es un SaaS puro distribuido en todas las plataformas, el
+flujo de pagos es la principal fuente de complejidad legal y técnica. Se
+requiere una arquitectura híbrida para cumplir con las normativas de las
+tiendas de Apple y Google.
+
+7.1. Flujo Web y Desktop (Stripe)
+El usuario en Web o en la app de Electron (Desktop) hace clic en "Mejorar a Pro".
+La aplicación llama al backend (Hono BFF) para crear una sesión de Stripe Checkout.
+El usuario paga con tarjeta.
+Stripe Webhook: Envía un evento al servidor confirmando el pago. El servidor
+actualiza la tabla users marcando plan = 'pro'.
+El cliente hace refetch del estado (TanStack Query) y la calculadora se expande
+a modo científico.
+
+7.2. Flujo Móvil (RevenueCat)
+El usuario en iOS o Android (Expo) hace clic en "Mejorar a Pro".
+La aplicación invoca el SDK de RevenueCat para mostrar la pasarela nativa.
+Apple/Google procesan el pago y se quedan con su comisión (15-30%).
+RevenueCat Webhook: RevenueCat detecta el pago nativo y envía un evento a
+nuestro servidor backend (Hono).
+El servidor actualiza la misma tabla users marcando plan = 'pro'.
+Si el usuario inicia sesión en la Web mañana, ya será "Pro" porque la fuente
+de verdad es centralizada en la base de datos.
+
+Ver: docs/payments.md para detalles de integración.
+
+8. Estructura del Monorepo y Paquetes
+---------------------------------------
+Para garantizar la escalabilidad y una experiencia de desarrollo fluida (DX),
+el proyecto se organizará en un monorepo gestionado por Turborepo.
+
+omnicalc/
+├── apps/
+│   ├── web/              # Hono BFF (API routes + landing page)
+│   ├── mobile/           # Expo (App para iOS, Android y Web)
+│   └── desktop/          # Electron + React (Vite) — Windows, macOS, Linux
+├── packages/
+│   ├── ui/               # NativeWind + Gluestack (Botones, Displays, Teclados)
+│   ├── core-math/        # Lógica pura en TypeScript (decimal.js, parseo de fórmulas)
+│   ├── db/               # Prisma ORM (Esquemas de Neon Postgres, migraciones)
+│   └── tsconfig/         # Configuraciones base de TypeScript
+├── docs/                 # Documentación extendida (diseño, API, pagos, etc.)
+├── .agents/              # Skills para agentes de IA
+└── package.json
+
+Justificación: Separar core-math en un paquete aislado asegura que la lógica
+de la calculadora pueda ser testeada exhaustivamente con Unit Tests (Vitest)
+sin depender de React o componentes visuales.
+
+9. Estrategia de CI/CD y Despliegue
+--------------------------------------
+La automatización de este proyecto es clave para que un desarrollador individual
+pueda mantenerlo en producción.
+
+Backend y Web: Vercel + Neon. Al hacer push a la rama main en GitHub, Vercel
+despliega automáticamente la app web (Hono BFF) y las API routes. Neon
+proporciona branches de base de datos para entornos de preview.
+
+Escritorio (Desktop): GitHub Actions + Electron Forge. Se configurará un flujo
+de trabajo que, al generar un Release Tag en GitHub (ej. v1.2.0), compilará
+automáticamente los instaladores de Electron para Windows, macOS y Linux,
+adjuntándolos al release como artifacts.
+
+Móvil (iOS/Android): Expo EAS. Se usará el servicio en la nube de Expo para
+generar los binarios y enviarlos directamente a TestFlight (Apple) o Google
+Play Console. Los OTA updates de Expo permitirán corregir bugs matemáticos
+o de UI sin requerir que el usuario actualice la app en la tienda.
+
+Ver: docs/deployment.md para guía completa.
+
+10. Calidad de Código
+-----------------------
+Linting y Formateo: ESLint (eslint.config.js flat config) + Prettier (.prettierrc).
+El estándar más adoptado de la industria con el ecosistema de plugins más maduro
+(type-aware rules con @typescript-eslint, react-hooks, accesibilidad con
+eslint-plugin-jsx-a11y). Se eligió sobre Biome por su mayor adopción, estabilidad
+y compatibilidad universal.
+
+Git Hooks: Husky 9 + lint-staged. Ejecuta ESLint fix y Prettier en pre-commit
+para garantizar calidad antes de cada push.
+
+Configuración lint-staged:
+  "*.{ts,tsx,js,jsx}": ["eslint --fix", "prettier --write"],
+  "*.{json,md,css}": ["prettier --write"]
+
+11. Directrices para Generación Asistida por IA
+-------------------------------------------------
+Para garantizar que el código generado por IA sea de nivel profesional:
+
+Matemáticas Seguras: "Bajo ninguna circunstancia utilices operadores aritméticos
+nativos de JavaScript para cálculos de coma flotante. Utiliza estrictamente
+decimal.js en packages/core-math".
+
+Prioridad UI Compartida: "Cualquier componente visual nuevo debe ser creado en
+packages/ui. No crees componentes visuales directamente dentro de apps/".
+
+Manejo del Offline-First: "Guarda el cálculo localmente primero. Luego, ejecuta
+la mutación al servidor en segundo plano (TanStack Query). Si no hay internet,
+la app no debe bloquearse."
+
+Seguridad de Tipos: "Prisma ORM y Zustand deben compartir tipos inferidos. No
+dupliques interfaces de TypeScript si ya están definidas en el esquema de Prisma."
+
+Ver: AGENTS.md para reglas completas del agente.
+
+12. Manejo de Errores y Casos Límite (Edge Cases)
+---------------------------------------------------
+Una calculadora profesional no puede cerrarse inesperadamente (crash) bajo
+ninguna circunstancia matemática.
+
+División por Cero: El motor core-math lanza un CalculatorError con código
+DIVISION_BY_ZERO. Zustand muestra "Cannot divide by zero" en el display.
+
+Desbordamiento (Overflow): Límite de 15 dígitos en display. Si un cálculo
+supera este límite, transiciona automáticamente a notación científica.
+
+Errores de Dominio: sqrt(-1), log(0), log(-5) lanzan DOMAIN_ERROR con
+mensajes descriptivos.
+
+Sincronización Fallida (Cloud Tape): Si Neon no responde, TanStack Query
+mantiene el cálculo en caché local con reintentos automáticos (exponential
+backoff).
+
+Ver: docs/math-engine.md para especificaciones completas de errores.
+
+13. Fases de Ejecución del Proyecto (Roadmap)
+-----------------------------------------------
+Este es el orden cronológico para construir OmniCalc desde cero:
+
+Fase 1: El Núcleo Matemático
+  Configuración del monorepo Turborepo con pnpm.
+  Setup de ESLint + Prettier + Husky.
+  Desarrollo del paquete core-math con decimal.js.
+  Pruebas unitarias al 100% de cobertura (Vitest).
+
+Fase 2: Interfaz Universal
+  Creación de botones, display y layouts usando NativeWind en packages/ui.
+  Implementación de Zustand para conectar el core-math a la UI.
+  Pruebas visuales en entorno Web y simulador de iOS (Expo) simultáneamente.
+
+Fase 3: Infraestructura SaaS
+  Diseño e implementación de la base de datos Neon con Prisma ORM.
+  Implementación de Better Auth para el registro de usuarios.
+  API routes con Hono (validación Zod, auth middleware).
+  Conexión del historial de cálculos (Zustand → TanStack Query → API → PostgreSQL).
+
+Fase 4: Monetización
+  Configuración de los Webhooks de Stripe para Web/Desktop.
+  Configuración del SDK de RevenueCat en el proyecto móvil Expo.
+  Sincronización de eventos de pago con la tabla users.
+
+Fase 5: Empaquetado Desktop y Lanzamiento
+  Configuración de Electron envolviendo la aplicación React.
+  Configuración de GitHub Actions para el empaquetado multiplataforma.
+  Creación de la Landing Page pública y publicación oficial.
+  Despliegue en Vercel (web), App Store / Play Store (mobile), GitHub
+  Releases (desktop).
+
+Ver: ROADMAP.md para plan detallado con milestones.
+
+14. Documentación del Proyecto
+-------------------------------
+El repositorio incluye documentación completa para facilitar el desarrollo:
+
+| Archivo              | Propósito                                    |
+|-----------------------|----------------------------------------------|
+| README.md            | Resumen del proyecto y quickstart            |
+| SPEC.md              | Requisitos funcionales y contratos API       |
+| ARCHITECTURE.md      | Diseño del sistema y flujos de datos          |
+| ROADMAP.md           | Plan de milestones en 5 fases                |
+| PLANNING.md          | Tareas del sprint actual                     |
+| AGENTS.md            | Instrucciones para agentes de IA             |
+| docs/design-system.md| Tokens de diseño y sistema visual            |
+| docs/math-engine.md  | Especificación del motor matemático          |
+| docs/api.md          | Referencia de endpoints API                  |
+| docs/payments.md     | Arquitectura de pagos                        |
+| docs/adr/            | Decisiones arquitectónicas documentadas      |
+
+[FIN DEL DOCUMENTO DE ARQUITECTURA. OmniCalc SaaS — Stack y decisiones finalizados.]
