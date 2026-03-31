@@ -12,14 +12,20 @@
     "clean": "rimraf .expo"
   },
   "dependencies": {
+    "@expo/metro-runtime": "~4.0.1",
     "@omnicalc/core-math": "workspace:*",
     "@omnicalc/ui": "workspace:*",
+    "better-auth": "^1.5.6",
     "expo": "~52.0.0",
     "expo-router": "~4.0.0",
     "expo-status-bar": "~2.0.0",
     "nativewind": "^4.1.0",
     "react": "18.3.1",
+    "react-dom": "18.3.1",
     "react-native": "0.76.0",
+    "react-native-safe-area-context": "4.12.0",
+    "react-native-screens": "~4.4.0",
+    "react-native-web": "~0.19.13",
     "zustand": "^5.0.12"
   },
   "devDependencies": {

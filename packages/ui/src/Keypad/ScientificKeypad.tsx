@@ -10,6 +10,7 @@ interface ScientificKeypadProps {
   onPower: () => void;
   onReciprocal: () => void;
   onParenthesis: (parens: '(' | ')') => void;
+  onUpgradeToPro: () => void;
   isPro?: boolean;
   className?: string;
 }
@@ -43,6 +44,7 @@ export function ScientificKeypad({
   onPower,
   onReciprocal,
   onParenthesis,
+  onUpgradeToPro,
   isPro = false,
   className = '',
 }: ScientificKeypadProps): React.ReactElement {
@@ -52,7 +54,7 @@ export function ScientificKeypad({
         <View className="bg-surface-container-low dark:bg-surface rounded-2xl p-4 opacity-60">
           <View className="flex-row justify-center items-center mb-4">
             <View className="bg-primary-500/10 rounded-full px-4 py-2">
-              <Button label="Upgrade to Pro" onPress={() => {}} variant="primary" />
+              <Button label="Upgrade to Pro" onPress={onUpgradeToPro} variant="primary" />
             </View>
           </View>
         </View>

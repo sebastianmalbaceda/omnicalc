@@ -7,19 +7,24 @@
 import Stripe from 'stripe';
 import { prisma } from '@omnicalc/db';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2026-03-25.dahlia',
-});
+function getStripe(): Stripe {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error('STRIPE_SECRET_KEY is not configured');
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: '2026-03-25.dahlia',
+  });
+}
 
 export async function createCheckoutSession(userId: string, customerId?: string) {
-  const session = await stripe.checkout.sessions.create({
+  const session = await getStripe().checkout.sessions.create({
     customer: customerId,
     customer_email: customerId ? undefined : undefined,
     mode: 'subscription',
     payment_method_types: ['card'],
     line_items: [
       {
-        price: process.env.STRIPE_PRO_PRICE_ID,
+        price: process.env.STRIPE_PRO_PRICE_ID || 'price_1TGmTeQT2nY3kpfwiliCIv6r',
         quantity: 1,
       },
     ],
@@ -39,7 +44,7 @@ export async function createCheckoutSession(userId: string, customerId?: string)
 }
 
 export async function createCustomerPortalSession(customerId: string) {
-  const session = await stripe.billingPortal.sessions.create({
+  const session = await getStripe().billingPortal.sessions.create({
     customer: customerId,
     return_url: process.env.APP_URL,
   });
@@ -54,7 +59,7 @@ export async function handleStripeWebhook(
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(
+    event = getStripe().webhooks.constructEvent(
       payload,
       signature,
       process.env.STRIPE_WEBHOOK_SECRET || '',
@@ -144,5 +149,3 @@ export async function handleStripeWebhook(
 
   return { success: true };
 }
-
-export { stripe };

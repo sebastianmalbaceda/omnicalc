@@ -6,6 +6,7 @@ interface HistoryPanelProps {
   entries: HistoryEntry[];
   onSelectEntry?: (entry: HistoryEntry) => void;
   onClearHistory: () => void;
+  onUpgradeToPro?: () => void;
   isPro?: boolean;
   className?: string;
 }
@@ -14,6 +15,7 @@ export function HistoryPanel({
   entries,
   onSelectEntry,
   onClearHistory,
+  onUpgradeToPro,
   isPro = false,
   className = '',
 }: HistoryPanelProps): React.ReactElement {
@@ -28,8 +30,8 @@ export function HistoryPanel({
         </View>
         <View className="bg-surface rounded-xl p-4 items-center">
           <Text className="text-body-md text-on-surface-variant mb-2">Cloud Tape</Text>
-          <Pressable className="bg-primary-500 rounded-full px-4 py-2">
-            <Text className="text-button text-white">Upgrade to Pro</Text>
+          <Pressable onPress={onUpgradeToPro} className="bg-primary-500 rounded-full px-4 py-2 hover:bg-primary-600 active:scale-95 transition-all">
+            <Text className="text-button text-white uppercase tracking-widest font-heading">Upgrade to Pro</Text>
           </Pressable>
         </View>
       </View>

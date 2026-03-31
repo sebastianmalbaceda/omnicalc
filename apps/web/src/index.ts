@@ -23,7 +23,7 @@ app.use('*', logger());
 app.use(
   '*',
   cors({
-    origin: process.env.APP_URL || 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'http://localhost:8081', 'http://localhost:3001', process.env.APP_URL as string].filter(Boolean),
     credentials: true,
   }),
 );
@@ -35,10 +35,24 @@ app.get('/', (c) => {
   return c.html(html);
 });
 
-// Better Auth handler
-app.on(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/api/auth/**', async (c) => {
-  return auth.handler(c.req.raw);
+// Redirect /app to the Expo Web App port in development
+app.get('/app', (c) => {
+  return c.redirect(process.env.APP_URL || 'http://localhost:8081');
 });
+
+// Debug test endpoint at auth path
+app.get('/api/auth/test', (c) => c.json({ message: 'auth test endpoint works' }));
+app.post('/api/auth/test', (c) => c.json({ message: 'auth test POST endpoint works' }));
+
+// Better Auth handler
+app.on(['POST', 'GET'], '/api/auth/*', (c) => auth.handler(c.req.raw));
+app.get('/api/debug/env', (c) =>
+  c.json({
+    DATABASE_URL: process.env.DATABASE_URL ? 'SET' : 'NOT SET',
+    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL ? 'SET' : 'NOT SET',
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ? 'SET' : 'NOT SET',
+  }),
+);
 
 // Health check
 app.get('/api/health', (c) => c.json({ status: 'ok', timestamp: Date.now() }));

@@ -15,6 +15,9 @@ const electron = require('electron');
 console.log('Build main process...');
 require('./build-main');
 
+console.log('Build renderer process...');
+require('./build-renderer');
+
 // Start Electron with devtools
 const proc = spawn(electron, ['.'], {
   cwd: rootDir,

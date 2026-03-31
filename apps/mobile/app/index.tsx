@@ -5,7 +5,8 @@
  */
 
 import React from 'react';
-import { View, Pressable, Text } from 'react-native';
+import { View, Pressable, Text, Platform, Linking } from 'react-native';
+import { useRouter } from 'expo-router';
 import {
   Display,
   NumericKeypad,
@@ -15,9 +16,39 @@ import {
   useTheme,
 } from '@omnicalc/ui';
 import { useCalculatorStore } from '../stores/useCalculatorStore';
+import { useSession } from '../lib/auth';
 
 export default function CalculatorScreen(): React.ReactElement {
+  const router = useRouter();
+  const { data: session } = useSession();
   const { resolvedTheme, toggleTheme } = useTheme();
+
+  const handleUpgradeToPro = async (): Promise<void> => {
+    if (!session?.user) {
+      router.push('/login');
+      return;
+    }
+    
+    try {
+      const baseUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
+      const res = await fetch(`${baseUrl}/api/payments/checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: session.user.id }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        if (Platform.OS === 'web') {
+          window.location.href = data.url;
+        } else {
+          await Linking.openURL(data.url);
+        }
+      }
+    } catch (err) {
+      console.error('Upgrade failed', err);
+    }
+  };
+
 
   const {
     display,
@@ -64,16 +95,15 @@ export default function CalculatorScreen(): React.ReactElement {
           className="flex-shrink-0"
         />
 
-        {/* History Panel (Pro only) */}
-        {isPro && (
-          <HistoryPanel
-            entries={history}
-            onSelectEntry={selectHistoryEntry}
-            onClearHistory={clearHistory}
-            isPro={isPro}
-            className="flex-shrink-0 max-h-48"
-          />
-        )}
+        {/* History Panel */}
+        <HistoryPanel
+          entries={history}
+          onSelectEntry={selectHistoryEntry}
+          onClearHistory={clearHistory}
+          onUpgradeToPro={handleUpgradeToPro}
+          isPro={isPro}
+          className="flex-shrink-0 max-h-48"
+        />
 
         {/* Keypads */}
         <View className="flex-1 gap-4">
@@ -85,6 +115,7 @@ export default function CalculatorScreen(): React.ReactElement {
             onPower={() => inputOperator('^')}
             onReciprocal={() => scientificOperation('reciprocal')}
             onParenthesis={inputParenthesis}
+            onUpgradeToPro={handleUpgradeToPro}
             isPro={isPro}
           />
 

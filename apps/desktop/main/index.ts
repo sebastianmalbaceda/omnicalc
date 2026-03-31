@@ -20,17 +20,17 @@ function createWindow(): void {
     title: 'OmniCalc',
     backgroundColor: '#f7f9fb',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, '../../preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
     },
   });
 
   if (isDev) {
-    mainWindow.loadURL('http://localhost:8081');
+    mainWindow.loadFile(path.join(__dirname, '../../renderer/index.html'));
     mainWindow.webContents.openDevTools({ mode: 'detach' });
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+    mainWindow.loadFile(path.join(__dirname, '../../renderer/index.html'));
   }
 
   mainWindow.on('closed', () => {

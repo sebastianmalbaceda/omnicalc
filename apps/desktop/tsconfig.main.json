@@ -5,7 +5,9 @@
     "rootDir": "./main",
     "declaration": false,
     "sourceMap": true,
-    "declarationMap": false
+    "declarationMap": false,
+    "module": "CommonJS",
+    "moduleResolution": "node"
   },
   "include": ["main/**/*"],
   "exclude": ["node_modules", "dist", "renderer"]

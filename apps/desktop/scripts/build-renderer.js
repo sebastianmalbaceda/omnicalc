@@ -16,7 +16,11 @@ if (!fs.existsSync(outDir)) {
 
 // Copy HTML and CSS
 console.log('Copying renderer files...');
-fs.copyFileSync(path.join(rootDir, 'renderer/index.html'), path.join(outDir, 'index.html'));
+const htmlContent = fs.readFileSync(path.join(rootDir, 'renderer/index.html'), 'utf8');
+fs.writeFileSync(
+  path.join(outDir, 'index.html'),
+  htmlContent.replace('src="./index.ts"', 'src="./index.js"')
+);
 fs.copyFileSync(path.join(rootDir, 'renderer/styles.css'), path.join(outDir, 'styles.css'));
 
 // Bundle renderer with esbuild
