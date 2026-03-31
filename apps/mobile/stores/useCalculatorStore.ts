@@ -6,7 +6,6 @@
  */
 
 import { create } from 'zustand';
-import Decimal from 'decimal.js';
 import {
   createCalculatorState,
   inputDigit,

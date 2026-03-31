@@ -16,15 +16,15 @@ import {
   useTheme,
 } from '@omnicalc/ui';
 import { useCalculatorStore } from '../stores/useCalculatorStore';
-import { useSession } from '../lib/auth';
+import { useAuthStore } from '../lib/auth';
 
 export default function CalculatorScreen(): React.ReactElement {
   const router = useRouter();
-  const { data: session } = useSession();
-  const { resolvedTheme, toggleTheme, isDark } = useTheme();
+  const user = useAuthStore((state) => state.user);
+  const { toggleTheme, isDark } = useTheme();
 
   const handleUpgradeToPro = async (): Promise<void> => {
-    if (!session?.user) {
+    if (!user) {
       router.push('/login');
       return;
     }
@@ -34,7 +34,7 @@ export default function CalculatorScreen(): React.ReactElement {
       const res = await fetch(`${baseUrl}/api/payments/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: session.user.id }),
+        body: JSON.stringify({ userId: user.id }),
       });
       const data = await res.json();
       if (data.url) {

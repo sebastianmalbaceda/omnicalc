@@ -2,7 +2,7 @@
   "extends": "@omnicalc/tsconfig/node.json",
   "compilerOptions": {
     "outDir": "./dist/main",
-    "rootDir": "./main",
+    "rootDir": ".",
     "declaration": false,
     "sourceMap": true,
     "declarationMap": false,

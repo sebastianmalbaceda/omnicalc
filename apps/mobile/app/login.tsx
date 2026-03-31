@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { signIn, signUp } from '../lib/auth';
+import { signIn, signUp, useAuthStore } from '../lib/auth';
 
 export default function LoginScreen(): React.ReactElement {
   const router = useRouter();
+  const setUser = useAuthStore((state) => state.setUser);
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,20 +19,17 @@ export default function LoginScreen(): React.ReactElement {
 
     try {
       if (isLogin) {
-        const { error: signInError } = await signIn.email({
-          email,
-          password,
-        });
-        if (signInError) throw new Error(signInError.message || 'Login failed');
+        const { user } = await signIn.email({ email, password });
+        setUser(user);
       } else {
-        const { error: signUpError } = await signUp.email({
+        const { user } = await signUp.email({
           email,
           password,
           name: name || email.split('@')[0] || 'User',
         });
-        if (signUpError) throw new Error(signUpError.message || 'Signup failed');
+        setUser(user);
       }
-      
+
       // Navigate to the main app on success
       router.replace('/');
     } catch (err: unknown) {
@@ -95,7 +93,9 @@ export default function LoginScreen(): React.ReactElement {
             onPress={handleSubmit}
             disabled={loading}
             className={`w-full py-4 mt-4 rounded-xl items-center justify-center ${
-              loading ? 'bg-primary-400 opacity-70' : 'bg-primary-500 hover:bg-primary-600 active:scale-95'
+              loading
+                ? 'bg-primary-400 opacity-70'
+                : 'bg-primary-500 hover:bg-primary-600 active:scale-95'
             } transition-all`}
           >
             {loading ? (
@@ -108,10 +108,7 @@ export default function LoginScreen(): React.ReactElement {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          onPress={() => setIsLogin(!isLogin)}
-          className="mt-6"
-        >
+        <TouchableOpacity onPress={() => setIsLogin(!isLogin)} className="mt-6">
           <Text className="text-center text-primary-500 dark:text-primary-400 font-label">
             {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
           </Text>
