@@ -9,14 +9,14 @@ import '../global.css';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ThemeProvider } from '@omnicalc/ui';
-import { SafeAreaView, useColorScheme } from 'react-native';
+import { SafeAreaView, useColorScheme, StyleSheet } from 'react-native';
 
 export default function RootLayout(): React.ReactElement {
   const colorScheme = useColorScheme();
 
   return (
     <ThemeProvider defaultMode={colorScheme === 'dark' ? 'dark' : 'light'}>
-      <SafeAreaView className="flex-1 bg-surface dark:bg-surface-dark">
+      <SafeAreaView style={styles.safeArea}>
         <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
         <Stack
           screenOptions={{
@@ -29,3 +29,10 @@ export default function RootLayout(): React.ReactElement {
     </ThemeProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#0A0A0F',
+  },
+});

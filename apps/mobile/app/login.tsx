@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
-  SafeAreaView,
+  useWindowDimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { signIn, signUp, useAuthStore } from '../lib/auth';
@@ -14,12 +14,15 @@ import { signIn, signUp, useAuthStore } from '../lib/auth';
 export default function LoginScreen(): React.ReactElement {
   const router = useRouter();
   const setUser = useAuthStore((state) => state.setUser);
+  const { height } = useWindowDimensions();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const isSmallHeight = height < 600;
 
   const handleSubmit = async (): Promise<void> => {
     setError('');
@@ -55,16 +58,16 @@ export default function LoginScreen(): React.ReactElement {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        {/* Header with back button */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={handleGoBack} style={styles.backButton} activeOpacity={0.7}>
-            <Text style={styles.backButtonText}>←</Text>
-          </TouchableOpacity>
-        </View>
+    <View style={styles.container}>
+      {/* Header with back button */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handleGoBack} style={styles.backButton} activeOpacity={0.7}>
+          <Text style={styles.backButtonText}>←</Text>
+        </TouchableOpacity>
+      </View>
 
-        {/* Login form */}
+      {/* Login form - centered */}
+      <View style={[styles.formWrapper, isSmallHeight && styles.formWrapperSmall]}>
         <View style={styles.formContainer}>
           <Text style={styles.title}>{isLogin ? 'Welcome Back' : 'Create Account'}</Text>
           <Text style={styles.subtitle}>
@@ -132,22 +135,19 @@ export default function LoginScreen(): React.ReactElement {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#0A0A0F',
-  },
   container: {
     flex: 1,
     backgroundColor: '#0A0A0F',
   },
   header: {
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingTop: 16,
+    paddingBottom: 8,
   },
   backButton: {
     width: 44,
@@ -161,9 +161,15 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: '#FFFFFF',
   },
-  formContainer: {
+  formWrapper: {
     flex: 1,
     justifyContent: 'center',
+  },
+  formWrapperSmall: {
+    justifyContent: 'flex-start',
+    paddingTop: 20,
+  },
+  formContainer: {
     paddingHorizontal: 24,
   },
   title: {
