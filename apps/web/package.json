@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx --env-file=../../.env src/server/serve.ts",
+    "dev": "tsx --env-file=../../.env src/server/dev.ts",
     "dev:mobile": "cd ../mobile && npx expo start --web",
     "build": "cd ../mobile && npx expo export --platform web && tsc -p tsconfig.server.json",
     "build:server": "tsc -p tsconfig.server.json",
