@@ -2,18 +2,20 @@
  * @omnicalc/desktop — Main Process
  *
  * Electron main process that loads the mobile Expo web app.
- * This ensures desktop uses the exact same code as mobile and web.
+ * Tries loading from:
+ * 1. Local file (mobile/dist) - works standalone
+ * 2. localhost:3000 (web server)
+ * 3. localhost:8081 (expo dev)
  */
 
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import * as path from 'path';
 
-// URLs for different environments
-const WEB_PROD_URL = 'http://localhost:3000';
-const MOBILE_DEV_URL = 'http://localhost:8081';
-
-console.log('[Electron] OmniCalc Desktop starting...');
-console.log('[Electron] Will try:', WEB_PROD_URL, 'then', MOBILE_DEV_URL);
+// Paths
+const PROJECT_ROOT = path.join(__dirname, '..', '..', '..', '..');
+const LOCAL_INDEX = path.join(PROJECT_ROOT, 'mobile', 'dist', 'index.html');
+const WEB_URL = 'http://localhost:3000';
+const EXPO_URL = 'http://localhost:8081';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -32,13 +34,28 @@ function createWindow(): void {
     },
   });
 
-  // Try loading from web production server first
-  mainWindow.loadURL(WEB_PROD_URL).catch(() => {
-    console.log('[Electron] Web server not available, trying mobile dev');
-    mainWindow?.loadURL(MOBILE_DEV_URL).catch((err) => {
-      console.error('[Electron] Failed to load:', err.message);
+  console.log('[Electron] Local file:', LOCAL_INDEX);
+
+  // Try loading from local file first (standalone)
+  mainWindow
+    .loadFile(LOCAL_INDEX)
+    .then(() => {
+      console.log('[Electron] Loaded from local file');
+    })
+    .catch(() => {
+      console.log('[Electron] Local file failed, trying web server:', WEB_URL);
+      mainWindow
+        ?.loadURL(WEB_URL)
+        .then(() => {
+          console.log('[Electron] Loaded from web server');
+        })
+        .catch(() => {
+          console.log('[Electron] Web server failed, trying Expo dev:', EXPO_URL);
+          mainWindow?.loadURL(EXPO_URL).catch((err) => {
+            console.error('[Electron] All sources failed:', err.message);
+          });
+        });
     });
-  });
 
   mainWindow.webContents.on('did-fail-load', (_event, errorCode, errorDescription) => {
     console.error('[Electron] Failed to load:', errorCode, errorDescription);
