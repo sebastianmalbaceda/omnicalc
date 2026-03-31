@@ -171,6 +171,9 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     paddingHorizontal: 24,
+    maxWidth: 400,
+    width: '100%',
+    alignSelf: 'center',
   },
   title: {
     fontSize: 28,
@@ -201,7 +204,6 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   input: {
-    width: '100%',
     paddingVertical: 14,
     paddingHorizontal: 16,
     backgroundColor: '#1A1A2E',
@@ -212,8 +214,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   submitButton: {
-    width: '100%',
     paddingVertical: 14,
+    paddingHorizontal: 24,
     backgroundColor: '#6366F1',
     borderRadius: 10,
     alignItems: 'center',
