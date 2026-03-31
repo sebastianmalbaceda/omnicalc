@@ -32,28 +32,13 @@ function createWindow(): void {
     },
   });
 
-  // Load from web production server (serves mobile export)
-  // This ensures desktop uses the exact same code as web and mobile
-  mainWindow
-    .loadURL(WEB_PROD_URL)
-    .then(() => {
-      console.log('[Electron] Loaded from web server:', WEB_PROD_URL);
-    })
-    .catch(() => {
-      console.log('[Electron] Web server not available, trying mobile dev:', MOBILE_DEV_URL);
-      return mainWindow?.loadURL(MOBILE_DEV_URL);
-    })
-    .then(() => {
-      console.log('[Electron] Loaded from mobile dev server');
-    })
-    .catch((err) => {
+  // Try loading from web production server first
+  mainWindow.loadURL(WEB_PROD_URL).catch(() => {
+    console.log('[Electron] Web server not available, trying mobile dev');
+    mainWindow?.loadURL(MOBILE_DEV_URL).catch((err) => {
       console.error('[Electron] Failed to load:', err.message);
-      console.error('[Electron] Please ensure either:');
-      console.error('[Electron]   - Web server is running: cd apps/web && pnpm dev');
-      console.error(
-        '[Electron]   - Mobile dev server is running: cd apps/mobile && npx expo start --web',
-      );
     });
+  });
 
   mainWindow.webContents.on('did-fail-load', (_event, errorCode, errorDescription) => {
     console.error('[Electron] Failed to load:', errorCode, errorDescription);
