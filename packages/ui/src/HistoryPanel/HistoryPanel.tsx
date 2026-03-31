@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, Pressable } from 'react-native';
+import { useTheme } from '../ThemeProvider/ThemeProvider';
 import type { HistoryEntry } from '@omnicalc/core-math';
 
 interface HistoryPanelProps {
@@ -19,19 +20,32 @@ export function HistoryPanel({
   isPro = false,
   className = '',
 }: HistoryPanelProps): React.ReactElement {
+  const { isDark } = useTheme();
+
   if (!isPro) {
     return (
-      <View className={`bg-surface-container rounded-2xl p-4 ${className}`}>
+      <View className={`${isDark ? 'bg-[#141420]' : 'bg-[#F5F5FA]'} rounded-2xl p-4 ${className}`}>
         <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-heading-md font-heading text-on-surface">History</Text>
-          <View className="bg-primary-500/10 rounded-full px-3 py-1">
-            <Text className="text-label text-primary-500">Pro</Text>
+          <Text
+            className={`text-heading-md font-heading ${isDark ? 'text-white' : 'text-[#1A1A2A]'}`}
+          >
+            History
+          </Text>
+          <View className="bg-[#4648D4]/10 rounded-full px-3 py-1">
+            <Text className="text-label text-[#4648D4]">Pro</Text>
           </View>
         </View>
-        <View className="bg-surface rounded-xl p-4 items-center">
-          <Text className="text-body-md text-on-surface-variant mb-2">Cloud Tape</Text>
-          <Pressable onPress={onUpgradeToPro} className="bg-primary-500 rounded-full px-4 py-2 hover:bg-primary-600 active:scale-95 transition-all">
-            <Text className="text-button text-white uppercase tracking-widest font-heading">Upgrade to Pro</Text>
+        <View className={`${isDark ? 'bg-[#0A0A0F]' : 'bg-white'} rounded-xl p-4 items-center`}>
+          <Text className={`text-body-md ${isDark ? 'text-[#A0A0B8]' : 'text-[#505F76]'} mb-2`}>
+            Cloud Tape
+          </Text>
+          <Pressable
+            onPress={onUpgradeToPro}
+            className={`${isDark ? 'bg-[#6366F1]' : 'bg-[#4648D4]'} rounded-full px-4 py-2 active:scale-95 transition-all`}
+          >
+            <Text className="text-button text-white uppercase tracking-widest font-heading">
+              Upgrade to Pro
+            </Text>
           </Pressable>
         </View>
       </View>
@@ -39,34 +53,47 @@ export function HistoryPanel({
   }
 
   return (
-    <View className={`bg-surface-container rounded-2xl p-4 ${className}`}>
+    <View className={`${isDark ? 'bg-[#141420]' : 'bg-[#F5F5FA]'} rounded-2xl p-4 ${className}`}>
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-heading-md font-heading text-on-surface">History</Text>
+        <Text
+          className={`text-heading-md font-heading ${isDark ? 'text-white' : 'text-[#1A1A2A]'}`}
+        >
+          History
+        </Text>
         {entries.length > 0 && (
           <Pressable onPress={onClearHistory} className="px-3 py-1">
-            <Text className="text-label text-error">Clear</Text>
+            <Text className="text-label text-[#DC2626]">Clear</Text>
           </Pressable>
         )}
       </View>
       <ScrollView className="max-h-64" showsVerticalScrollIndicator={false}>
         {entries.length === 0 ? (
           <View className="items-center py-8">
-            <Text className="text-body-md text-on-surface-variant">No calculations yet</Text>
+            <Text className={`text-body-md ${isDark ? 'text-[#A0A0B8]' : 'text-[#505F76]'}`}>
+              No calculations yet
+            </Text>
           </View>
         ) : (
           entries.map((entry, _index) => (
             <Pressable
               key={entry.timestamp}
               onPress={() => onSelectEntry?.(entry)}
-              className="flex-row justify-between items-center py-3 border-b border-outline/20"
+              className={`flex-row justify-between items-center py-3 ${isDark ? 'border-white/10' : 'border-[#D4D4E0]/20'}`}
             >
               <View className="flex-1">
-                <Text className="text-body-md text-on-surface-variant font-mono" numberOfLines={1}>
+                <Text
+                  className={`text-body-md font-mono ${isDark ? 'text-[#A0A0B8]' : 'text-[#505F76]'}`}
+                  numberOfLines={1}
+                >
                   {entry.expression}
                 </Text>
-                <Text className="text-body-lg font-semibold text-on-surface">= {entry.result}</Text>
+                <Text
+                  className={`text-body-lg font-semibold ${isDark ? 'text-white' : 'text-[#1A1A2A]'}`}
+                >
+                  = {entry.result}
+                </Text>
               </View>
-              <Text className="text-label text-on-surface-variant ml-4">
+              <Text className={`text-label ${isDark ? 'text-[#A0A0B8]' : 'text-[#505F76]'} ml-4`}>
                 {new Date(entry.timestamp).toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit',

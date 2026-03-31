@@ -14,14 +14,26 @@ if (!fs.existsSync(outDir)) {
   fs.mkdirSync(outDir, { recursive: true });
 }
 
-// Copy HTML and CSS
+// Copy and combine CSS files
+console.log('Building renderer CSS...');
+const designSystemCss = fs.readFileSync(
+  path.join(rootDir, '../../packages/ui/src/styles/design-system.css'),
+  'utf8',
+);
+const rendererCss = fs.readFileSync(path.join(rootDir, 'renderer/styles.css'), 'utf8');
+const combinedCss =
+  designSystemCss +
+  '\n\n/* Renderer-specific styles */\n' +
+  rendererCss.replace(/@import.*design-system\.css.*;/g, '');
+fs.writeFileSync(path.join(outDir, 'styles.css'), combinedCss);
+
+// Copy HTML
 console.log('Copying renderer files...');
 const htmlContent = fs.readFileSync(path.join(rootDir, 'renderer/index.html'), 'utf8');
 fs.writeFileSync(
   path.join(outDir, 'index.html'),
-  htmlContent.replace('src="./index.ts"', 'src="./index.js"')
+  htmlContent.replace('src="./index.ts"', 'src="./index.js"'),
 );
-fs.copyFileSync(path.join(rootDir, 'renderer/styles.css'), path.join(outDir, 'styles.css'));
 
 // Bundle renderer with esbuild
 console.log('Bundling renderer...');

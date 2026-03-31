@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Button } from '../Button';
+import { useTheme } from '../ThemeProvider/ThemeProvider';
 import type { ScientificFunction } from '@omnicalc/core-math';
 
 interface ScientificKeypadProps {
@@ -48,12 +49,16 @@ export function ScientificKeypad({
   isPro = false,
   className = '',
 }: ScientificKeypadProps): React.ReactElement {
+  const { isDark } = useTheme();
+
   if (!isPro) {
     return (
       <View className={className}>
-        <View className="bg-surface-container-low dark:bg-surface rounded-2xl p-4 opacity-60">
+        <View className={`${isDark ? 'bg-[#1A1A2E]' : 'bg-[#F5F5FA]'} rounded-2xl p-4 opacity-60`}>
           <View className="flex-row justify-center items-center mb-4">
-            <View className="bg-primary-500/10 rounded-full px-4 py-2">
+            <View
+              className={`${isDark ? 'bg-[#6366F1]/10 rounded-full px-4 py-2' : 'bg-[#4648D4]/10 rounded-full px-4 py-2'}`}
+            >
               <Button label="Upgrade to Pro" onPress={onUpgradeToPro} variant="primary" />
             </View>
           </View>

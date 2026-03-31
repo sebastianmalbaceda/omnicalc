@@ -1,0 +1,14 @@
+{
+  "extends": "@omnicalc/tsconfig/node.json",
+  "compilerOptions": {
+    "outDir": "./dist/main",
+    "rootDir": ".",
+    "declaration": false,
+    "sourceMap": false,
+    "declarationMap": false,
+    "module": "CommonJS",
+    "moduleResolution": "node"
+  },
+  "include": ["preload.ts"],
+  "exclude": ["node_modules", "dist", "renderer", "scripts", "main"]
+}

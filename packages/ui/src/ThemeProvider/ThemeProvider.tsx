@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useColorScheme } from 'react-native';
 
 type ThemeMode = 'light' | 'dark' | 'system';
@@ -8,6 +8,7 @@ interface ThemeContextValue {
   resolvedTheme: 'light' | 'dark';
   setMode: (mode: ThemeMode) => void;
   toggleTheme: () => void;
+  isDark: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
@@ -17,33 +18,50 @@ interface ThemeProviderProps {
   defaultMode?: ThemeMode;
 }
 
+function getInitialMode(defaultMode: ThemeMode): ThemeMode {
+  if (typeof window === 'undefined') return defaultMode;
+  const saved = localStorage.getItem('theme-mode');
+  if (saved === 'light' || saved === 'dark' || saved === 'system') {
+    return saved;
+  }
+  return defaultMode;
+}
+
+function applyThemeToDOM(theme: 'light' | 'dark'): void {
+  if (typeof document === 'undefined') return;
+  const root = document.documentElement;
+  root.classList.remove('light', 'dark');
+  root.classList.add(theme);
+
+  // Also apply background color directly to body as fallback
+  document.body.style.backgroundColor = theme === 'dark' ? '#0A0A0F' : '#FFFFFF';
+}
+
 export function ThemeProvider({
   children,
   defaultMode = 'system',
 }: ThemeProviderProps): React.ReactElement {
   const systemColorScheme = useColorScheme();
-  const [mode, setMode] = useState<ThemeMode>(defaultMode);
+  const [mode, setMode] = useState<ThemeMode>(() => getInitialMode(defaultMode));
 
   const resolvedTheme = mode === 'system' ? (systemColorScheme ?? 'light') : mode;
-
-  const toggleTheme = () => {
-    if (mode === 'light') {
-      setMode('dark');
-    } else if (mode === 'dark') {
-      setMode('light');
-    } else {
-      setMode(systemColorScheme === 'dark' ? 'light' : 'dark');
-    }
-  };
+  const isDark = resolvedTheme === 'dark';
 
   useEffect(() => {
-    const root = document.documentElement;
-    root.classList.remove('light', 'dark');
-    root.classList.add(resolvedTheme);
-  }, [resolvedTheme]);
+    applyThemeToDOM(resolvedTheme);
+    localStorage.setItem('theme-mode', mode);
+  }, [resolvedTheme, mode]);
+
+  const toggleTheme = useCallback(() => {
+    setMode((prev) => {
+      if (prev === 'light') return 'dark';
+      if (prev === 'dark') return 'light';
+      return systemColorScheme === 'dark' ? 'light' : 'dark';
+    });
+  }, [systemColorScheme]);
 
   return (
-    <ThemeContext.Provider value={{ mode, resolvedTheme, setMode, toggleTheme }}>
+    <ThemeContext.Provider value={{ mode, resolvedTheme, setMode, toggleTheme, isDark }}>
       {children}
     </ThemeContext.Provider>
   );

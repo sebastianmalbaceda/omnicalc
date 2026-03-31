@@ -1,3 +1,62 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* @omnicalc/mobile — Uses shared design system CSS variables */
+
+:root {
+  /* Primary Colors */
+  --primary-50: #eef2ff;
+  --primary-400: #6366f1;
+  --primary-500: #4648d4;
+  --primary-600: #3730a3;
+
+  /* Surface Colors - Light */
+  --surface: #ffffff;
+  --surface-container-low: #fafafa;
+  --surface-container: #f5f5fa;
+  --surface-container-high: #ededf3;
+  --surface-dark: #0a0a0f;
+  --surface-dark-container-low: #1a1a2e;
+  --surface-dark-container: #141420;
+
+  /* On Surface Colors - Light */
+  --on-surface: #1a1a2a;
+  --on-surface-variant: #505f76;
+  --on-surface-dark: #e8e8f0;
+  --on-surface-dark-variant: #a0a0b8;
+
+  /* Other */
+  --outline: #d4d4e0;
+  --error: #dc2626;
+  --white: #ffffff;
+}
+
+/* Dark mode - these override the above */
+:root.dark,
+html.dark {
+  --surface: #0a0a0f;
+  --surface-container-low: #1a1a2e;
+  --surface-container: #141420;
+  --surface-container-high: #1e1e32;
+  --on-surface: #e8e8f0;
+  --on-surface-variant: #a0a0b8;
+  --outline: #3d3d5c;
+  --error: #f87171;
+}
+
+/* Dark mode styles for web */
+html.dark body {
+  background-color: var(--surface);
+  color: var(--on-surface);
+}
+
+html.light body {
+  background-color: var(--surface);
+  color: var(--on-surface);
+}
+
+html.light body {
+  background-color: #ffffff;
+  color: #1a1a2a;
+}

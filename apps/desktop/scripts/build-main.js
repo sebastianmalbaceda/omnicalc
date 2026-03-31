@@ -18,11 +18,8 @@ if (!fs.existsSync(outDir)) {
 console.log('Building main process...');
 execSync('npx tsc -p tsconfig.main.json', { cwd: rootDir, stdio: 'inherit' });
 
-// Copy preload script
-console.log('Compiling preload...');
-execSync('npx esbuild preload.ts --bundle --platform=node --outfile=dist/main/preload.js', {
-  cwd: rootDir,
-  stdio: 'inherit',
-});
+// Copy preload script (plain JS to avoid Node module bundling issues)
+console.log('Copying preload...');
+fs.copyFileSync(path.join(rootDir, 'preload.js'), path.join(outDir, 'preload.js'));
 
 console.log('Main process build complete!');

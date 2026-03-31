@@ -21,14 +21,14 @@ import { useSession } from '../lib/auth';
 export default function CalculatorScreen(): React.ReactElement {
   const router = useRouter();
   const { data: session } = useSession();
-  const { resolvedTheme, toggleTheme } = useTheme();
+  const { resolvedTheme, toggleTheme, isDark } = useTheme();
 
   const handleUpgradeToPro = async (): Promise<void> => {
     if (!session?.user) {
       router.push('/login');
       return;
     }
-    
+
     try {
       const baseUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
       const res = await fetch(`${baseUrl}/api/payments/checkout`, {
@@ -48,7 +48,6 @@ export default function CalculatorScreen(): React.ReactElement {
       console.error('Upgrade failed', err);
     }
   };
-
 
   const {
     display,
@@ -73,16 +72,16 @@ export default function CalculatorScreen(): React.ReactElement {
   } = useCalculatorStore();
 
   return (
-    <View className={`flex-1 bg-surface ${resolvedTheme === 'dark' ? 'dark' : ''}`}>
+    <View className={`flex-1 ${isDark ? 'bg-[#0A0A0F]' : 'bg-[#FFFFFF]'}`}>
       <View className="flex-1 p-4 gap-4">
         {/* Header with theme toggle */}
         <View className="flex-row justify-end">
           <Pressable
             onPress={toggleTheme}
-            className="bg-surface-container-low dark:bg-surface-container rounded-full px-4 py-2"
+            className={`${isDark ? 'bg-[#141420]' : 'bg-[#FAFAFA]'} rounded-full px-4 py-2`}
           >
-            <Text className="text-body-md text-on-surface-variant dark:text-white">
-              {resolvedTheme === 'dark' ? '☀️' : '🌙'}
+            <Text className={`text-body-md ${isDark ? 'text-white' : 'text-[#505F76]'}`}>
+              {isDark ? '☀️' : '🌙'}
             </Text>
           </Pressable>
         </View>

@@ -132,11 +132,32 @@ class CalculatorApp {
       this.render();
     });
 
-    // Theme toggle
-    document.getElementById('btn-theme')?.addEventListener('click', () => {
-      const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.theme = isDark ? 'dark' : 'light';
+    // Theme toggle - defined outside to be accessible from initializeTheme
+    const themeBtn = document.getElementById('btn-theme');
+
+    const updateThemeButton = () => {
+      if (themeBtn) {
+        const isDark = document.documentElement.classList.contains('dark');
+        themeBtn.textContent = isDark ? '☀️' : '🌙';
+      }
+    };
+
+    themeBtn?.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      if (isDark) {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+        localStorage.theme = 'light';
+      } else {
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+      }
+      updateThemeButton();
     });
+
+    // Initialize theme button state
+    updateThemeButton();
 
     // Keyboard support
     document.addEventListener('keydown', (e) => {
@@ -164,7 +185,26 @@ class CalculatorApp {
   }
 }
 
+// Initialize theme from localStorage or system preference
+function initializeTheme(): void {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') {
+    document.documentElement.classList.remove('light');
+    document.documentElement.classList.add('dark');
+  } else if (savedTheme === 'light') {
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+  }
+  // If no saved preference, let CSS media query handle it
+}
+
 // Initialize app when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    initializeTheme();
+    new CalculatorApp();
+  });
+} else {
+  initializeTheme();
   new CalculatorApp();
-});
+}
