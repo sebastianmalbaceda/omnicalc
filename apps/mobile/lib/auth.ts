@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
+
+console.log('[Auth] API_URL:', API_URL);
+console.log('[Auth] EXPO_PUBLIC_API_URL env:', process.env.EXPO_PUBLIC_API_URL);
 
 export interface AuthUser {
   id: string;

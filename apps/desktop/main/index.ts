@@ -1,23 +1,27 @@
 /**
  * @omnicalc/desktop — Main Process
  *
- * Electron main process that loads the mobile Expo web app.
- * Tries loading from:
- * 1. Local file (mobile/dist) - works standalone
- * 2. localhost:3000 (web server)
- * 3. localhost:8081 (expo dev)
+ * Electron main process that loads the OmniCalc app.
+ *
+ * Loading priority:
+ * 1. http://localhost:3000 (Unified server - serves mobile dist + API)
+ * 2. http://localhost:8081 (Expo dev server)
+ * 3. file:// local fallback (limited functionality)
  */
 
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import * as path from 'path';
 
-// Paths
-const PROJECT_ROOT = path.join(__dirname, '..', '..', '..', '..');
-const LOCAL_INDEX = path.join(PROJECT_ROOT, 'mobile', 'dist', 'index.html');
 const WEB_URL = 'http://localhost:3000';
 const EXPO_URL = 'http://localhost:8081';
+const PROJECT_ROOT = path.join(__dirname, '..', '..', '..');
+const LOCAL_INDEX = path.join(PROJECT_ROOT, 'mobile', 'dist', 'index.html');
 
 let mainWindow: BrowserWindow | null = null;
+
+function log(...args: Parameters<typeof console.log>) {
+  console.log('[Electron]', ...args);
+}
 
 function createWindow(): void {
   mainWindow = new BrowserWindow({
@@ -34,35 +38,50 @@ function createWindow(): void {
     },
   });
 
-  console.log('[Electron] Local file:', LOCAL_INDEX);
+  log('Starting app...');
+  log('Project root:', PROJECT_ROOT);
+  log('Local index:', LOCAL_INDEX);
 
-  // Try loading from local file first (standalone)
-  mainWindow
-    .loadFile(LOCAL_INDEX)
-    .then(() => {
-      console.log('[Electron] Loaded from local file');
-    })
-    .catch(() => {
-      console.log('[Electron] Local file failed, trying web server:', WEB_URL);
-      mainWindow
-        ?.loadURL(WEB_URL)
-        .then(() => {
-          console.log('[Electron] Loaded from web server');
-        })
-        .catch(() => {
-          console.log('[Electron] Web server failed, trying Expo dev:', EXPO_URL);
-          mainWindow?.loadURL(EXPO_URL).catch((err) => {
-            console.error('[Electron] All sources failed:', err.message);
-          });
-        });
-    });
+  let loaded = false;
+
+  async function tryLoad(url: string, label: string): Promise<boolean> {
+    try {
+      log(`Trying ${label}: ${url}`);
+      await mainWindow!.loadURL(url);
+      log(`Loaded from ${label}`);
+      loaded = true;
+      return true;
+    } catch (err) {
+      log(`${label} failed:`, (err as Error).message);
+      return false;
+    }
+  }
+
+  async function loadSequentially() {
+    // 1. First try unified server on port 3000
+    if (await tryLoad(WEB_URL, 'Web Server')) return;
+
+    // 2. Fallback to Expo dev server
+    if (await tryLoad(EXPO_URL, 'Expo Dev')) return;
+
+    // 3. Last resort: local file (assets won't load but app shell will show)
+    log('Falling back to local file...');
+    try {
+      await mainWindow!.loadFile(LOCAL_INDEX);
+      log('Loaded local file (assets may not work)');
+    } catch (err) {
+      log('All sources failed:', (err as Error).message);
+    }
+  }
+
+  loadSequentially();
 
   mainWindow.webContents.on('did-fail-load', (_event, errorCode, errorDescription) => {
-    console.error('[Electron] Failed to load:', errorCode, errorDescription);
+    log('Failed to load:', errorCode, errorDescription);
   });
 
   mainWindow.webContents.on('did-finish-load', () => {
-    console.log('[Electron] Page loaded successfully');
+    log('Page loaded successfully');
   });
 
   mainWindow.on('closed', () => {
@@ -75,7 +94,6 @@ function createWindow(): void {
   });
 }
 
-// IPC Handlers
 ipcMain.handle('get-app-version', () => app.getVersion());
 
 ipcMain.handle('open-external', (_event, url: string) => {
@@ -84,7 +102,6 @@ ipcMain.handle('open-external', (_event, url: string) => {
 
 ipcMain.handle('get-platform', () => process.platform);
 
-// App lifecycle
 app.whenReady().then(() => {
   createWindow();
 });

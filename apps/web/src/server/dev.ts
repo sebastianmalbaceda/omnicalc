@@ -1,43 +1,83 @@
 /**
- * @omnicalc/web — Development Server
+ * OmniCalc Unified Dev Server
  *
- * Starts both the static file server AND API server on the same port.
+ * Serves BOTH:
+ * - Static files from mobile/dist (SPA)
+ * - API routes via Hono (auth, payments, calculations)
  *
- * Usage:
- *   cd apps/web
- *   pnpm dev
+ * Usage: cd apps/web && pnpm dev
  */
 
 import { serve } from '@hono/node-server';
-import { config } from 'dotenv';
-import { dirname, resolve, join } from 'path';
-import { fileURLToPath } from 'url';
-import { readFileSync, existsSync, statSync } from 'fs';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
-import { auth } from './auth.js';
-import { createCheckoutSession, handleStripeWebhook } from './stripe.js';
-import { prisma } from '@omnicalc/db';
+import { config } from 'dotenv';
+import { resolve, join, dirname } from 'path';
+import { readFileSync, existsSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { betterAuth } from 'better-auth';
+import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { PrismaClient } from '@omnicalc/db';
+import {
+  createCheckoutSession,
+  createCustomerPortalSession,
+  handleStripeWebhook,
+} from './stripe.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Load .env
-const envPath = resolve(__dirname, '../../../.env');
-config({ path: envPath });
+config({ path: resolve(__dirname, '../../.env') });
 
-// Paths - __dirname is apps/web/src/server, go up 3 levels to project root
-const PROJECT_ROOT = resolve(__dirname, '../../../');
-const MOBILE_DIST = resolve(PROJECT_ROOT, 'apps', 'mobile', 'dist');
-const API_PORT = parseInt(process.env.PORT || '3001', 10);
-const SERVER_PORT = 3000;
+const PROJECT_ROOT = resolve(__dirname, '../../../../');
+const MOBILE_DIST = join(PROJECT_ROOT, 'apps', 'mobile', 'dist');
+const PORT = 3000;
 
-console.log('[Dev Server] Project root:', PROJECT_ROOT);
-console.log('[Dev Server] Mobile dist:', MOBILE_DIST);
-console.log('[Dev Server] Mobile dist exists:', existsSync(MOBILE_DIST));
+console.log('[Server] Mobile dist:', MOBILE_DIST);
+console.log('[Server] Exists:', existsSync(MOBILE_DIST));
 
-// Create Hono app for API
+const prisma = new PrismaClient();
+
+const socialProviders: Record<string, { clientId: string; clientSecret: string }> = {};
+
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  socialProviders.google = {
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  };
+}
+
+if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
+  socialProviders.github = {
+    clientId: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+  };
+}
+
+const auth = betterAuth({
+  trustedOrigins: [
+    'http://localhost:8081',
+    'http://localhost:19006',
+    'exp://localhost:8081',
+    'http://localhost:3000',
+    process.env.APP_URL as string,
+  ].filter(Boolean),
+  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
+  database: prismaAdapter(prisma, {
+    provider: 'postgresql',
+  }),
+  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: false,
+  },
+  socialProviders: Object.keys(socialProviders).length > 0 ? socialProviders : undefined,
+  session: {
+    expiresIn: 60 * 60 * 24 * 7,
+    updateAge: 60 * 60 * 24,
+  },
+});
+
 const app = new Hono();
 
 app.use('*', logger());
@@ -48,34 +88,38 @@ app.use(
       'http://localhost:3000',
       'http://localhost:8081',
       'http://localhost:3001',
+      'http://localhost:19006',
+      'exp://localhost:8081',
       process.env.APP_URL as string,
     ].filter(Boolean),
     credentials: true,
   }),
 );
 
-// Better Auth handler
+app.get('/api/auth/test', (c) => c.json({ message: 'auth test endpoint works' }));
+app.post('/api/auth/test', (c) => c.json({ message: 'auth test POST endpoint works' }));
+
 app.on(['POST', 'GET'], '/api/auth/*', (c) => auth.handler(c.req.raw));
 
-// Debug
 app.get('/api/debug/env', (c) =>
   c.json({
     DATABASE_URL: process.env.DATABASE_URL ? 'SET' : 'NOT SET',
     BETTER_AUTH_URL: process.env.BETTER_AUTH_URL ? 'SET' : 'NOT SET',
-    PORT: API_PORT,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ? 'SET' : 'NOT SET',
   }),
 );
 
 app.get('/api/health', (c) => c.json({ status: 'ok', timestamp: Date.now() }));
 
-// Stripe checkout
 app.post('/api/payments/checkout', async (c) => {
   try {
-    const { userId } = await c.req.json<{ userId?: string }>();
+    const { userId, customerId } = await c.req.json<{ userId?: string; customerId?: string }>();
+
     if (!process.env.STRIPE_SECRET_KEY) {
       return c.json({ error: 'Stripe not configured' }, 503);
     }
-    const session = await createCheckoutSession(userId || 'anonymous');
+
+    const session = await createCheckoutSession(userId || 'anonymous', customerId);
     return c.json({ url: session.url });
   } catch (error) {
     console.error('Checkout error:', error);
@@ -83,18 +127,37 @@ app.post('/api/payments/checkout', async (c) => {
   }
 });
 
-// Stripe webhook
+app.post('/api/payments/portal', async (c) => {
+  try {
+    const { customerId } = await c.req.json<{ customerId: string }>();
+
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return c.json({ error: 'Stripe not configured' }, 503);
+    }
+
+    const session = await createCustomerPortalSession(customerId);
+    return c.json({ url: session.url });
+  } catch (error) {
+    console.error('Portal error:', error);
+    return c.json({ error: 'Failed to create portal session' }, 500);
+  }
+});
+
 app.post('/api/webhooks/stripe', async (c) => {
   try {
     const payload = await c.req.text();
     const signature = c.req.header('stripe-signature') || '';
+
     if (!process.env.STRIPE_WEBHOOK_SECRET) {
       return c.json({ error: 'Webhook secret not configured' }, 503);
     }
+
     const result = await handleStripeWebhook(payload, signature);
+
     if (!result.success) {
       return c.json({ error: result.error }, 400);
     }
+
     return c.json({ received: true });
   } catch (error) {
     console.error('Webhook error:', error);
@@ -102,17 +165,20 @@ app.post('/api/webhooks/stripe', async (c) => {
   }
 });
 
-// Calculations
 app.post('/api/calculations', async (c) => {
   try {
-    const { expression, result, deviceOrigin } = await c.req.json<{
-      expression: string;
-      result: string;
-      deviceOrigin?: string;
-    }>();
+    const body = await c.req.json<{ expression: string; result: string; deviceOrigin?: string }>();
+    const { expression, result, deviceOrigin } = body;
+
     const calculation = await prisma.calculation.create({
-      data: { expression, result, deviceOrigin, userId: 'anonymous' },
+      data: {
+        expression,
+        result,
+        deviceOrigin,
+        userId: 'anonymous',
+      },
     });
+
     return c.json(calculation, 201);
   } catch (error) {
     console.error('Error creating calculation:', error);
@@ -127,6 +193,7 @@ app.get('/api/calculations', async (c) => {
       orderBy: { createdAt: 'desc' },
       take: 100,
     });
+
     return c.json(calculations);
   } catch (error) {
     console.error('Error fetching calculations:', error);
@@ -134,100 +201,124 @@ app.get('/api/calculations', async (c) => {
   }
 });
 
-// Serve static files from mobile/dist
-const mimeTypes: Record<string, string> = {
-  html: 'text/html',
-  js: 'application/javascript',
-  mjs: 'application/javascript',
-  css: 'text/css',
-  png: 'image/png',
-  json: 'application/json',
-  ico: 'image/x-icon',
-  svg: 'image/svg+xml',
-  jpg: 'image/jpeg',
-  jpeg: 'image/jpeg',
-  gif: 'image/gif',
-  webp: 'image/webp',
-};
+app.delete('/api/calculations', async (c) => {
+  try {
+    await prisma.calculation.deleteMany({
+      where: { userId: 'anonymous' },
+    });
 
-async function staticHandler(req: Request): Promise<Response> {
-  const url = new URL(req.url);
-  let pathname = url.pathname;
+    return c.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting calculations:', error);
+    return c.json({ error: 'Failed to delete calculations' }, 500);
+  }
+});
 
-  // Root - serve index.html
-  if (pathname === '/' || pathname === '') {
-    const indexPath = join(MOBILE_DIST, 'index.html');
-    if (existsSync(indexPath)) {
-      return new Response(readFileSync(indexPath), {
-        headers: { 'Content-Type': 'text/html' },
+app.get('/api/settings', async (c) => {
+  try {
+    const userId = 'anonymous';
+
+    let settings = await prisma.userSettings.findUnique({
+      where: { userId },
+    });
+
+    if (!settings) {
+      settings = await prisma.userSettings.create({
+        data: { userId },
       });
     }
-    return new Response('Mobile dist not found', { status: 404 });
+
+    return c.json(settings);
+  } catch (error) {
+    console.error('Error fetching settings:', error);
+    return c.json({ error: 'Failed to fetch settings' }, 500);
   }
+});
 
-  // Try exact path
-  let filePath = join(MOBILE_DIST, pathname);
+app.patch('/api/settings', async (c) => {
+  try {
+    const userId = 'anonymous';
+    const body = await c.req.json<{
+      theme?: string;
+      angleUnit?: string;
+      thousandsSeparator?: boolean;
+      decimalPlaces?: number;
+      hapticFeedback?: boolean;
+    }>();
 
-  if (!existsSync(filePath)) {
-    // Try Expo paths
-    const expoPath = join(MOBILE_DIST, pathname);
-    if (existsSync(expoPath)) {
-      filePath = expoPath;
-    }
-  }
-
-  if (existsSync(filePath)) {
-    const stats = statSync(filePath);
-    if (stats.isDirectory()) {
-      const indexPath = join(filePath, 'index.html');
-      if (existsSync(indexPath)) {
-        filePath = indexPath;
-      }
-    }
-  }
-
-  if (existsSync(filePath)) {
-    const content = readFileSync(filePath);
-    const ext = filePath.split('.').pop() || 'html';
-    const mimeType = mimeTypes[ext] || 'application/octet-stream';
-    return new Response(content, {
-      headers: { 'Content-Type': mimeType },
+    const settings = await prisma.userSettings.upsert({
+      where: { userId },
+      update: body,
+      create: { userId, ...body },
     });
+
+    return c.json(settings);
+  } catch (error) {
+    console.error('Error updating settings:', error);
+    return c.json({ error: 'Failed to update settings' }, 500);
   }
+});
 
-  // Fallback to mobile index.html for SPA routing
-  const indexPath = join(MOBILE_DIST, 'index.html');
-  if (existsSync(indexPath)) {
-    return new Response(readFileSync(indexPath), {
-      headers: { 'Content-Type': 'text/html' },
-    });
-  }
+const MIME = {
+  html: 'text/html',
+  js: 'application/javascript',
+  css: 'text/css',
+  png: 'image/png',
+  svg: 'image/svg+xml',
+  json: 'application/json',
+  ico: 'image/x-icon',
+  map: 'application/json',
+};
 
-  return new Response('Not Found', { status: 404 });
-}
-
-// Main fetch handler
-async function fetchHandler(req: Request): Promise<Response> {
+async function handleRequest(req: Request): Promise<Response> {
   const url = new URL(req.url);
 
-  // API routes go to Hono
   if (url.pathname.startsWith('/api/')) {
     return app.fetch(req);
   }
 
-  // Everything else is static
-  return staticHandler(req);
+  if (url.pathname === '/favicon.ico') {
+    const faviconPath = join(MOBILE_DIST, 'favicon.ico');
+    if (existsSync(faviconPath)) {
+      const content = readFileSync(faviconPath);
+      return new Response(content, { headers: { 'Content-Type': 'image/x-icon' } });
+    }
+    return new Response('Not Found', { status: 404 });
+  }
+
+  const pathname = url.pathname === '/' ? '/index.html' : url.pathname;
+  let filePath = join(MOBILE_DIST, pathname);
+
+  if (!existsSync(filePath)) {
+    filePath = join(MOBILE_DIST, 'index.html');
+  }
+
+  if (!existsSync(filePath)) {
+    console.log('[Server] File not found:', pathname);
+    return new Response('Not Found', { status: 404 });
+  }
+
+  try {
+    const content = readFileSync(filePath);
+    const ext = filePath.split('.').pop() || 'html';
+    const type = MIME[ext as keyof typeof MIME] || 'text/plain';
+
+    return new Response(content, {
+      headers: { 'Content-Type': type },
+    });
+  } catch {
+    return new Response('Error reading file', { status: 500 });
+  }
 }
 
-console.log(`[Dev Server] Starting on port ${SERVER_PORT}`);
-console.log('[Dev Server] API available at /api/*');
-console.log('[Dev Server] Static files from:', MOBILE_DIST);
-
 serve({
-  fetch: fetchHandler,
-  port: SERVER_PORT,
+  port: PORT,
+  fetch: handleRequest,
 });
 
-console.log(`[Dev Server] Running!`);
-console.log(`[Dev Server] Web App: http://localhost:${SERVER_PORT}`);
-console.log(`[Dev Server] API: http://localhost:${SERVER_PORT}/api/*`);
+console.log('[Server] ============================================');
+console.log('[Server] OmniCalc Unified Server');
+console.log('[Server] ============================================');
+console.log('[Server] Static files: http://localhost:' + PORT);
+console.log('[Server] API endpoints: http://localhost:' + PORT + '/api/*');
+console.log('[Server] ============================================');
