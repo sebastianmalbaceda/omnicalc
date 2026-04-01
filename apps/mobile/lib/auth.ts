@@ -3,7 +3,6 @@ import { create } from 'zustand';
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
 
 console.log('[Auth] API_URL:', API_URL);
-console.log('[Auth] EXPO_PUBLIC_API_URL env:', process.env.EXPO_PUBLIC_API_URL);
 
 export interface AuthUser {
   id: string;
@@ -13,13 +12,6 @@ export interface AuthUser {
   createdAt: string;
   plan?: 'free' | 'pro';
   subscriptionStatus?: string;
-}
-
-export interface AuthState {
-  user: AuthUser | null;
-  token: string | null;
-  isLoading: boolean;
-  isAuthenticated: boolean;
 }
 
 interface SignInError {
@@ -35,6 +27,7 @@ export const signIn = {
     const res = await fetch(`${API_URL}/api/auth/sign-in/email`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(params),
     });
     if (!res.ok) {
@@ -55,6 +48,7 @@ export const signUp = {
     const res = await fetch(`${API_URL}/api/auth/sign-up/email`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(params),
     });
     if (!res.ok) {
@@ -69,29 +63,42 @@ export const signUp = {
 export async function signOut(): Promise<void> {
   await fetch(`${API_URL}/api/auth/sign-out`, {
     method: 'POST',
+    credentials: 'include',
   });
 }
 
-export function useSession(): { data: null; isLoading: false } {
-  return { data: null, isLoading: false };
+export async function getSession(): Promise<{ user: AuthUser | null } | null> {
+  try {
+    const res = await fetch(`${API_URL}/api/auth/session`, {
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      return null;
+    }
+    const data = await res.json();
+    if (!data.user) {
+      return null;
+    }
+    return { user: data.user as AuthUser };
+  } catch {
+    return null;
+  }
 }
 
 interface AuthStore {
   user: AuthUser | null;
-  token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   setUser: (user: AuthUser | null) => void;
-  setToken: (token: string | null) => void;
+  setLoading: (loading: boolean) => void;
   logout: () => void;
 }
 
 export const useAuthStore = create<AuthStore>((set) => ({
   user: null,
-  token: null,
-  isLoading: false,
+  isLoading: true,
   isAuthenticated: false,
-  setUser: (user) => set({ user, isAuthenticated: !!user }),
-  setToken: (token) => set({ token }),
-  logout: () => set({ user: null, token: null, isAuthenticated: false }),
+  setUser: (user) => set({ user, isAuthenticated: !!user, isLoading: false }),
+  setLoading: (isLoading) => set({ isLoading }),
+  logout: () => set({ user: null, isAuthenticated: false }),
 }));

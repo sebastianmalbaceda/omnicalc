@@ -18,6 +18,8 @@ import {
 import { useCalculatorStore } from '../stores/useCalculatorStore';
 import { useAuthStore } from '../lib/auth';
 
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
+
 export default function CalculatorScreen(): React.ReactElement {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
@@ -30,10 +32,10 @@ export default function CalculatorScreen(): React.ReactElement {
     }
 
     try {
-      const baseUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
-      const res = await fetch(`${baseUrl}/api/payments/checkout`, {
+      const res = await fetch(`${API_URL}/api/payments/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ userId: user.id }),
       });
       const data = await res.json();
@@ -43,6 +45,8 @@ export default function CalculatorScreen(): React.ReactElement {
         } else {
           await Linking.openURL(data.url);
         }
+      } else {
+        console.error('Checkout error:', data.error);
       }
     } catch (err) {
       console.error('Upgrade failed', err);
