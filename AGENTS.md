@@ -5,11 +5,12 @@
 ```bash
 pnpm install          # Install all dependencies
 pnpm dev              # Start all apps in development mode
-pnpm dev:web          # Start unified server (mobile SPA + API on :3000)
+pnpm dev:api          # Start NestJS API server (:3001)
+pnpm dev:web          # Start Next.js web app (:3000)
 pnpm dev:mobile       # Start Expo dev server (mobile + web on :19006)
-pnpm dev:desktop      # Start Electron desktop app (loads :3000)
+pnpm dev:desktop      # Start Electron desktop app
 pnpm build            # Build all packages and apps
-pnpm test             # Run all tests (Vitest)
+pnpm test             # Run all tests (Vitest + Jest)
 pnpm lint             # Lint (ESLint) and format (Prettier)
 pnpm lint:fix         # Auto-fix lint issues
 pnpm type-check       # TypeScript type checking
@@ -25,18 +26,19 @@ pnpm clean            # Remove all build artifacts
 - **Runtime:** Node.js 22 LTS
 - **Package Manager:** pnpm 9+
 - **Monorepo:** Turborepo
+- **Web (SaaS & Landing):** Next.js (App Router)
 - **Mobile:** Expo SDK 52 + Expo Router (iOS, Android, Web)
-- **Desktop:** Electron 34 (thin shell loading the unified server)
-- **Web:** Hono 4 unified server serving mobile web export + API
-- **UI:** NativeWind 4 (Tailwind for React Native)
-- **State:** Zustand 5
-- **Backend (BFF):** Hono 4
+- **Desktop:** Electron 34 + React
+- **Backend (API):** NestJS 11
+- **UI Shared:** NativeWind 4 (Tailwind for React Native) + Shadcn UI (web)
+- **State:** Zustand 5 (local) + TanStack Query (API data)
+- **Forms:** React Hook Form + Zod
 - **ORM:** Prisma 6
 - **Database:** PostgreSQL 16 (Neon Serverless)
 - **Auth:** Better Auth
 - **Payments:** Stripe (web/desktop) + RevenueCat (mobile)
 - **Math:** decimal.js
-- **Testing:** Vitest 3
+- **Testing:** Vitest 3 (packages) + Jest (NestJS)
 - **Linting:** ESLint 9 + Prettier 3 + Husky 9 + lint-staged
 - **CI/CD:** GitHub Actions + Expo EAS
 
@@ -45,11 +47,13 @@ pnpm clean            # Remove all build artifacts
 ```
 omnicalc/
 ├── apps/
-│   ├── web/              # Hono unified server (mobile SPA + API)
-│   ├── mobile/           # Expo — SINGLE SOURCE OF TRUTH for UI
-│   └── desktop/          # Electron shell (loads :3000)
+│   ├── api/              # NestJS central API server
+│   ├── web/              # Next.js App Router (SaaS + Landing)
+│   ├── mobile/           # Expo — UI source of truth (iOS, Android, Web)
+│   └── desktop/          # Electron + React
 ├── packages/
 │   ├── ui/               # Shared NativeWind components
+│   ├── shared-types/     # Zod schemas + TS types (frontend ↔ backend contract)
 │   ├── core-math/        # Pure math engine (decimal.js) — NO React deps
 │   ├── db/               # Prisma schema, client, migrations
 │   └── tsconfig/         # Shared TypeScript configs
@@ -60,14 +64,33 @@ omnicalc/
 
 ## Architecture
 
-**Mobile is the single source of truth.** All UI lives in `apps/mobile/`.
-Web and desktop consume the same build:
+**Mobile is the single source of truth for UI.** All visual components live in `apps/mobile/`.
+The API server (`apps/api/`) is the central backend serving all platforms.
 
-1. `npx expo export --platform web` → generates SPA in `apps/mobile/dist/`
-2. `apps/web/src/server/dev.ts` → serves mobile/dist as SPA + handles `/api/*`
-3. `apps/desktop/main/index.ts` → Electron loads `http://localhost:3000`
-
-**All 3 platforms see exactly the same UI.**
+```
+┌──────────────────────────────────────────────────────┐
+│                 apps/mobile/                          │
+│            (Expo — UI Source of Truth)                │
+│  ┌──────────────────────────────────────────────┐    │
+│  │  React Native + Expo Router                  │    │
+│  │  • Calculator screen                         │    │
+│  │  • Login/Register screens                    │    │
+│  │  • Zustand stores + TanStack Query           │    │
+│  └──────────────────────────────────────────────┘    │
+│         │                    │                       │
+│         │ expo export        │ API calls             │
+│         ▼                    ▼                       │
+│  ┌──────────────┐    ┌──────────────┐               │
+│  │  mobile/dist │    │  apps/api/   │               │
+│  │  (SPA)       │    │  (NestJS)    │               │
+│  └──────────────┘    └──────────────┘               │
+│         │                    │                       │
+│    ┌────┴─────┐         ┌───┴────┐                  │
+│    ▼          ▼         ▼        ▼                  │
+│  Web       Desktop    Stripe   Neon DB              │
+│  (Next.js) (Electron)  RevCat  (PostgreSQL)         │
+└──────────────────────────────────────────────────────┘
+```
 
 ## Conventions
 
@@ -75,9 +98,10 @@ Web and desktop consume the same build:
 
 - **All UI** → `apps/mobile/app/` (Expo Router screens)
 - **Shared UI components** → `packages/ui/src/` (NativeWind)
+- **Shared types/schemas** → `packages/shared-types/src/` (Zod + TS)
 - **Math logic** → `packages/core-math/src/` (pure TypeScript, zero UI deps)
 - **Database** → `packages/db/` (Prisma schema + client)
-- **API routes** → `apps/web/src/server/` (Hono)
+- **API routes** → `apps/api/src/` (NestJS modules)
 - **Stores** → `apps/mobile/stores/`
 - **Electron main** → `apps/desktop/main/`
 
@@ -86,14 +110,14 @@ Web and desktop consume the same build:
 - Components: `PascalCase` — one component per file
 - Files: `kebab-case.ts` for utilities, `PascalCase.tsx` for components
 - Stores: `use<Name>Store.ts` (e.g., `useCalculatorStore.ts`)
-- API routes: `kebab-case` (e.g., `/api/calculations`)
+- API routes: NestJS controllers with `@Controller('resource-name')`
 - Types: `PascalCase` — `interface` preferred over `type` for objects
 
 ### TypeScript
 
 - Strict mode enforced — no `any`, no `@ts-ignore`, no `as` casting unless unavoidable
 - Explicit return types on all exported functions
-- Use types inferred from Prisma schema — never duplicate DB types manually
+- Use types from `@omnicalc/shared-types` — never duplicate API types manually
 - Prefer `async/await` over Promise chains
 
 ### Math Engine Rules
@@ -105,12 +129,13 @@ Web and desktop consume the same build:
 
 ### Validation
 
-- Use Zod for all API input validation
-- Share Zod schemas between client and server when possible
+- Use Zod schemas from `@omnicalc/shared-types` for all API input validation
+- Share Zod schemas between client and server — single source of truth
+- React Hook Form + Zod resolver for all client-side forms
 
 ### Styling
 
-- All visual components must use NativeWind classes
+- All visual components must use NativeWind classes (mobile) or Tailwind (web)
 - Follow design tokens in `docs/design-system.md`
 - Never hardcode colors or spacing — always use design tokens
 
@@ -136,7 +161,7 @@ When different behavior is needed per platform, use Expo's file extensions:
 
 - Run `pnpm lint` and `pnpm test` before committing
 - Use `decimal.js` for any arithmetic in `packages/core-math`
-- Validate all API inputs with Zod
+- Validate all API inputs with Zod schemas from `@omnicalc/shared-types`
 - Write tests for new functionality
 - Follow the design system for UI changes
 
@@ -157,7 +182,7 @@ When different behavior is needed per platform, use Expo's file extensions:
 - Never bypass Prisma with raw SQL queries
 - Never modify `packages/core-math` without updating tests
 - Never import server-only code into client bundles
-- Never add duplicate React apps in `apps/web/` or `apps/desktop/` — they serve mobile/dist
+- Never duplicate Zod schemas — always use `@omnicalc/shared-types`
 
 ## External Services
 

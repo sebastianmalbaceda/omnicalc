@@ -1,158 +1,153 @@
 # OmniCalc — System Architecture
 
-> **Version:** 0.3.0
+> **Version:** 0.4.0
 > **Last Updated:** 2026-04-05
-> **Status:** Unified Multiplatform
+> **Status:** Standard 2026 Architecture
 
 ---
 
 ## 1. Architecture Overview
 
-OmniCalc follows a **monorepo architecture** managed by Turborepo. The key principle is that **Mobile (Expo + React Native) is the single source of truth** for the UI, which is then rendered identically on all platforms.
+OmniCalc follows a **monorepo architecture** managed by Turborepo with a **centralized NestJS backend** serving all frontend platforms. **Mobile (Expo + React Native) is the single source of truth** for the UI.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                    MOBILE (SOURCE OF TRUTH)                          │
+│                    FRONTEND PLATFORMS                                │
+│                                                                      │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────────┐  │
+│  │  apps/web/   │  │ apps/mobile/ │  │    apps/desktop/         │  │
+│  │  Next.js     │  │ Expo SDK 52  │  │    Electron + React      │  │
+│  │  App Router  │  │ Expo Router  │  │    (main + renderer)     │  │
+│  │  :3000       │  │ :19006       │  │    :3000 (loads web)     │  │
+│  └──────┬───────┘  └──────┬───────┘  └──────────┬───────────────┘  │
+│         │                 │                      │                   │
+│         └─────────────────┼──────────────────────┘                   │
+│                           │ API calls (REST)                        │
+│                           ▼                                          │
 │  ┌─────────────────────────────────────────────────────────────┐    │
-│  │  Expo + React Native + Expo Router                          │    │
-│  │  • apps/mobile/app/ — all screens (calculator, login)       │    │
-│  │  • apps/mobile/stores/ — Zustand state                      │    │
-│  │  • apps/mobile/lib/ — auth, API client                      │    │
-│  └─────────────────────────────────────────────────────────────┘    │
-│                              │                                       │
-│                              │ npx expo export --platform web        │
-│                              ▼                                       │
+│  │              apps/api/ — NestJS Central API                  │    │
+│  │  ┌─────────┐ ┌────────────┐ ┌──────┐ ┌────────┐            │    │
+│  │  │  Auth   │ │Calculation │ │Users │ │Billing │            │    │
+│  │  │ Module  │ │  Module    │ │Module│ │ Module │            │    │
+│  │  └─────────┘ └────────────┘ └──────┘ └────────┘            │    │
+│  │  Port: 3001  │  Swagger: /api/docs                          │    │
+│  └───────────────────────┬─────────────────────────────────────┘    │
+│                          │                                           │
+│                          ▼                                           │
 │  ┌─────────────────────────────────────────────────────────────┐    │
-│  │  apps/mobile/dist (Static Web Export — SPA)                │    │
-│  │  • Pure HTML + CSS + JavaScript via react-native-web       │    │
-│  │  • Works in ANY browser                                    │    │
+│  │              packages/db — Prisma + PostgreSQL               │    │
+│  │              Neon Serverless (cloud)                         │    │
 │  └─────────────────────────────────────────────────────────────┘    │
-│                    │                       │                        │
-│     ┌──────────────┘                       └──────────────┐        │
-│     ▼                                                     ▼        │
-│  ┌──────────────┐                                        ┌─────────┐
-│  │  Web Server  │                                        │ Desktop │
-│  │  (Hono)      │                                        │ (Elect) │
-│  │  :3000       │                                        │ :3000   │
-│  │  Serves      │                                        │ Loads   │
-│  │  mobile/dist │                                        │ localhost│
-│  │  + /api/*    │                                        │         │
-│  └──────────────┘                                        └─────────┘
-└─────────────────────────────────────────────────────────────────────┘
-```
-
-### The Multiplatform Magic: React Native Web
-
-When you write `<View>`, `<Text>`, `<Pressable>` in React Native:
-
-- **iOS**: Translated to `UIView`, `UILabel`, native touchable (100% native)
-- **Android**: Translated to `ViewGroup`, `TextView`, native touchable (100% native)
-- **Web**: Expo uses `react-native-web` which translates to `<div>`, `<span>`, `<button>`
-
-**You write ONCE, renders EVERYWHERE identically.**
-
----
-
-## 2. Multiplatform Flow
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│  DEVELOPER WORKFLOW                                                 │
-│                                                                      │
-│  1. Edit code in apps/mobile/ (React Native + Expo)                 │
-│                     │                                                │
-│                     ▼                                                │
-│  2. npx expo export --platform web                                  │
-│                     │                                                │
-│                     ▼                                                │
-│  3. apps/mobile/dist (static SPA files)                             │
-│                     │                                                │
-│         ┌───────────┴───────────┐                                   │
-│         ▼                       ▼                                   │
-│  ┌──────────────┐      ┌───────────────┐                           │
-│  │ Web Server   │      │ Desktop       │                           │
-│  │ (Hono)       │      │ (Electron)    │                           │
-│  │ Serves :3000 │      │ Loads :3000   │                           │
-│  │ + API routes │      │               │                           │
-│  └──────────────┘      └───────────────┘                           │
-│                                                                      │
-│  USER EXPERIENCE                                                     │
-│                                                                      │
-│  • Mobile: Native app (iOS/Android) via Expo Go / EAS Build         │
-│  • Web: Browser at http://localhost:3000                             │
-│  • Desktop: Electron window loading http://localhost:3000            │
-│                                                                      │
-│  ALL THREE SEE EXACTLY THE SAME UI                                   │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 3. Monorepo Structure
+## 2. Monorepo Structure
 
 ```
 omnicalc/
 ├── apps/
-│   ├── mobile/                    # ⭐ SINGLE SOURCE OF TRUTH (UI)
-│   │   ├── app/                   # Expo Router pages
-│   │   │   ├── _layout.tsx       # Root layout with ThemeProvider
-│   │   │   ├── index.tsx         # Calculator screen
-│   │   │   └── login.tsx         # Auth screen
-│   │   ├── lib/                  # Auth, API client
-│   │   ├── stores/               # Zustand stores (calculator, auth)
-│   │   ├── global.css            # Design system CSS variables
-│   │   └── dist/                 # Web export (generated by expo export)
+│   ├── api/                    # NestJS central API server
+│   │   ├── src/
+│   │   │   ├── auth/          # Authentication (Better Auth integration)
+│   │   │   ├── calculations/  # CRUD for calculation history
+│   │   │   ├── users/         # User management
+│   │   │   ├── billing/       # Stripe webhooks + subscriptions
+│   │   │   └── common/        # Guards, filters, interceptors
+│   │   └── test/              # Jest E2E tests
 │   │
-│   ├── web/                      # Hono unified server (API + SPA)
-│   │   └── src/
-│   │       └── server/           # All server code
-│   │           ├── dev.ts        # Dev server: serves mobile/dist + API
-│   │           ├── serve.ts      # Production server
-│   │           ├── index.ts      # Hono app with API routes
-│   │           ├── auth.ts       # Better Auth configuration
-│   │           └── stripe.ts     # Stripe checkout + webhooks
+│   ├── web/                    # Next.js App Router (SaaS + Landing)
+│   │   ├── src/app/           # App Router pages
+│   │   └── package.json       # Tailwind CSS + Shadcn UI
 │   │
-│   └── desktop/                  # Electron shell (thin wrapper)
-│       └── main/
-│           └── index.ts          # Loads http://localhost:3000
+│   ├── mobile/                 # Expo — UI source of truth
+│   │   ├── app/               # Expo Router screens
+│   │   ├── stores/            # Zustand stores
+│   │   ├── lib/               # Auth, API client
+│   │   └── dist/              # Web export (generated)
+│   │
+│   └── desktop/               # Electron + React
+│       ├── main/              # Electron main process
+│       └── renderer/          # React renderer (loads web)
 │
 ├── packages/
-│   ├── ui/                       # Shared React Native components
+│   ├── ui/                    # Shared NativeWind components
 │   │   └── src/
-│   │       ├── Button/           # Calculator buttons
-│   │       ├── Display/          # Calculator display
-│   │       ├── Keypad/           # Numeric, Operator, Scientific
-│   │       ├── HistoryPanel/     # Cloud Tape history
-│   │       ├── ThemeProvider/    # Light/dark theme context
-│   │       └── styles/           # Design system CSS
+│   │       ├── Button/
+│   │       ├── Display/
+│   │       ├── Keypad/
+│   │       ├── HistoryPanel/
+│   │       └── ThemeProvider/
 │   │
-│   ├── core-math/                # Pure math engine (no UI deps)
+│   ├── shared-types/          # Frontend ↔ Backend contract
 │   │   └── src/
-│   │       ├── calculator.ts     # State machine
-│   │       ├── operations.ts     # +, -, ×, ÷
-│   │       ├── scientific.ts     # sin, cos, tan, log, etc.
-│   │       ├── parser.ts         # Expression evaluation
-│   │       ├── constants.ts      # π, e
-│   │       ├── types.ts          # TypeScript types
-│   │       └── errors.ts         # Error classes
+│   │       ├── schemas.ts     # Zod validation schemas
+│   │       ├── types.ts       # TypeScript interfaces
+│   │       └── index.ts       # Public API
 │   │
-│   ├── db/                       # Prisma schema + client
+│   ├── core-math/             # Pure math engine (no UI deps)
+│   │   └── src/
+│   │       ├── calculator.ts
+│   │       ├── operations.ts
+│   │       ├── scientific.ts
+│   │       └── parser.ts
+│   │
+│   ├── db/                    # Prisma schema + client
 │   │   └── prisma/schema.prisma
 │   │
-│   └── tsconfig/                 # Shared TypeScript configs
+│   └── tsconfig/              # Shared TypeScript configs
 │       ├── base.json
 │       ├── node.json
 │       └── react.json
 │
 ├── docs/
-│   ├── adr/                      # Architecture Decision Records
-│   ├── design-system.md          # Visual design tokens
-│   └── math-engine.md            # Math engine specifications
+│   ├── adr/                   # Architecture Decision Records
+│   ├── design-system.md       # Visual design tokens
+│   └── math-engine.md         # Math engine specifications
 │
-├── .agents/                      # AI agent skills
-├── turbo.json                    # Turborepo config
-├── package.json                  # Root scripts
+├── turbo.json
+├── package.json
 └── pnpm-workspace.yaml
+```
+
+---
+
+## 3. Data Flow
+
+### 3.1 API Request Flow
+
+```
+Client (Web/Mobile/Desktop)
+        │
+        ▼ POST /api/calculations
+┌─────────────────┐
+│  NestJS API     │  ← Validates with Zod from @omnicalc/shared-types
+│  (:3001)        │  ← Auth guard checks Better Auth session
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Prisma Client  │  ← Type-safe database query
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Neon PostgreSQL│  ← INSERT into calculations table
+└─────────────────┘
+```
+
+### 3.2 Shared Types Flow
+
+```
+packages/shared-types/
+├── schemas.ts    ← Zod schemas (single source of truth for validation)
+└── types.ts      ← TypeScript interfaces (derived from schemas)
+        │
+        ├──→ apps/api/       ← NestJS DTOs, request validation
+        ├──→ apps/web/       ← Next.js form validation, API types
+        ├──→ apps/mobile/    ← React Native form validation
+        └──→ apps/desktop/   ← Electron form validation
 ```
 
 ---
@@ -162,14 +157,18 @@ omnicalc/
 ### Development Mode
 
 ```bash
-# Terminal 1: Web server (serves mobile/dist SPA + API on :3000)
-pnpm dev:web
+# Terminal 1: NestJS API server
+pnpm dev:api          # → http://localhost:3001
+                      # → Swagger: http://localhost:3001/api/docs
 
-# Terminal 2: Mobile dev server (Expo with HMR on :19006)
-pnpm dev:mobile
+# Terminal 2: Next.js web app
+pnpm dev:web          # → http://localhost:3000
 
-# Terminal 3: Desktop (Electron shell loading :3000)
-pnpm dev:desktop
+# Terminal 3: Expo mobile dev
+pnpm dev:mobile       # → http://localhost:19006
+
+# Terminal 4: Electron desktop
+pnpm dev:desktop      # → Desktop window
 
 # Or run all at once:
 pnpm dev
@@ -178,20 +177,7 @@ pnpm dev
 ### Production Build
 
 ```bash
-# 1. Export mobile to web (SPA)
-cd apps/mobile
-npx expo export --platform web
-
-# 2. Build API server
-cd apps/web
-pnpm build:server
-
-# 3. Build Electron main process
-cd apps/desktop
-pnpm build
-
-# Or build everything:
-pnpm build
+pnpm build            # Build all packages and apps
 ```
 
 ---
@@ -200,53 +186,52 @@ pnpm build
 
 ### 5.1 Single Source of Truth
 
-All UI lives in `apps/mobile/`. Web and desktop consume the same build:
+- **UI**: `apps/mobile/` — all visual components originate here
+- **Types**: `packages/shared-types/` — Zod schemas + TS types shared across all apps
+- **Math**: `packages/core-math/` — pure functions, zero dependencies on UI
+- **Database**: `packages/db/` — single Prisma schema
 
-- **Web**: Hono server serves `apps/mobile/dist` as a SPA + handles `/api/*` routes
-- **Desktop**: Electron `BrowserWindow` loads `http://localhost:3000`
-- **Mobile**: Expo renders natively on iOS/Android
+### 5.2 Validation Contract
 
-### 5.2 Platform-Specific Files
+All API inputs are validated with Zod schemas from `@omnicalc/shared-types`:
 
-When you need different behavior per platform, use Expo's file extensions:
+```ts
+// packages/shared-types/src/schemas.ts
+export const calculationCreateSchema = z.object({
+  expression: z.string().min(1),
+  result: z.string().min(1),
+  deviceOrigin: z.enum(['web', 'ios', 'android', 'desktop']).optional(),
+});
 
-```
-components/
-├── BotonInstalar.tsx        # Shared (default)
-├── BotonInstalar.web.tsx    # Web/Desktop overrides
-└── BotonInstalar.native.tsx # Mobile overrides
-```
-
-### 5.3 Adaptive Design
-
-The same UI adapts to different screen sizes using `useWindowDimensions`:
-
-```tsx
-import { useWindowDimensions } from 'react-native';
-
-function AppLayout({ children }) {
-  const { width } = useWindowDimensions();
-
-  // Desktop/web: wider layout
-  if (width >= 768) {
-    return <WideLayout>{children}</WideLayout>;
-  }
-
-  // Mobile: compact layout
-  return <MobileLayout>{children}</MobileLayout>;
+// apps/api/src/calculations/calculations.controller.ts
+@Post()
+create(@Body() dto: z.infer<typeof calculationCreateSchema>) {
+  // dto is already validated
 }
+
+// apps/mobile/app/index.tsx
+const schema = calculationCreateSchema; // Same schema, same validation
 ```
+
+### 5.3 Platform-Specific Files
+
+When different behavior is needed per platform, use Expo's file extensions:
+
+- `Component.tsx` — shared (default)
+- `Component.web.tsx` — web/desktop override
+- `Component.native.tsx` — mobile override
 
 ---
 
 ## 6. Deployment
 
-| Platform    | Source                  | Output     | Deployment      |
-| ----------- | ----------------------- | ---------- | --------------- |
-| **iOS**     | `apps/mobile`           | Native app | Expo EAS        |
-| **Android** | `apps/mobile`           | APK/AAB    | Expo EAS        |
-| **Web**     | `apps/mobile` → `dist/` | Static SPA | Vercel/Netlify  |
-| **Desktop** | `apps/mobile` → `dist/` | Electron   | GitHub Releases |
+| Platform    | Source          | Output        | Deployment      |
+| ----------- | --------------- | ------------- | --------------- |
+| **API**     | `apps/api/`     | NestJS bundle | Railway/Render  |
+| **Web**     | `apps/web/`     | Next.js build | Vercel          |
+| **iOS**     | `apps/mobile/`  | Native app    | Expo EAS        |
+| **Android** | `apps/mobile/`  | APK/AAB       | Expo EAS        |
+| **Desktop** | `apps/desktop/` | Electron      | GitHub Releases |
 
 ---
 
@@ -259,101 +244,10 @@ function AppLayout({ children }) {
 | Stripe      | Web/Desktop payments               | `STRIPE_SECRET_KEY`  |
 | RevenueCat  | Mobile payments (iOS/Android)      | `REVENUECAT_API_KEY` |
 | Expo EAS    | Mobile builds + push notifications | Expo account         |
-| Resend      | Transactional emails               | `RESEND_API_KEY`     |
-| Sentry      | Error monitoring                   | `SENTRY_DSN`         |
 
 ---
 
-## 8. Data Flow
-
-### 8.1 Calculation Flow
-
-```
-User presses "=" on any device
-        │
-        ▼
-┌─────────────────┐
-│ core-math engine │  ← Evaluates expression with decimal.js
-│ (pure function)  │
-└────────┬────────┘
-         │ returns { expression, result }
-         ▼
-┌─────────────────┐
-│ Zustand Store    │  ← Updates UI state (display, expression)
-│ (useCalcStore)   │  ← Adds to history
-└────────┬────────┘
-         │ (Pro users only — background sync)
-         ▼
-┌─────────────────┐
-│ POST /api/calc   │  ← Save to database
-│                  │
-└────────┬────────┘
-         ▼
-┌─────────────────┐
-│ Prisma → Neon    │  ← INSERT into calculations table
-└─────────────────┘
-```
-
-### 8.2 Payment Flow (Web/Desktop → Stripe)
-
-```
-User clicks "Upgrade to Pro"
-        │
-        ▼
-POST /api/payments/checkout  →  Stripe creates Checkout Session
-        │                               │
-        ▼                               ▼
-Redirect to Stripe Checkout    User completes payment
-        │                               │
-        ▼                               ▼
-Stripe fires webhook  →  POST /api/webhooks/stripe
-        │
-        ▼
-Server updates users.plan = 'pro'
-        │
-        ▼
-Client refetches session → UI unlocks Pro features
-```
-
-### 8.3 Payment Flow (Mobile → RevenueCat)
-
-```
-User clicks "Upgrade to Pro" (iOS/Android)
-        │
-        ▼
-RevenueCat SDK presents native paywall
-        │
-        ▼
-Apple/Google processes payment (15-30% commission)
-        │
-        ▼
-RevenueCat fires webhook  →  POST /api/webhooks/revenuecat
-        │
-        ▼
-Server updates users.plan = 'pro'
-        │
-        ▼
-Client validates entitlement → UI unlocks Pro features
-```
-
----
-
-## 9. Security Architecture
-
-| Concern            | Mechanism                                                |
-| ------------------ | -------------------------------------------------------- |
-| Authentication     | Better Auth (JWT sessions, secure cookies)               |
-| API Authorization  | Middleware validates session before protected routes     |
-| Pro Feature Gating | Server-side check on `users.plan` for all Pro endpoints  |
-| Webhook Security   | Stripe signature verification, RevenueCat webhook secret |
-| Input Validation   | Zod schemas on all API inputs                            |
-| SQL Injection      | Prisma parameterized queries (never raw SQL)             |
-| CORS               | Strict origin allowlist                                  |
-| Secrets            | Environment variables only, never committed              |
-
----
-
-## 10. Architecture Decision Records
+## 8. Architecture Decision Records
 
 | Decision                | Record                                           |
 | ----------------------- | ------------------------------------------------ |
@@ -362,7 +256,9 @@ Client validates entitlement → UI unlocks Pro features
 | Decimal.js for math     | [ADR-003](docs/adr/003-decimal-js-for-math.md)   |
 | Better Auth             | [ADR-004](docs/adr/004-better-auth.md)           |
 | Dual payment strategy   | [ADR-005](docs/adr/005-dual-payment-strategy.md) |
+| NestJS as central API   | [ADR-006](docs/adr/006-nestjs-api.md)            |
+| Next.js for web         | [ADR-007](docs/adr/007-nextjs-web.md)            |
 
 ---
 
-_Document version: 0.3.0 — Unified multiplatform architecture_
+_Document version: 0.4.0 — Standard 2026 Architecture_

@@ -2,30 +2,30 @@
   "name": "@omnicalc/web",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "tsx --env-file=../../.env src/server/dev.ts",
-    "dev:mobile": "cd ../mobile && npx expo start --web",
-    "build": "cd ../mobile && npx expo export --platform web && tsc -p tsconfig.server.json",
-    "build:server": "tsc -p tsconfig.server.json",
-    "start": "node --env-file=../../.env dist/server/serve.js",
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start",
     "type-check": "tsc --noEmit",
-    "clean": "rimraf dist"
+    "clean": "rimraf .next"
   },
   "dependencies": {
-    "@hono/node-server": "^1.19.12",
-    "@omnicalc/core-math": "workspace:*",
-    "@omnicalc/db": "workspace:*",
-    "@prisma/client": "^6.19.2",
-    "better-auth": "^1.5.6",
-    "dotenv": "^17.3.1",
-    "hono": "^4.6.0",
-    "stripe": "^21.0.1"
+    "@omnicalc/shared-types": "workspace:*",
+    "@omnicalc/ui": "workspace:*",
+    "next": "^15.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
     "@omnicalc/tsconfig": "workspace:*",
     "@types/node": "^22.0.0",
-    "tsx": "^4.19.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "rimraf": "^6.0.0",
+    "tailwindcss": "^3.4.0",
     "typescript": "^5.7.0"
   }
 }

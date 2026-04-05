@@ -21,7 +21,7 @@ export function Display({
     <View
       className={`
         flex-col justify-end items-end p-8 pb-10
-        ${isDark ? 'bg-[#f7f9fb]' : 'bg-[#f7f9fb]'}
+        ${isDark ? 'bg-[#141420]' : 'bg-[#f7f9fb]'}
         rounded-3xl
         ${className}
       `}

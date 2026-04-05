@@ -11,6 +11,7 @@
     "dev:web": "turbo dev --filter=@omnicalc/web",
     "dev:mobile": "turbo dev --filter=@omnicalc/mobile",
     "dev:desktop": "turbo dev --filter=@omnicalc/desktop",
+    "dev:api": "turbo dev --filter=@omnicalc/api",
     "build": "turbo build",
     "test": "turbo test",
     "test:e2e": "turbo test:e2e",

@@ -11,8 +11,12 @@ interface ScientificKeypadProps {
   onPower: () => void;
   onReciprocal: () => void;
   onParenthesis: (parens: '(' | ')') => void;
+  onClear: () => void;
+  onBackspace: () => void;
+  onToggleAngleUnit: () => void;
   onUpgradeToPro: () => void;
   isPro?: boolean;
+  angleUnit?: 'degrees' | 'radians';
   className?: string;
 }
 
@@ -23,8 +27,12 @@ export function ScientificKeypad({
   onPower,
   onReciprocal,
   onParenthesis,
+  onClear,
+  onBackspace,
+  onToggleAngleUnit,
   onUpgradeToPro,
   isPro = false,
+  angleUnit = 'degrees',
   className = '',
 }: ScientificKeypadProps): React.ReactElement {
   const { isDark } = useTheme();
@@ -51,15 +59,19 @@ export function ScientificKeypad({
         <Button label="sin" onPress={() => onFunction('sin')} variant="function" />
         <Button label="cos" onPress={() => onFunction('cos')} variant="function" />
         <Button label="tan" onPress={() => onFunction('tan')} variant="function" />
-        <Button label="deg" onPress={() => onFunction('sin')} variant="function" />
-        <Button label="AC" onPress={() => {}} variant="memory" />
+        <Button
+          label={angleUnit === 'degrees' ? 'DEG' : 'RAD'}
+          onPress={onToggleAngleUnit}
+          variant="function"
+        />
+        <Button label="AC" onPress={onClear} variant="memory" />
       </View>
       <View className="flex-row gap-3">
         <Button label="log" onPress={() => onFunction('log')} variant="function" />
         <Button label="ln" onPress={() => onFunction('ln')} variant="function" />
         <Button label="(" onPress={() => onParenthesis('(')} variant="function" />
         <Button label=")" onPress={() => onParenthesis(')')} variant="function" />
-        <Button label="⌫" onPress={() => {}} variant="memory" />
+        <Button label="⌫" onPress={onBackspace} variant="memory" />
       </View>
       <View className="flex-row gap-3">
         <Button label="√" onPress={() => onFunction('sqrt')} variant="function" />
