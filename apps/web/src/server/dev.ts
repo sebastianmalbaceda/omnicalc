@@ -99,7 +99,9 @@ app.use(
 app.get('/api/auth/test', (c) => c.json({ message: 'auth test endpoint works' }));
 app.post('/api/auth/test', (c) => c.json({ message: 'auth test POST endpoint works' }));
 
-app.on(['POST', 'GET'], '/api/auth/*', (c) => auth.handler(c.req.raw));
+app.all('/api/auth/*', async (c) => {
+  return auth.handler(c.req.raw);
+});
 
 app.get('/api/debug/env', (c) =>
   c.json({
@@ -323,6 +325,8 @@ console.log('[Server] OmniCalc Unified Server');
 console.log('[Server] ============================================');
 console.log('[Server] App: http://localhost:' + PORT);
 console.log('[Server] API: http://localhost:' + PORT + '/api/...');
+console.log('[Server] ============================================');
+console.log('[Server] OmniCalc Unified Server');
 console.log('[Server] ============================================');
 console.log('[Server] App: http://localhost:' + PORT);
 console.log('[Server] API: http://localhost:' + PORT + '/api/...');

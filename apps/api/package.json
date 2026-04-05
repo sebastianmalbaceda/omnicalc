@@ -2,6 +2,7 @@
   "name": "@omnicalc/api",
   "version": "0.1.0",
   "private": true,
+  "type": "commonjs",
   "description": "OmniCalc Central API (NestJS)",
   "scripts": {
     "dev": "nest start --watch",
