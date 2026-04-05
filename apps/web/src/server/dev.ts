@@ -120,6 +120,7 @@ app.post('/api/payments/checkout', async (c) => {
     }
 
     const session = await createCheckoutSession(userId || 'anonymous', customerId);
+    if (!session) return c.json({ error: 'Failed to create session' }, 500);
     return c.json({ url: session.url });
   } catch (error) {
     console.error('Checkout error:', error);
@@ -136,6 +137,7 @@ app.post('/api/payments/portal', async (c) => {
     }
 
     const session = await createCustomerPortalSession(customerId);
+    if (!session) return c.json({ error: 'Failed to create portal session' }, 500);
     return c.json({ url: session.url });
   } catch (error) {
     console.error('Portal error:', error);
@@ -322,7 +324,6 @@ console.log('[Server] ============================================');
 console.log('[Server] App: http://localhost:' + PORT);
 console.log('[Server] API: http://localhost:' + PORT + '/api/...');
 console.log('[Server] ============================================');
-
 console.log('[Server] App: http://localhost:' + PORT);
 console.log('[Server] API: http://localhost:' + PORT + '/api/...');
 console.log('[Server] ============================================');

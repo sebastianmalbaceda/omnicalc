@@ -3,18 +3,29 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3000",
-    "build": "next build",
-    "start": "next start",
+    "dev": "tsx --env-file=../../.env src/server/dev.ts",
+    "dev:next": "next dev -p 3000",
+    "build": "cd ../mobile && npx expo export --platform web && tsc -p tsconfig.server.json",
+    "build:next": "next build",
+    "build:server": "tsc -p tsconfig.server.json",
+    "start": "node --env-file=../../.env dist/server/dev.js",
     "type-check": "tsc --noEmit",
-    "clean": "rimraf .next"
+    "clean": "rimraf dist .next"
   },
   "dependencies": {
+    "@hono/node-server": "^1.19.12",
+    "@omnicalc/core-math": "workspace:*",
+    "@omnicalc/db": "workspace:*",
     "@omnicalc/shared-types": "workspace:*",
     "@omnicalc/ui": "workspace:*",
+    "@prisma/client": "^6.19.2",
+    "better-auth": "^1.5.6",
+    "dotenv": "^17.3.1",
+    "hono": "^4.6.0",
     "next": "^15.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "stripe": "^21.0.1",
     "zustand": "^5.0.12"
   },
   "devDependencies": {
@@ -26,6 +37,7 @@
     "postcss": "^8.4.0",
     "rimraf": "^6.0.0",
     "tailwindcss": "^3.4.0",
+    "tsx": "^4.19.0",
     "typescript": "^5.7.0"
   }
 }
