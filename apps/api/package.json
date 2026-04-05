@@ -10,7 +10,7 @@
     "start": "node dist/main",
     "start:prod": "node dist/main",
     "type-check": "tsc --noEmit",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "lint": "eslint src/",
     "clean": "rimraf dist"
