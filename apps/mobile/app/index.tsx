@@ -62,8 +62,6 @@ export default function CalculatorScreen(): React.ReactElement {
     memoryAdd,
     memoryRecall,
     memoryClear,
-    scientificOperation,
-    inputParenthesis,
     clearHistory,
     selectHistoryEntry,
   } = useCalculatorStore();

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @omnicalc/mobile — Root Layout
  *
  * Expo Router root layout with ThemeProvider and NativeWind setup.
@@ -12,8 +12,8 @@ import { ThemeProvider } from '@omnicalc/ui';
 import { SafeAreaView, useColorScheme, StyleSheet, View, ActivityIndicator } from 'react-native';
 import { useAuthStore, getSession } from '../lib/auth';
 
-function AuthInitializer({ children }: { children: React.ReactNode }) {
-  const { setUser, setLoading, isLoading } = useAuthStore();
+function AuthInitializer({ children }: { children: React.ReactNode }): React.ReactElement {
+  const { setUser, isLoading } = useAuthStore();
 
   useEffect(() => {
     async function loadSession() {

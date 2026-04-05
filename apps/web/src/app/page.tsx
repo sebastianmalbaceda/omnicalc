@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useCallback } from 'react';
-import type { Operator, ScientificFunction, HistoryEntry } from '@omnicalc/core-math';
+import type { Operator } from '@omnicalc/core-math';
 import {
   createCalculatorState,
   inputDigit,
@@ -14,7 +14,6 @@ import {
   memoryAdd,
   memoryRecall,
   memoryClear,
-  scientificOperation,
   getDisplay,
   getExpression,
   type CalculatorState,
@@ -25,7 +24,6 @@ export default function HomePage(): React.ReactElement {
   const [display, setDisplay] = useState<string>('0');
   const [expression, setExpression] = useState<string>('');
   const [isError, setIsError] = useState<boolean>(false);
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [isDark, setIsDark] = useState(false);
 
   const updateState = useCallback((newState: CalculatorState, showError = false) => {
@@ -36,9 +34,6 @@ export default function HomePage(): React.ReactElement {
       setIsError(true);
     } else {
       setIsError(false);
-    }
-    if (newState.history) {
-      setHistory(newState.history);
     }
   }, []);
 
@@ -97,14 +92,6 @@ export default function HomePage(): React.ReactElement {
     const newState = memoryClear(state);
     updateState(newState);
   }, [state, updateState]);
-
-  const handleScientificOperation = useCallback(
-    (fn: ScientificFunction) => {
-      const newState = scientificOperation(state, fn);
-      updateState(newState, newState.display === 'Error');
-    },
-    [state, updateState],
-  );
 
   const bg = isDark ? 'bg-[#0a0a0f]' : 'bg-[#f7f9fb]';
   const surfaceLowest = isDark ? 'bg-[#141420]' : 'bg-[#ffffff]';

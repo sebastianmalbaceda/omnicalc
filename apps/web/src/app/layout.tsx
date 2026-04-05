@@ -22,7 +22,11 @@ export const metadata: Metadata = {
   description: 'Professional multiplatform calculator',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}): React.ReactElement {
   return (
     <html lang="en">
       <body className={`${inter.variable} ${manrope.variable} ${jetbrainsMono.variable}`}>

@@ -63,11 +63,9 @@ export default function LoginScreen(): React.ReactElement {
   const bg = isDark ? '#0a0a0f' : '#f7f9fb';
   const surfaceLowest = isDark ? '#141420' : '#ffffff';
   const surfaceContainerLow = isDark ? '#1a1a2e' : '#f2f4f6';
-  const surfaceContainerHighest = isDark ? '#252540' : '#e0e3e5';
   const onSurface = isDark ? '#e8e8f0' : '#191c1e';
   const onSurfaceVariant = isDark ? '#a0a0b8' : '#464555';
   const primary = isDark ? '#c3c0ff' : '#392cc1';
-  const primaryContainer = isDark ? '#372abf' : '#534ad9';
 
   return (
     <View style={[styles.container, { backgroundColor: bg }]}>
