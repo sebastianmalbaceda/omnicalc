@@ -20,6 +20,7 @@
     "nativewind": "^4.1.0"
   },
   "devDependencies": {
+    "@omnicalc/core-math": "workspace:*",
     "@omnicalc/tsconfig": "workspace:*",
     "@types/react": "^18.3.0",
     "typescript": "^5.7.0",
