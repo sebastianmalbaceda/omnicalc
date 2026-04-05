@@ -326,8 +326,3 @@ console.log('[Server] ============================================');
 console.log('[Server] App: http://localhost:' + PORT);
 console.log('[Server] API: http://localhost:' + PORT + '/api/...');
 console.log('[Server] ============================================');
-console.log('[Server] OmniCalc Unified Server');
-console.log('[Server] ============================================');
-console.log('[Server] App: http://localhost:' + PORT);
-console.log('[Server] API: http://localhost:' + PORT + '/api/...');
-console.log('[Server] ============================================');

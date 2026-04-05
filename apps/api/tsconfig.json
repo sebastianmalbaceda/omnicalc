@@ -1,6 +1,9 @@
-﻿{
-  "extends": "@omnicalc/tsconfig/node.json",
+{
+  "extends": "@omnicalc/tsconfig/base.json",
   "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "target": "ES2022",
     "outDir": "dist",
     "rootDir": "src",
     "noEmit": false,
