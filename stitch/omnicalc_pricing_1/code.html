@@ -1,80 +1,94 @@
-<!DOCTYPE html>
+<!doctype html>
 
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>OmniCalc Pricing - Upgrade to Pro</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>OmniCalc Pricing - Upgrade to Pro</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
       tailwind.config = {
-        darkMode: "class",
+        darkMode: 'class',
         theme: {
           extend: {
             colors: {
-              "on-tertiary-container": "#ffd2be",
-              "on-primary": "#ffffff",
-              "tertiary-fixed-dim": "#ffb695",
-              "on-secondary-fixed": "#07006c",
-              "on-primary-fixed": "#100069",
-              "primary-fixed-dim": "#c3c0ff",
-              "surface-container-highest": "#e0e3e5",
-              "on-error": "#ffffff",
-              "error-container": "#ffdad6",
-              "surface-container-low": "#f2f4f6",
-              "inverse-surface": "#2d3133",
-              "tertiary-fixed": "#ffdbcc",
-              "surface-container-high": "#e6e8ea",
-              "error": "#ba1a1a",
-              "primary-fixed": "#e3dfff",
-              "background": "#f7f9fb",
-              "on-secondary-fixed-variant": "#2f2ebe",
-              "tertiary": "#7e3000",
-              "surface-tint": "#5148d7",
-              "inverse-primary": "#c3c0ff",
-              "on-tertiary-fixed-variant": "#7b2f00",
-              "on-secondary-container": "#fffbff",
-              "surface-container": "#eceef0",
-              "surface": "#f7f9fb",
-              "outline": "#777587",
-              "tertiary-container": "#a44100",
-              "surface-container-lowest": "#ffffff",
-              "on-primary-fixed-variant": "#372abf",
-              "secondary-container": "#6063ee",
-              "on-surface": "#191c1e",
-              "on-surface-variant": "#464555",
-              "surface-bright": "#f7f9fb",
-              "on-tertiary": "#ffffff",
-              "primary": "#392cc1",
-              "surface-variant": "#e0e3e5",
-              "on-primary-container": "#dbd7ff",
-              "primary-container": "#534ad9",
-              "surface-dim": "#d8dadc",
-              "on-tertiary-fixed": "#351000",
-              "outline-variant": "#c7c4d8",
-              "on-secondary": "#ffffff",
-              "secondary": "#4648d4",
-              "inverse-on-surface": "#eff1f3",
-              "on-background": "#191c1e",
-              "secondary-fixed-dim": "#c0c1ff",
-              "secondary-fixed": "#e1e0ff",
-              "on-error-container": "#93000a"
+              'on-tertiary-container': '#ffd2be',
+              'on-primary': '#ffffff',
+              'tertiary-fixed-dim': '#ffb695',
+              'on-secondary-fixed': '#07006c',
+              'on-primary-fixed': '#100069',
+              'primary-fixed-dim': '#c3c0ff',
+              'surface-container-highest': '#e0e3e5',
+              'on-error': '#ffffff',
+              'error-container': '#ffdad6',
+              'surface-container-low': '#f2f4f6',
+              'inverse-surface': '#2d3133',
+              'tertiary-fixed': '#ffdbcc',
+              'surface-container-high': '#e6e8ea',
+              error: '#ba1a1a',
+              'primary-fixed': '#e3dfff',
+              background: '#f7f9fb',
+              'on-secondary-fixed-variant': '#2f2ebe',
+              tertiary: '#7e3000',
+              'surface-tint': '#5148d7',
+              'inverse-primary': '#c3c0ff',
+              'on-tertiary-fixed-variant': '#7b2f00',
+              'on-secondary-container': '#fffbff',
+              'surface-container': '#eceef0',
+              surface: '#f7f9fb',
+              outline: '#777587',
+              'tertiary-container': '#a44100',
+              'surface-container-lowest': '#ffffff',
+              'on-primary-fixed-variant': '#372abf',
+              'secondary-container': '#6063ee',
+              'on-surface': '#191c1e',
+              'on-surface-variant': '#464555',
+              'surface-bright': '#f7f9fb',
+              'on-tertiary': '#ffffff',
+              primary: '#392cc1',
+              'surface-variant': '#e0e3e5',
+              'on-primary-container': '#dbd7ff',
+              'primary-container': '#534ad9',
+              'surface-dim': '#d8dadc',
+              'on-tertiary-fixed': '#351000',
+              'outline-variant': '#c7c4d8',
+              'on-secondary': '#ffffff',
+              secondary: '#4648d4',
+              'inverse-on-surface': '#eff1f3',
+              'on-background': '#191c1e',
+              'secondary-fixed-dim': '#c0c1ff',
+              'secondary-fixed': '#e1e0ff',
+              'on-error-container': '#93000a',
             },
             fontFamily: {
-              "headline": ["Manrope"],
-              "body": ["Inter"],
-              "label": ["Inter"]
+              headline: ['Manrope'],
+              body: ['Inter'],
+              label: ['Inter'],
             },
-            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            borderRadius: { DEFAULT: '0.25rem', lg: '0.5rem', xl: '0.75rem', full: '9999px' },
           },
         },
-      }
+      };
     </script>
-<style>
+    <style>
       .material-symbols-outlined {
-        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
       }
       .signature-gradient {
         background: linear-gradient(135deg, #392cc1 0%, #534ad9 100%);
@@ -83,176 +97,290 @@
         backdrop-filter: blur(20px);
       }
     </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-  </style>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
   </head>
-<body class="bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-primary">
-<!-- TopAppBar -->
-<header class="flex justify-between items-center px-6 py-4 w-full sticky top-0 z-50 bg-white dark:bg-slate-950 shadow-sm dark:shadow-none">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-indigo-600 dark:text-indigo-400" data-icon="calculate">calculate</span>
-<span class="text-2xl font-extrabold font-headline tracking-tighter text-indigo-600 dark:text-indigo-400">OmniCalc</span>
-</div>
-<div class="hidden md:flex items-center gap-8">
-<nav class="flex gap-6 items-center">
-<a class="font-manrope text-sm font-medium tracking-tight text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-indigo-900/20 transition-colors px-3 py-2 rounded-lg" href="#">Standard</a>
-<a class="font-manrope text-sm font-medium tracking-tight text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-indigo-900/20 transition-colors px-3 py-2 rounded-lg" href="#">Scientific</a>
-<a class="font-manrope text-sm font-medium tracking-tight text-indigo-600 dark:text-indigo-400 font-bold px-3 py-2 rounded-lg" href="#">Pricing</a>
-</nav>
-<div class="h-10 w-10 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border border-outline-variant/20">
-<img alt="User avatar" class="w-full h-full object-cover" data-alt="minimalist stylized avatar of a person with friendly expression and clean lines" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQA0k2qmpZ8u6bHlreM6YVsdK_stWOw60khcLguRVnCSz53FOM6tJu7D_1TfAaDmFLl8zesi0np-KknUIf63flkJEbwzyBVyctmyNHc7J2O8lBs3LO9dp9SKAhXwAlznJhFbq1WhRlWAQemEmvU3yRuYqDoRwvMOeW7hSNvTVXuCZDKV9nfB7rQLhYsaiNRk1CkuvFq5tldI2WRtFEijIPltCHy8Eonpr9_2wj5epaNKXBbC18u3P1PjzLskNJzYsdf8IIXWYVsc0w"/>
-</div>
-</div>
-</header>
-<main class="min-h-screen pb-24 md:pb-12 pt-8 px-6 max-w-7xl mx-auto">
-<!-- Hero Section -->
-<section class="text-center mb-16">
-<h1 class="font-headline text-5xl md:text-6xl font-extrabold tracking-tight text-on-surface mb-4">
-                Unlock <span class="text-primary">Ethereal</span> Power
-            </h1>
-<p class="text-on-surface-variant max-w-xl mx-auto font-body text-lg">
-                Choose the logic that fits your workflow. From daily math to advanced scientific exploration.
+  <body
+    class="bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-primary"
+  >
+    <!-- TopAppBar -->
+    <header
+      class="flex justify-between items-center px-6 py-4 w-full sticky top-0 z-50 bg-white dark:bg-slate-950 shadow-sm dark:shadow-none"
+    >
+      <div class="flex items-center gap-3">
+        <span
+          class="material-symbols-outlined text-indigo-600 dark:text-indigo-400"
+          data-icon="calculate"
+          >calculate</span
+        >
+        <span
+          class="text-2xl font-extrabold font-headline tracking-tighter text-indigo-600 dark:text-indigo-400"
+          >OmniCalc</span
+        >
+      </div>
+      <div class="hidden md:flex items-center gap-8">
+        <nav class="flex gap-6 items-center">
+          <a
+            class="font-manrope text-sm font-medium tracking-tight text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-indigo-900/20 transition-colors px-3 py-2 rounded-lg"
+            href="#"
+            >Standard</a
+          >
+          <a
+            class="font-manrope text-sm font-medium tracking-tight text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-indigo-900/20 transition-colors px-3 py-2 rounded-lg"
+            href="#"
+            >Scientific</a
+          >
+          <a
+            class="font-manrope text-sm font-medium tracking-tight text-indigo-600 dark:text-indigo-400 font-bold px-3 py-2 rounded-lg"
+            href="#"
+            >Pricing</a
+          >
+        </nav>
+        <div
+          class="h-10 w-10 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border border-outline-variant/20"
+        >
+          <img
+            alt="User avatar"
+            class="w-full h-full object-cover"
+            data-alt="minimalist stylized avatar of a person with friendly expression and clean lines"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQA0k2qmpZ8u6bHlreM6YVsdK_stWOw60khcLguRVnCSz53FOM6tJu7D_1TfAaDmFLl8zesi0np-KknUIf63flkJEbwzyBVyctmyNHc7J2O8lBs3LO9dp9SKAhXwAlznJhFbq1WhRlWAQemEmvU3yRuYqDoRwvMOeW7hSNvTVXuCZDKV9nfB7rQLhYsaiNRk1CkuvFq5tldI2WRtFEijIPltCHy8Eonpr9_2wj5epaNKXBbC18u3P1PjzLskNJzYsdf8IIXWYVsc0w"
+          />
+        </div>
+      </div>
+    </header>
+    <main class="min-h-screen pb-24 md:pb-12 pt-8 px-6 max-w-7xl mx-auto">
+      <!-- Hero Section -->
+      <section class="text-center mb-16">
+        <h1
+          class="font-headline text-5xl md:text-6xl font-extrabold tracking-tight text-on-surface mb-4"
+        >
+          Unlock <span class="text-primary">Ethereal</span> Power
+        </h1>
+        <p class="text-on-surface-variant max-w-xl mx-auto font-body text-lg">
+          Choose the logic that fits your workflow. From daily math to advanced scientific
+          exploration.
+        </p>
+      </section>
+      <!-- Pricing Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch">
+        <!-- Free Plan -->
+        <div
+          class="bg-surface-container-lowest p-8 md:p-10 rounded-3xl flex flex-col transition-all duration-300 hover:scale-[1.02]"
+        >
+          <div class="mb-8">
+            <span
+              class="bg-surface-container px-3 py-1 rounded-full font-label text-xs font-semibold tracking-wider text-on-surface-variant uppercase"
+              >Basic</span
+            >
+            <h2 class="font-headline text-3xl font-bold mt-4">Free</h2>
+            <p class="text-on-surface-variant mt-2 font-body">
+              Everything you need for everyday tasks.
             </p>
-</section>
-<!-- Pricing Cards Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch">
-<!-- Free Plan -->
-<div class="bg-surface-container-lowest p-8 md:p-10 rounded-3xl flex flex-col transition-all duration-300 hover:scale-[1.02]">
-<div class="mb-8">
-<span class="bg-surface-container px-3 py-1 rounded-full font-label text-xs font-semibold tracking-wider text-on-surface-variant uppercase">Basic</span>
-<h2 class="font-headline text-3xl font-bold mt-4">Free</h2>
-<p class="text-on-surface-variant mt-2 font-body">Everything you need for everyday tasks.</p>
-</div>
-<div class="mb-10 flex-grow">
-<ul class="space-y-4">
-<li class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary text-xl" data-icon="check_circle">check_circle</span>
-<span class="text-on-surface font-body">Standard calculator</span>
-</li>
-<li class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary text-xl" data-icon="check_circle">check_circle</span>
-<span class="text-on-surface font-body">Basic functions</span>
-</li>
-<li class="flex items-center gap-3 text-outline">
-<span class="material-symbols-outlined text-xl" data-icon="block">block</span>
-<span class="font-body">Scientific mode</span>
-</li>
-<li class="flex items-center gap-3 text-outline">
-<span class="material-symbols-outlined text-xl" data-icon="block">block</span>
-<span class="font-body">Cloud history</span>
-</li>
-</ul>
-</div>
-<div class="mt-auto pt-8">
-<div class="flex items-baseline gap-1 mb-6">
-<span class="text-4xl font-headline font-extrabold">$0</span>
-<span class="text-on-surface-variant font-label">/forever</span>
-</div>
-<button class="w-full py-4 px-6 rounded-xl border border-outline-variant text-on-surface font-headline font-bold hover:bg-surface-container-low active:scale-95 transition-all">
-                        Current Plan
-                    </button>
-</div>
-</div>
-<!-- Pro Plan (The Anchor) -->
-<div class="bg-white p-8 md:p-10 rounded-3xl flex flex-col relative overflow-hidden shadow-xl shadow-primary/5 border border-primary/10 transition-all duration-300 hover:scale-[1.03]">
-<!-- Decorative element -->
-<div class="absolute -top-12 -right-12 w-32 h-32 signature-gradient rounded-full opacity-10 blur-3xl"></div>
-<div class="mb-8">
-<div class="flex justify-between items-start">
-<span class="signature-gradient px-4 py-1.5 rounded-full font-label text-xs font-bold tracking-widest text-on-primary uppercase shadow-md shadow-primary/20">Recommended</span>
-</div>
-<h2 class="font-headline text-3xl font-bold mt-6">Pro</h2>
-<p class="text-on-surface-variant mt-2 font-body">Professional tools for power users.</p>
-</div>
-<div class="mb-10 flex-grow">
-<ul class="space-y-4">
-<li class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary text-xl" data-icon="verified" data-weight="fill">verified</span>
-<span class="text-on-surface font-semibold font-body">Scientific mode</span>
-</li>
-<li class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary text-xl" data-icon="verified" data-weight="fill">verified</span>
-<span class="text-on-surface font-semibold font-body">Cloud history sync</span>
-</li>
-<li class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary text-xl" data-icon="verified" data-weight="fill">verified</span>
-<span class="text-on-surface font-semibold font-body">No ads (Pure Focus)</span>
-</li>
-<li class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary text-xl" data-icon="verified" data-weight="fill">verified</span>
-<span class="text-on-surface font-semibold font-body">Priority support</span>
-</li>
-</ul>
-</div>
-<div class="mt-auto pt-8">
-<div class="flex items-baseline gap-1 mb-6">
-<span class="text-4xl font-headline font-extrabold">$4.99</span>
-<span class="text-on-surface-variant font-label">/mo</span>
-</div>
-<button class="w-full py-4 px-6 rounded-xl signature-gradient text-on-primary font-headline font-bold shadow-lg shadow-primary/30 hover:opacity-90 active:scale-[0.98] transition-all">
-                        Upgrade Now
-                    </button>
-</div>
-</div>
-</div>
-<!-- Comparative Feature Detail (Minimalist Table) -->
-<section class="mt-24 mb-12">
-<div class="max-w-4xl mx-auto">
-<h3 class="font-headline text-2xl font-bold mb-8 text-center">Feature Breakdown</h3>
-<div class="bg-surface-container-low rounded-3xl overflow-hidden">
-<div class="grid grid-cols-3 p-6 border-b border-outline-variant/10 font-label text-xs font-bold tracking-widest text-on-surface-variant uppercase">
-<div>Feature</div>
-<div class="text-center">Free</div>
-<div class="text-center">Pro</div>
-</div>
-<div class="grid grid-cols-3 p-6 items-center">
-<div class="font-body font-medium">Calculation Depth</div>
-<div class="text-center text-on-surface-variant">100 rows</div>
-<div class="text-center font-bold text-primary">Unlimited</div>
-</div>
-<div class="grid grid-cols-3 p-6 items-center bg-surface-container">
-<div class="font-body font-medium">Export Options</div>
-<div class="text-center text-on-surface-variant">PDF</div>
-<div class="text-center font-bold text-primary">JSON, CSV, PDF</div>
-</div>
-<div class="grid grid-cols-3 p-6 items-center">
-<div class="font-body font-medium">Theme Engine</div>
-<div class="text-center text-on-surface-variant">Light / Dark</div>
-<div class="text-center font-bold text-primary">Full Customization</div>
-</div>
-</div>
-</div>
-</section>
-</main>
-<!-- Footer -->
-<footer class="w-full py-12 px-8 flex flex-col md:flex-row justify-between items-center gap-6 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-900">
-<div class="flex flex-col items-center md:items-start gap-2">
-<span class="font-manrope font-bold text-slate-900 dark:text-white">OmniCalc Ethereal</span>
-<p class="font-inter text-xs text-slate-500 dark:text-slate-400">© 2024 OmniCalc Ethereal Logic. All rights reserved.</p>
-</div>
-<div class="flex gap-6">
-<a class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80" href="#">Terms</a>
-<a class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80" href="#">Privacy</a>
-<a class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80" href="#">Support</a>
-<a class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80" href="#">Contact</a>
-</div>
-</footer>
-<!-- BottomNavBar (Mobile Only) -->
-<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl md:hidden shadow-[0_-4px_20px_0_rgba(79,70,229,0.05)]">
-<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-1.5 hover:text-indigo-500 dark:hover:text-indigo-300 active:scale-90 transition-transform">
-<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
-<span class="font-inter text-[11px] font-semibold uppercase tracking-wider">Standard</span>
-</div>
-<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-1.5 hover:text-indigo-500 dark:hover:text-indigo-300 active:scale-90 transition-transform">
-<span class="material-symbols-outlined" data-icon="science">science</span>
-<span class="font-inter text-[11px] font-semibold uppercase tracking-wider">Scientific</span>
-</div>
-<div class="flex flex-col items-center justify-center bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded-xl px-5 py-1.5 hover:text-indigo-500 dark:hover:text-indigo-300 active:scale-90 transition-transform">
-<span class="material-symbols-outlined" data-icon="payments">payments</span>
-<span class="font-inter text-[11px] font-semibold uppercase tracking-wider">Pricing</span>
-</div>
-</nav>
-</body></html>
+          </div>
+          <div class="mb-10 flex-grow">
+            <ul class="space-y-4">
+              <li class="flex items-center gap-3">
+                <span
+                  class="material-symbols-outlined text-primary text-xl"
+                  data-icon="check_circle"
+                  >check_circle</span
+                >
+                <span class="text-on-surface font-body">Standard calculator</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span
+                  class="material-symbols-outlined text-primary text-xl"
+                  data-icon="check_circle"
+                  >check_circle</span
+                >
+                <span class="text-on-surface font-body">Basic functions</span>
+              </li>
+              <li class="flex items-center gap-3 text-outline">
+                <span class="material-symbols-outlined text-xl" data-icon="block">block</span>
+                <span class="font-body">Scientific mode</span>
+              </li>
+              <li class="flex items-center gap-3 text-outline">
+                <span class="material-symbols-outlined text-xl" data-icon="block">block</span>
+                <span class="font-body">Cloud history</span>
+              </li>
+            </ul>
+          </div>
+          <div class="mt-auto pt-8">
+            <div class="flex items-baseline gap-1 mb-6">
+              <span class="text-4xl font-headline font-extrabold">$0</span>
+              <span class="text-on-surface-variant font-label">/forever</span>
+            </div>
+            <button
+              class="w-full py-4 px-6 rounded-xl border border-outline-variant text-on-surface font-headline font-bold hover:bg-surface-container-low active:scale-95 transition-all"
+            >
+              Current Plan
+            </button>
+          </div>
+        </div>
+        <!-- Pro Plan (The Anchor) -->
+        <div
+          class="bg-white p-8 md:p-10 rounded-3xl flex flex-col relative overflow-hidden shadow-xl shadow-primary/5 border border-primary/10 transition-all duration-300 hover:scale-[1.03]"
+        >
+          <!-- Decorative element -->
+          <div
+            class="absolute -top-12 -right-12 w-32 h-32 signature-gradient rounded-full opacity-10 blur-3xl"
+          ></div>
+          <div class="mb-8">
+            <div class="flex justify-between items-start">
+              <span
+                class="signature-gradient px-4 py-1.5 rounded-full font-label text-xs font-bold tracking-widest text-on-primary uppercase shadow-md shadow-primary/20"
+                >Recommended</span
+              >
+            </div>
+            <h2 class="font-headline text-3xl font-bold mt-6">Pro</h2>
+            <p class="text-on-surface-variant mt-2 font-body">
+              Professional tools for power users.
+            </p>
+          </div>
+          <div class="mb-10 flex-grow">
+            <ul class="space-y-4">
+              <li class="flex items-center gap-3">
+                <span
+                  class="material-symbols-outlined text-primary text-xl"
+                  data-icon="verified"
+                  data-weight="fill"
+                  >verified</span
+                >
+                <span class="text-on-surface font-semibold font-body">Scientific mode</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span
+                  class="material-symbols-outlined text-primary text-xl"
+                  data-icon="verified"
+                  data-weight="fill"
+                  >verified</span
+                >
+                <span class="text-on-surface font-semibold font-body">Cloud history sync</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span
+                  class="material-symbols-outlined text-primary text-xl"
+                  data-icon="verified"
+                  data-weight="fill"
+                  >verified</span
+                >
+                <span class="text-on-surface font-semibold font-body">No ads (Pure Focus)</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span
+                  class="material-symbols-outlined text-primary text-xl"
+                  data-icon="verified"
+                  data-weight="fill"
+                  >verified</span
+                >
+                <span class="text-on-surface font-semibold font-body">Priority support</span>
+              </li>
+            </ul>
+          </div>
+          <div class="mt-auto pt-8">
+            <div class="flex items-baseline gap-1 mb-6">
+              <span class="text-4xl font-headline font-extrabold">$4.99</span>
+              <span class="text-on-surface-variant font-label">/mo</span>
+            </div>
+            <button
+              class="w-full py-4 px-6 rounded-xl signature-gradient text-on-primary font-headline font-bold shadow-lg shadow-primary/30 hover:opacity-90 active:scale-[0.98] transition-all"
+            >
+              Upgrade Now
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Comparative Feature Detail (Minimalist Table) -->
+      <section class="mt-24 mb-12">
+        <div class="max-w-4xl mx-auto">
+          <h3 class="font-headline text-2xl font-bold mb-8 text-center">Feature Breakdown</h3>
+          <div class="bg-surface-container-low rounded-3xl overflow-hidden">
+            <div
+              class="grid grid-cols-3 p-6 border-b border-outline-variant/10 font-label text-xs font-bold tracking-widest text-on-surface-variant uppercase"
+            >
+              <div>Feature</div>
+              <div class="text-center">Free</div>
+              <div class="text-center">Pro</div>
+            </div>
+            <div class="grid grid-cols-3 p-6 items-center">
+              <div class="font-body font-medium">Calculation Depth</div>
+              <div class="text-center text-on-surface-variant">100 rows</div>
+              <div class="text-center font-bold text-primary">Unlimited</div>
+            </div>
+            <div class="grid grid-cols-3 p-6 items-center bg-surface-container">
+              <div class="font-body font-medium">Export Options</div>
+              <div class="text-center text-on-surface-variant">PDF</div>
+              <div class="text-center font-bold text-primary">JSON, CSV, PDF</div>
+            </div>
+            <div class="grid grid-cols-3 p-6 items-center">
+              <div class="font-body font-medium">Theme Engine</div>
+              <div class="text-center text-on-surface-variant">Light / Dark</div>
+              <div class="text-center font-bold text-primary">Full Customization</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- Footer -->
+    <footer
+      class="w-full py-12 px-8 flex flex-col md:flex-row justify-between items-center gap-6 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-900"
+    >
+      <div class="flex flex-col items-center md:items-start gap-2">
+        <span class="font-manrope font-bold text-slate-900 dark:text-white">OmniCalc Ethereal</span>
+        <p class="font-inter text-xs text-slate-500 dark:text-slate-400">
+          © 2024 OmniCalc Ethereal Logic. All rights reserved.
+        </p>
+      </div>
+      <div class="flex gap-6">
+        <a
+          class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80"
+          href="#"
+          >Terms</a
+        >
+        <a
+          class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80"
+          href="#"
+          >Privacy</a
+        >
+        <a
+          class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80"
+          href="#"
+          >Support</a
+        >
+        <a
+          class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80"
+          href="#"
+          >Contact</a
+        >
+      </div>
+    </footer>
+    <!-- BottomNavBar (Mobile Only) -->
+    <nav
+      class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl md:hidden shadow-[0_-4px_20px_0_rgba(79,70,229,0.05)]"
+    >
+      <div
+        class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-1.5 hover:text-indigo-500 dark:hover:text-indigo-300 active:scale-90 transition-transform"
+      >
+        <span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+        <span class="font-inter text-[11px] font-semibold uppercase tracking-wider">Standard</span>
+      </div>
+      <div
+        class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-1.5 hover:text-indigo-500 dark:hover:text-indigo-300 active:scale-90 transition-transform"
+      >
+        <span class="material-symbols-outlined" data-icon="science">science</span>
+        <span class="font-inter text-[11px] font-semibold uppercase tracking-wider"
+          >Scientific</span
+        >
+      </div>
+      <div
+        class="flex flex-col items-center justify-center bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded-xl px-5 py-1.5 hover:text-indigo-500 dark:hover:text-indigo-300 active:scale-90 transition-transform"
+      >
+        <span class="material-symbols-outlined" data-icon="payments">payments</span>
+        <span class="font-inter text-[11px] font-semibold uppercase tracking-wider">Pricing</span>
+      </div>
+    </nav>
+  </body>
+</html>

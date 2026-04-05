@@ -100,7 +100,9 @@ export const apiErrorSchema = z.object({
   code: z.string().optional(),
 });
 
-export const apiSuccessSchema = <T extends z.ZodType>(data: T) =>
+export const apiSuccessSchema = <T extends z.ZodType>(
+  data: T,
+): z.ZodObject<{ data: T; message: z.ZodOptional<z.ZodString> }> =>
   z.object({
     data,
     message: z.string().optional(),

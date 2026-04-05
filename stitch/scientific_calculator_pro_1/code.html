@@ -1,84 +1,103 @@
-<!DOCTYPE html>
+<!doctype html>
 
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>OmniCalc Pro - Scientific</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>OmniCalc Pro - Scientific</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
       tailwind.config = {
-        darkMode: "class",
+        darkMode: 'class',
         theme: {
           extend: {
             colors: {
-              "on-tertiary-container": "#ffd2be",
-              "on-primary": "#ffffff",
-              "tertiary-fixed-dim": "#ffb695",
-              "on-secondary-fixed": "#07006c",
-              "on-primary-fixed": "#100069",
-              "primary-fixed-dim": "#c3c0ff",
-              "surface-container-highest": "#e0e3e5",
-              "on-error": "#ffffff",
-              "error-container": "#ffdad6",
-              "surface-container-low": "#f2f4f6",
-              "inverse-surface": "#2d3133",
-              "tertiary-fixed": "#ffdbcc",
-              "surface-container-high": "#e6e8ea",
-              "error": "#ba1a1a",
-              "primary-fixed": "#e3dfff",
-              "background": "#f7f9fb",
-              "on-secondary-fixed-variant": "#2f2ebe",
-              "tertiary": "#7e3000",
-              "surface-tint": "#5148d7",
-              "inverse-primary": "#c3c0ff",
-              "on-tertiary-fixed-variant": "#7b2f00",
-              "on-secondary-container": "#fffbff",
-              "surface-container": "#eceef0",
-              "surface": "#f7f9fb",
-              "outline": "#777587",
-              "tertiary-container": "#a44100",
-              "surface-container-lowest": "#ffffff",
-              "on-primary-fixed-variant": "#372abf",
-              "secondary-container": "#6063ee",
-              "on-surface": "#191c1e",
-              "on-surface-variant": "#464555",
-              "surface-bright": "#f7f9fb",
-              "on-tertiary": "#ffffff",
-              "primary": "#392cc1",
-              "surface-variant": "#e0e3e5",
-              "on-primary-container": "#dbd7ff",
-              "primary-container": "#534ad9",
-              "surface-dim": "#d8dadc",
-              "on-tertiary-fixed": "#351000",
-              "outline-variant": "#c7c4d8",
-              "on-secondary": "#ffffff",
-              "secondary": "#4648d4",
-              "inverse-on-surface": "#eff1f3",
-              "on-background": "#191c1e",
-              "secondary-fixed-dim": "#c0c1ff",
-              "secondary-fixed": "#e1e0ff",
-              "on-error-container": "#93000a"
+              'on-tertiary-container': '#ffd2be',
+              'on-primary': '#ffffff',
+              'tertiary-fixed-dim': '#ffb695',
+              'on-secondary-fixed': '#07006c',
+              'on-primary-fixed': '#100069',
+              'primary-fixed-dim': '#c3c0ff',
+              'surface-container-highest': '#e0e3e5',
+              'on-error': '#ffffff',
+              'error-container': '#ffdad6',
+              'surface-container-low': '#f2f4f6',
+              'inverse-surface': '#2d3133',
+              'tertiary-fixed': '#ffdbcc',
+              'surface-container-high': '#e6e8ea',
+              error: '#ba1a1a',
+              'primary-fixed': '#e3dfff',
+              background: '#f7f9fb',
+              'on-secondary-fixed-variant': '#2f2ebe',
+              tertiary: '#7e3000',
+              'surface-tint': '#5148d7',
+              'inverse-primary': '#c3c0ff',
+              'on-tertiary-fixed-variant': '#7b2f00',
+              'on-secondary-container': '#fffbff',
+              'surface-container': '#eceef0',
+              surface: '#f7f9fb',
+              outline: '#777587',
+              'tertiary-container': '#a44100',
+              'surface-container-lowest': '#ffffff',
+              'on-primary-fixed-variant': '#372abf',
+              'secondary-container': '#6063ee',
+              'on-surface': '#191c1e',
+              'on-surface-variant': '#464555',
+              'surface-bright': '#f7f9fb',
+              'on-tertiary': '#ffffff',
+              primary: '#392cc1',
+              'surface-variant': '#e0e3e5',
+              'on-primary-container': '#dbd7ff',
+              'primary-container': '#534ad9',
+              'surface-dim': '#d8dadc',
+              'on-tertiary-fixed': '#351000',
+              'outline-variant': '#c7c4d8',
+              'on-secondary': '#ffffff',
+              secondary: '#4648d4',
+              'inverse-on-surface': '#eff1f3',
+              'on-background': '#191c1e',
+              'secondary-fixed-dim': '#c0c1ff',
+              'secondary-fixed': '#e1e0ff',
+              'on-error-container': '#93000a',
             },
             fontFamily: {
-              "headline": ["Manrope"],
-              "body": ["Inter"],
-              "label": ["Inter"]
+              headline: ['Manrope'],
+              body: ['Inter'],
+              label: ['Inter'],
             },
-            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            borderRadius: { DEFAULT: '0.25rem', lg: '0.5rem', xl: '0.75rem', full: '9999px' },
           },
         },
-      }
+      };
     </script>
-<style>
+    <style>
       .material-symbols-outlined {
-        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
       }
-      .hide-scrollbar::-webkit-scrollbar { display: none; }
-      .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
       /* Ethereal Logic Layering */
       .glass-card {
         background: rgba(255, 255, 255, 0.7);
@@ -88,152 +107,356 @@
         background: linear-gradient(135deg, #392cc1 0%, #534ad9 100%);
       }
     </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-  </style>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
   </head>
-<body class="bg-background text-on-background font-body min-h-screen flex flex-col">
-<!-- TopAppBar Component -->
-<header class="flex justify-between items-center px-6 py-4 w-full sticky top-0 z-50 bg-white dark:bg-slate-950 shadow-sm dark:shadow-none">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-indigo-600 dark:text-indigo-400" data-icon="calculate">calculate</span>
-<h1 class="text-2xl font-extrabold font-manrope tracking-tighter text-indigo-600 dark:text-indigo-400">OmniCalc</h1>
-<span class="bg-secondary-container text-on-secondary-container px-3 py-0.5 rounded-full text-[10px] font-bold tracking-widest uppercase ml-2 flex items-center gap-1">
-<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
-                PRO USER
-            </span>
-</div>
-<div class="flex items-center gap-4">
-<button class="material-symbols-outlined text-slate-500 hover:bg-slate-100 dark:hover:bg-indigo-900/20 transition-colors p-2 rounded-xl" data-icon="cloud_done">cloud_done</button>
-<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20">
-<img class="w-full h-full object-cover" data-alt="Portrait of a professional man with glasses in a creative studio setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQEcV_FuVbIlk_NjAnnxjZVCcoTcr6Q27ynWL7dyXlV8zoGCqFMkvt48nQFBOaCP8hxTpVOmlTzinFnujKi9whcjSNrJ6Iuakt1EYbnyo98j6Pd7IsaBEV7TRG4ni77mk5ZciXuviE8fJvvhyPgms8E-mKO5_hEzX1juyvg09x0ByfTUaz0z8Mck_HgodrqBGUW6HnmdJWxpN7WIkndMHIBrhHDNk0w04nM6mhJq_SnDDmZ4IE9soR-xTaAXNTTTMr23rkHn2CWFnQ"/>
-</div>
-</div>
-</header>
-<!-- Main Content: Scientific Calculator Canvas -->
-<main class="flex-1 flex flex-col max-w-lg mx-auto w-full relative">
-<!-- Cloud Tape / History History Section -->
-<section class="flex-none p-6 space-y-6 overflow-y-auto hide-scrollbar max-h-[265px]">
-<div class="flex justify-between items-center opacity-50">
-<span class="text-[10px] font-bold tracking-widest text-primary uppercase">Cloud Tape History</span>
-<span class="material-symbols-outlined text-sm" data-icon="history">history</span>
-</div>
-<div class="space-y-4">
-<div class="flex flex-col items-end group">
-<span class="text-on-surface-variant font-label text-xs tracking-tight">sin(45) * log(100)</span>
-<span class="text-primary font-headline text-lg font-bold">1.41421356</span>
-</div>
-<div class="flex flex-col items-end group bg-surface-container-low p-3 rounded-xl">
-<span class="text-on-surface-variant font-label text-xs tracking-tight">√(144) + 2^3</span>
-<span class="text-primary font-headline text-lg font-bold">20</span>
-</div>
-<div class="flex flex-col items-end group">
-<span class="text-on-surface-variant font-label text-xs tracking-tight">ln(e) * 50</span>
-<span class="text-primary font-headline text-lg font-bold">50</span>
-</div>
-</div>
-</section>
-<!-- Dynamic Result Display (Ethereal Logic Styling) -->
-<section class="flex-none px-6 pt-2 pb-8 text-right">
-<div class="space-y-1">
-<div class="text-on-surface-variant text-sm font-label flex items-center justify-end gap-2">
-<span class="bg-surface-container-highest px-2 py-0.5 rounded-md text-[10px]">RAD</span>
-<span>tan(π/4)</span>
-</div>
-<div class="text-6xl font-extrabold font-headline tracking-tighter text-on-surface break-all">
-                    1
-                </div>
-</div>
-</section>
-<!-- Calculator Keypad Surface -->
-<section class="flex-1 bg-surface-container rounded-t-[2.5rem] p-6 shadow-2xl">
-<!-- Functional Grid -->
-<div class="grid grid-cols-5 gap-3 h-full content-start">
-<!-- Row 1: Scientific Ops -->
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90">sin</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90">cos</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90">tan</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90">deg</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-highest text-on-surface font-bold hover:bg-slate-300 transition-all active:scale-90">AC</button>
-<!-- Row 2 -->
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90">log</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90">ln</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90">(</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90">)</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-highest text-on-surface font-bold hover:bg-slate-300 transition-all active:scale-90">
-<span class="material-symbols-outlined" data-icon="backspace">backspace</span>
-</button>
-<!-- Row 3 -->
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90">√</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90">7</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90">8</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90">9</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-primary text-on-primary font-bold text-2xl hover:brightness-110 transition-all active:scale-90">÷</button>
-<!-- Row 4 -->
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90">xʸ</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90">4</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90">5</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90">6</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-primary text-on-primary font-bold text-2xl hover:brightness-110 transition-all active:scale-90">×</button>
-<!-- Row 5 -->
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90">π</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90">1</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90">2</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90">3</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-primary text-on-primary font-bold text-2xl hover:brightness-110 transition-all active:scale-90">−</button>
-<!-- Row 6 -->
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90">e</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90">0</button>
-<button class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90">.</button>
-<button class="h-14 col-span-2 flex items-center justify-center rounded-xl signature-cta text-on-primary font-bold text-3xl shadow-lg shadow-primary/30 hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all">=</button>
-</div>
-<!-- Contextual Quick Settings -->
-<div class="mt-8 flex items-center justify-between">
-<div class="flex gap-2">
-<button class="bg-surface-container-highest/50 p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-highest">
-<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
-</button>
-<button class="bg-surface-container-highest/50 p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-highest">
-<span class="material-symbols-outlined text-[20px]" data-icon="share">share</span>
-</button>
-</div>
-<div class="flex items-center gap-2">
-<span class="text-[10px] font-bold text-primary tracking-widest uppercase">Precision: 8</span>
-<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-</div>
-</div>
-</section>
-</main>
-<!-- BottomNavBar Component -->
-<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-[0_-4px_20px_0_rgba(79,70,229,0.05)] rounded-t-2xl">
-<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-1.5 hover:text-indigo-500 transition-transform active:scale-90" href="#">
-<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
-<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Standard</span>
-</a>
-<a class="flex flex-col items-center justify-center bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded-xl px-5 py-1.5 transition-transform active:scale-90" href="#">
-<span class="material-symbols-outlined" data-icon="science" style="font-variation-settings: 'FILL' 1;">science</span>
-<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Scientific</span>
-</a>
-<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-1.5 hover:text-indigo-500 transition-transform active:scale-90" href="#">
-<span class="material-symbols-outlined" data-icon="payments">payments</span>
-<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Pricing</span>
-</a>
-</nav>
-<!-- Spacer for fixed nav -->
-<div class="h-24"></div>
-<!-- Footer Component -->
-<footer class="w-full py-12 px-8 flex flex-col md:flex-row justify-between items-center gap-6 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-900">
-<div class="flex flex-col items-center md:items-start gap-2">
-<span class="font-manrope font-bold text-slate-900 dark:text-white">OmniCalc Ethereal Logic</span>
-<p class="font-inter text-xs text-slate-500 dark:text-slate-400">© 2024 OmniCalc Ethereal Logic. All rights reserved.</p>
-</div>
-<div class="flex gap-8">
-<a class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80" href="#">Terms</a>
-<a class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80" href="#">Privacy</a>
-<a class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80" href="#">Support</a>
-<a class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80" href="#">Contact</a>
-</div>
-</footer>
-</body></html>
+  <body class="bg-background text-on-background font-body min-h-screen flex flex-col">
+    <!-- TopAppBar Component -->
+    <header
+      class="flex justify-between items-center px-6 py-4 w-full sticky top-0 z-50 bg-white dark:bg-slate-950 shadow-sm dark:shadow-none"
+    >
+      <div class="flex items-center gap-3">
+        <span
+          class="material-symbols-outlined text-indigo-600 dark:text-indigo-400"
+          data-icon="calculate"
+          >calculate</span
+        >
+        <h1
+          class="text-2xl font-extrabold font-manrope tracking-tighter text-indigo-600 dark:text-indigo-400"
+        >
+          OmniCalc
+        </h1>
+        <span
+          class="bg-secondary-container text-on-secondary-container px-3 py-0.5 rounded-full text-[10px] font-bold tracking-widest uppercase ml-2 flex items-center gap-1"
+        >
+          <span
+            class="material-symbols-outlined text-[12px]"
+            style="font-variation-settings: 'FILL' 1"
+            >workspace_premium</span
+          >
+          PRO USER
+        </span>
+      </div>
+      <div class="flex items-center gap-4">
+        <button
+          class="material-symbols-outlined text-slate-500 hover:bg-slate-100 dark:hover:bg-indigo-900/20 transition-colors p-2 rounded-xl"
+          data-icon="cloud_done"
+        >
+          cloud_done
+        </button>
+        <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20">
+          <img
+            class="w-full h-full object-cover"
+            data-alt="Portrait of a professional man with glasses in a creative studio setting"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQEcV_FuVbIlk_NjAnnxjZVCcoTcr6Q27ynWL7dyXlV8zoGCqFMkvt48nQFBOaCP8hxTpVOmlTzinFnujKi9whcjSNrJ6Iuakt1EYbnyo98j6Pd7IsaBEV7TRG4ni77mk5ZciXuviE8fJvvhyPgms8E-mKO5_hEzX1juyvg09x0ByfTUaz0z8Mck_HgodrqBGUW6HnmdJWxpN7WIkndMHIBrhHDNk0w04nM6mhJq_SnDDmZ4IE9soR-xTaAXNTTTMr23rkHn2CWFnQ"
+          />
+        </div>
+      </div>
+    </header>
+    <!-- Main Content: Scientific Calculator Canvas -->
+    <main class="flex-1 flex flex-col max-w-lg mx-auto w-full relative">
+      <!-- Cloud Tape / History History Section -->
+      <section class="flex-none p-6 space-y-6 overflow-y-auto hide-scrollbar max-h-[265px]">
+        <div class="flex justify-between items-center opacity-50">
+          <span class="text-[10px] font-bold tracking-widest text-primary uppercase"
+            >Cloud Tape History</span
+          >
+          <span class="material-symbols-outlined text-sm" data-icon="history">history</span>
+        </div>
+        <div class="space-y-4">
+          <div class="flex flex-col items-end group">
+            <span class="text-on-surface-variant font-label text-xs tracking-tight"
+              >sin(45) * log(100)</span
+            >
+            <span class="text-primary font-headline text-lg font-bold">1.41421356</span>
+          </div>
+          <div class="flex flex-col items-end group bg-surface-container-low p-3 rounded-xl">
+            <span class="text-on-surface-variant font-label text-xs tracking-tight"
+              >√(144) + 2^3</span
+            >
+            <span class="text-primary font-headline text-lg font-bold">20</span>
+          </div>
+          <div class="flex flex-col items-end group">
+            <span class="text-on-surface-variant font-label text-xs tracking-tight"
+              >ln(e) * 50</span
+            >
+            <span class="text-primary font-headline text-lg font-bold">50</span>
+          </div>
+        </div>
+      </section>
+      <!-- Dynamic Result Display (Ethereal Logic Styling) -->
+      <section class="flex-none px-6 pt-2 pb-8 text-right">
+        <div class="space-y-1">
+          <div
+            class="text-on-surface-variant text-sm font-label flex items-center justify-end gap-2"
+          >
+            <span class="bg-surface-container-highest px-2 py-0.5 rounded-md text-[10px]">RAD</span>
+            <span>tan(π/4)</span>
+          </div>
+          <div
+            class="text-6xl font-extrabold font-headline tracking-tighter text-on-surface break-all"
+          >
+            1
+          </div>
+        </div>
+      </section>
+      <!-- Calculator Keypad Surface -->
+      <section class="flex-1 bg-surface-container rounded-t-[2.5rem] p-6 shadow-2xl">
+        <!-- Functional Grid -->
+        <div class="grid grid-cols-5 gap-3 h-full content-start">
+          <!-- Row 1: Scientific Ops -->
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90"
+          >
+            sin
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90"
+          >
+            cos
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90"
+          >
+            tan
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90"
+          >
+            deg
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-highest text-on-surface font-bold hover:bg-slate-300 transition-all active:scale-90"
+          >
+            AC
+          </button>
+          <!-- Row 2 -->
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90"
+          >
+            log
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90"
+          >
+            ln
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90"
+          >
+            (
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90"
+          >
+            )
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-highest text-on-surface font-bold hover:bg-slate-300 transition-all active:scale-90"
+          >
+            <span class="material-symbols-outlined" data-icon="backspace">backspace</span>
+          </button>
+          <!-- Row 3 -->
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90"
+          >
+            √
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90"
+          >
+            7
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90"
+          >
+            8
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90"
+          >
+            9
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-primary text-on-primary font-bold text-2xl hover:brightness-110 transition-all active:scale-90"
+          >
+            ÷
+          </button>
+          <!-- Row 4 -->
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90"
+          >
+            xʸ
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90"
+          >
+            4
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90"
+          >
+            5
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90"
+          >
+            6
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-primary text-on-primary font-bold text-2xl hover:brightness-110 transition-all active:scale-90"
+          >
+            ×
+          </button>
+          <!-- Row 5 -->
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90"
+          >
+            π
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90"
+          >
+            1
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90"
+          >
+            2
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90"
+          >
+            3
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-primary text-on-primary font-bold text-2xl hover:brightness-110 transition-all active:scale-90"
+          >
+            −
+          </button>
+          <!-- Row 6 -->
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-lowest text-primary font-semibold hover:bg-white transition-all active:scale-90"
+          >
+            e
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90"
+          >
+            0
+          </button>
+          <button
+            class="h-14 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface font-headline text-xl font-bold hover:brightness-95 transition-all active:scale-90"
+          >
+            .
+          </button>
+          <button
+            class="h-14 col-span-2 flex items-center justify-center rounded-xl signature-cta text-on-primary font-bold text-3xl shadow-lg shadow-primary/30 hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
+          >
+            =
+          </button>
+        </div>
+        <!-- Contextual Quick Settings -->
+        <div class="mt-8 flex items-center justify-between">
+          <div class="flex gap-2">
+            <button
+              class="bg-surface-container-highest/50 p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-highest"
+            >
+              <span class="material-symbols-outlined text-[20px]" data-icon="settings"
+                >settings</span
+              >
+            </button>
+            <button
+              class="bg-surface-container-highest/50 p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-highest"
+            >
+              <span class="material-symbols-outlined text-[20px]" data-icon="share">share</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-bold text-primary tracking-widest uppercase"
+              >Precision: 8</span
+            >
+            <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- BottomNavBar Component -->
+    <nav
+      class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-[0_-4px_20px_0_rgba(79,70,229,0.05)] rounded-t-2xl"
+    >
+      <a
+        class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-1.5 hover:text-indigo-500 transition-transform active:scale-90"
+        href="#"
+      >
+        <span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+        <span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1"
+          >Standard</span
+        >
+      </a>
+      <a
+        class="flex flex-col items-center justify-center bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded-xl px-5 py-1.5 transition-transform active:scale-90"
+        href="#"
+      >
+        <span
+          class="material-symbols-outlined"
+          data-icon="science"
+          style="font-variation-settings: 'FILL' 1"
+          >science</span
+        >
+        <span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1"
+          >Scientific</span
+        >
+      </a>
+      <a
+        class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-1.5 hover:text-indigo-500 transition-transform active:scale-90"
+        href="#"
+      >
+        <span class="material-symbols-outlined" data-icon="payments">payments</span>
+        <span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1"
+          >Pricing</span
+        >
+      </a>
+    </nav>
+    <!-- Spacer for fixed nav -->
+    <div class="h-24"></div>
+    <!-- Footer Component -->
+    <footer
+      class="w-full py-12 px-8 flex flex-col md:flex-row justify-between items-center gap-6 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-900"
+    >
+      <div class="flex flex-col items-center md:items-start gap-2">
+        <span class="font-manrope font-bold text-slate-900 dark:text-white"
+          >OmniCalc Ethereal Logic</span
+        >
+        <p class="font-inter text-xs text-slate-500 dark:text-slate-400">
+          © 2024 OmniCalc Ethereal Logic. All rights reserved.
+        </p>
+      </div>
+      <div class="flex gap-8">
+        <a
+          class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80"
+          href="#"
+          >Terms</a
+        >
+        <a
+          class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80"
+          href="#"
+          >Privacy</a
+        >
+        <a
+          class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80"
+          href="#"
+          >Support</a
+        >
+        <a
+          class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80"
+          href="#"
+          >Contact</a
+        >
+      </div>
+    </footer>
+  </body>
+</html>

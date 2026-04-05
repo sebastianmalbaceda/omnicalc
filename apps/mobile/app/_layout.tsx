@@ -16,7 +16,7 @@ function AuthInitializer({ children }: { children: React.ReactNode }): React.Rea
   const { setUser, isLoading } = useAuthStore();
 
   useEffect(() => {
-    async function loadSession() {
+    async function loadSession(): Promise<void> {
       console.log('[Auth] Checking session...');
       const session = await getSession();
       if (session?.user) {
