@@ -20,8 +20,8 @@ export function Display({
   return (
     <View
       className={`
-        flex-col justify-end items-end p-6
-        ${isDark ? 'bg-[#1A1A2E]' : 'bg-[#FAFAFA]'}
+        flex-col justify-end items-end p-8 pb-10
+        ${isDark ? 'bg-[#f7f9fb]' : 'bg-[#f7f9fb]'}
         rounded-3xl
         ${className}
       `}
@@ -29,8 +29,9 @@ export function Display({
       {expression ? (
         <Text
           className={`
-            text-body-md mb-2 font-mono
-            ${isDark ? 'text-[#A0A0B8]' : 'text-[#505F76]'}
+            text-[14px] tracking-wide mb-2
+            ${isDark ? 'text-[#a0a0b8]' : 'text-[#464555]'}
+            opacity-60
           `}
           numberOfLines={1}
           adjustsFontSizeToFit
@@ -40,8 +41,8 @@ export function Display({
       ) : null}
       <Text
         className={`
-          text-display-xl font-light font-display
-          ${isError ? 'text-[#DC2626]' : isDark ? 'text-white' : 'text-[#1A1A2A]'}
+          text-[60px] font-extrabold tracking-tighter
+          ${isError ? 'text-[#DC2626]' : isDark ? 'text-[#e8e8f0]' : 'text-[#191c1e]'}
         `}
         numberOfLines={1}
         adjustsFontSizeToFit

@@ -2,50 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @omnicalc/mobile — Uses shared design system CSS variables */
-
 :root {
-  /* Primary Colors */
-  --primary-50: #eef2ff;
-  --primary-400: #6366f1;
-  --primary-500: #4648d4;
-  --primary-600: #3730a3;
-
-  /* Surface Colors - Light */
-  --surface: #ffffff;
-  --surface-container-low: #fafafa;
-  --surface-container: #f5f5fa;
-  --surface-container-high: #ededf3;
-  --surface-dark: #0a0a0f;
-  --surface-dark-container-low: #1a1a2e;
-  --surface-dark-container: #141420;
-
-  /* On Surface Colors - Light */
-  --on-surface: #1a1a2a;
-  --on-surface-variant: #505f76;
-  --on-surface-dark: #e8e8f0;
-  --on-surface-dark-variant: #a0a0b8;
-
-  /* Other */
-  --outline: #d4d4e0;
-  --error: #dc2626;
-  --white: #ffffff;
+  --primary: #392cc1;
+  --primary-container: #534ad9;
+  --on-primary: #ffffff;
+  --secondary: #4648d4;
+  --secondary-container: #6063ee;
+  --on-secondary: #ffffff;
+  --background: #f7f9fb;
+  --on-background: #191c1e;
+  --surface: #f7f9fb;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f2f4f6;
+  --surface-container: #eceef0;
+  --surface-container-high: #e6e8ea;
+  --surface-container-highest: #e0e3e5;
+  --on-surface: #191c1e;
+  --on-surface-variant: #464555;
+  --outline: #777587;
+  --outline-variant: #c7c4d8;
+  --error: #ba1a1a;
 }
 
-/* Dark mode - these override the above */
-:root.dark,
-html.dark {
+.dark {
+  --primary: #c3c0ff;
+  --primary-container: #372abf;
+  --on-primary: #ffffff;
+  --secondary: #c0c1ff;
+  --secondary-container: #2f2ebe;
+  --on-secondary: #ffffff;
+  --background: #0a0a0f;
+  --on-background: #e8e8f0;
   --surface: #0a0a0f;
+  --surface-container-lowest: #141420;
   --surface-container-low: #1a1a2e;
   --surface-container: #141420;
   --surface-container-high: #1e1e32;
+  --surface-container-highest: #252540;
   --on-surface: #e8e8f0;
   --on-surface-variant: #a0a0b8;
   --outline: #3d3d5c;
+  --outline-variant: #3d3d5c;
   --error: #f87171;
 }
 
-/* Dark mode styles for web */
+.signature-gradient {
+  background: linear-gradient(135deg, #392cc1 0%, #534ad9 100%);
+}
+
+.dark .signature-gradient {
+  background: linear-gradient(135deg, #372abf 0%, #534ad9 100%);
+}
+
 html.dark body {
   background-color: var(--surface);
   color: var(--on-surface);
@@ -54,9 +62,4 @@ html.dark body {
 html.light body {
   background-color: var(--surface);
   color: var(--on-surface);
-}
-
-html.light body {
-  background-color: #ffffff;
-  color: #1a1a2a;
 }

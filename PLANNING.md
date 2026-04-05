@@ -1,8 +1,8 @@
 # OmniCalc — Planning
 
-> **Current Phase:** Phase 3 — SaaS Infrastructure
-> **Sprint:** Sprint 4 (Monetization + Desktop)
-> **Last Updated:** 2026-03-30
+> **Current Phase:** Phase 5 — Desktop + Launch ✅ COMPLETE
+> **Sprint:** All sprints complete
+> **Last Updated:** 2026-04-05
 
 ---
 
@@ -219,49 +219,39 @@ _This file is updated at the start of each development cycle._
 
 ---
 
-## Phase 5: Desktop + Landing (Future)
-
-> See [ROADMAP.md](ROADMAP.md) for details on Electron app and landing page.
-
----
-
-## Phase 5: Desktop + Landing (BUILD Phase) ✅
+## Phase 5: Desktop + Launch ✅ COMPLETE
 
 > [!IMPORTANT]  
 > **Status:** COMPLETE ✅
-> Electron desktop app and landing page built.
+> All 3 platforms unified — mobile is the single source of truth.
 
 ### Completed
 
-- [x] **Landing Page** - `apps/web/public/index.html` - Full landing page with features, pricing, CTA
-- [x] **Electron Main Process** - `apps/desktop/main/index.ts` - Window management, IPC handlers
-- [x] **Electron Preload** - `apps/desktop/preload.ts` - Secure context bridge
-- [x] **Electron Renderer** - Calculator app with keyboard support
-- [x] **Build Scripts** - `scripts/build-main.js`, `scripts/build-renderer.js`, `scripts/build.js`
-- [x] **Desktop Styles** - `apps/desktop/renderer/styles.css` - Design system tokens
+- [x] **Unified Server** - `apps/web/src/server/dev.ts` — serves mobile/dist SPA + API routes
+- [x] **Electron Main Process** - `apps/desktop/main/index.ts` — loads http://localhost:3000
+- [x] **Mobile Web Export** - `npx expo export --platform web` → `apps/mobile/dist/`
+- [x] **Architecture Simplified** — removed duplicate React apps from web and desktop
+- [x] **All Platforms Identical** — web, mobile, and desktop serve the same mobile UI
 
 ### Desktop App Structure
 
 ```
 apps/desktop/
-├── main/index.ts       # Main process (window, IPC)
-├── preload.ts         # Context bridge
-├── renderer/
-│   ├── index.html    # Calculator UI
-│   ├── index.ts      # App logic
-│   └── styles.css     # Styles
-└── scripts/
-    ├── build-main.js
-    ├── build-renderer.js
-    └── build.js
+├── main/index.ts       # Electron main process (loads :3000)
+└── dist/main/          # Compiled output (generated)
 ```
 
-### To Run Desktop App
+### To Run
 
 ```bash
-cd apps/desktop
-pnpm build
-pnpm start
+# Terminal 1: Unified server (mobile SPA + API)
+pnpm dev:web
+
+# Terminal 2: Mobile dev (Expo with HMR)
+pnpm dev:mobile
+
+# Terminal 3: Desktop (Electron shell)
+pnpm dev:desktop
 ```
 
 ---

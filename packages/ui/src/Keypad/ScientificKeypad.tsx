@@ -16,28 +16,6 @@ interface ScientificKeypadProps {
   className?: string;
 }
 
-const SCIENTIFIC_FUNCTIONS: { label: string; fn: ScientificFunction }[][] = [
-  [
-    { label: 'sin', fn: 'sin' },
-    { label: 'cos', fn: 'cos' },
-    { label: 'tan', fn: 'tan' },
-  ],
-  [
-    { label: 'asin', fn: 'asin' },
-    { label: 'acos', fn: 'acos' },
-    { label: 'atan', fn: 'atan' },
-  ],
-  [
-    { label: 'log', fn: 'log' },
-    { label: 'ln', fn: 'ln' },
-    { label: '√', fn: 'sqrt' },
-  ],
-  [
-    { label: 'x²', fn: 'square' },
-    { label: 'n!', fn: 'factorial' },
-  ],
-];
-
 export function ScientificKeypad({
   onFunction,
   onInputPi,
@@ -54,10 +32,10 @@ export function ScientificKeypad({
   if (!isPro) {
     return (
       <View className={className}>
-        <View className={`${isDark ? 'bg-[#1A1A2E]' : 'bg-[#F5F5FA]'} rounded-2xl p-4 opacity-60`}>
+        <View className={`${isDark ? 'bg-[#1a1a2e]' : 'bg-[#f5f5fa]'} rounded-2xl p-4 opacity-60`}>
           <View className="flex-row justify-center items-center mb-4">
             <View
-              className={`${isDark ? 'bg-[#6366F1]/10 rounded-full px-4 py-2' : 'bg-[#4648D4]/10 rounded-full px-4 py-2'}`}
+              className={`${isDark ? 'bg-[#6366f1]/10' : 'bg-[#4648d4]/10'} rounded-full px-4 py-2`}
             >
               <Button label="Upgrade to Pro" onPress={onUpgradeToPro} variant="primary" />
             </View>
@@ -68,24 +46,26 @@ export function ScientificKeypad({
   }
 
   return (
-    <View className={`gap-1 ${className}`}>
-      <View className="flex-row gap-1">
+    <View className={`gap-3 ${className}`}>
+      <View className="flex-row gap-3">
+        <Button label="sin" onPress={() => onFunction('sin')} variant="function" />
+        <Button label="cos" onPress={() => onFunction('cos')} variant="function" />
+        <Button label="tan" onPress={() => onFunction('tan')} variant="function" />
+        <Button label="deg" onPress={() => onFunction('sin')} variant="function" />
+        <Button label="AC" onPress={() => {}} variant="memory" />
+      </View>
+      <View className="flex-row gap-3">
+        <Button label="log" onPress={() => onFunction('log')} variant="function" />
+        <Button label="ln" onPress={() => onFunction('ln')} variant="function" />
         <Button label="(" onPress={() => onParenthesis('(')} variant="function" />
         <Button label=")" onPress={() => onParenthesis(')')} variant="function" />
+        <Button label="⌫" onPress={() => {}} variant="memory" />
+      </View>
+      <View className="flex-row gap-3">
+        <Button label="√" onPress={() => onFunction('sqrt')} variant="function" />
         <Button label="π" onPress={onInputPi} variant="function" />
         <Button label="e" onPress={onInputE} variant="function" />
-      </View>
-      {SCIENTIFIC_FUNCTIONS.map((row, rowIndex) => (
-        <View key={rowIndex} className="flex-row gap-1">
-          {row.map(({ label, fn }) => (
-            <View key={label} className="flex-1">
-              <Button label={label} onPress={() => onFunction(fn)} variant="function" />
-            </View>
-          ))}
-        </View>
-      ))}
-      <View className="flex-row gap-1">
-        <Button label="xⁿ" onPress={onPower} variant="function" />
+        <Button label="xʸ" onPress={onPower} variant="function" />
         <Button label="1/x" onPress={onReciprocal} variant="function" />
       </View>
     </View>

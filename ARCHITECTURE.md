@@ -1,57 +1,55 @@
 # OmniCalc — System Architecture
 
-> **Version:** 0.2.0
-> **Last Updated:** 2026-03-31
-> **Status:** Production Ready
+> **Version:** 0.3.0
+> **Last Updated:** 2026-04-05
+> **Status:** Unified Multiplatform
 
 ---
 
 ## 1. Architecture Overview
 
-OmniCalc follows a **monorepo architecture** managed by Turborepo. The key innovation is that **Mobile (Expo + React Native) is the single source of truth** for the UI, which is then rendered identically on all platforms.
+OmniCalc follows a **monorepo architecture** managed by Turborepo. The key principle is that **Mobile (Expo + React Native) is the single source of truth** for the UI, which is then rendered identically on all platforms.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                    MOBILE (SOURCE OF TRUTH)                          │
 │  ┌─────────────────────────────────────────────────────────────┐    │
 │  │  Expo + React Native + Expo Router                          │    │
-│  │  • <View> → UIView (iOS) / ViewGroup (Android)          │    │
-│  │  • <Text> → UILabel (iOS) / TextView (Android)          │    │
-│  │  • <View> → <div> (Web via react-native-web)             │    │
-│  │  • Single codebase for ALL platforms                       │    │
+│  │  • apps/mobile/app/ — all screens (calculator, login)       │    │
+│  │  • apps/mobile/stores/ — Zustand state                      │    │
+│  │  • apps/mobile/lib/ — auth, API client                      │    │
 │  └─────────────────────────────────────────────────────────────┘    │
 │                              │                                       │
 │                              │ npx expo export --platform web        │
 │                              ▼                                       │
 │  ┌─────────────────────────────────────────────────────────────┐    │
-│  │  apps/mobile/dist (Static Web Export)                      │    │
-│  │  • Single Page Application (SPA)                           │    │
-│  │  • Pure HTML + CSS + JavaScript                           │    │
-│  │  • Works in ANY browser                                   │    │
+│  │  apps/mobile/dist (Static Web Export — SPA)                │    │
+│  │  • Pure HTML + CSS + JavaScript via react-native-web       │    │
+│  │  • Works in ANY browser                                    │    │
 │  └─────────────────────────────────────────────────────────────┘    │
-│                    │                       │                        │
 │                    │                       │                        │
 │     ┌──────────────┘                       └──────────────┐        │
 │     ▼                                                     ▼        │
-│  ┌──────────────┐                                        ┌───────┴───────┐
-│  │  Web Server │                                        │   Desktop     │
-│  │  (Hono)    │                                        │   (Electron)  │
-│  │  :3000      │                                        │   :3000       │
-│  │  Serves     │                                        │   Loads       │
-│  │  mobile/dist│                                        │   localhost    │
-│  └──────────────┘                                        └───────────────┘
+│  ┌──────────────┐                                        ┌─────────┐
+│  │  Web Server  │                                        │ Desktop │
+│  │  (Hono)      │                                        │ (Elect) │
+│  │  :3000       │                                        │ :3000   │
+│  │  Serves      │                                        │ Loads   │
+│  │  mobile/dist │                                        │ localhost│
+│  │  + /api/*    │                                        │         │
+│  └──────────────┘                                        └─────────┘
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
 ### The Multiplatform Magic: React Native Web
 
-When you write `<View>` and `<Text>` in React Native:
+When you write `<View>`, `<Text>`, `<Pressable>` in React Native:
 
-- **iOS**: Translated to `UIView` and `UILabel` (100% native)
-- **Android**: Translated to `ViewGroup` and `TextView` (100% native)
-- **Web**: Expo uses `react-native-web` which translates to `<div>` and `<span>`
+- **iOS**: Translated to `UIView`, `UILabel`, native touchable (100% native)
+- **Android**: Translated to `ViewGroup`, `TextView`, native touchable (100% native)
+- **Web**: Expo uses `react-native-web` which translates to `<div>`, `<span>`, `<button>`
 
-**You write ONCE, renders EVERYWHERE natively.**
+**You write ONCE, renders EVERYWHERE identically.**
 
 ---
 
@@ -59,31 +57,32 @@ When you write `<View>` and `<Text>` in React Native:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│  DEVELOPER WORKFLOW                                                │
-│                                                                     │
-│  1. Code in apps/mobile/ (React Native + Expo)                    │
-│                     │                                               │
-│                     ▼                                               │
-│  2. npx expo export --platform web                                 │
-│                     │                                               │
-│                     ▼                                               │
-│  3. apps/mobile/dist (static files)                               │
-│                     │                                               │
-│         ┌───────────┴───────────┐                                  │
-│         ▼                       ▼                                  │
-│  ┌──────────────┐      ┌───────────────┐                          │
-│  │ Web Server   │      │ Desktop      │                          │
-│  │ (Hono)      │      │ (Electron)   │                          │
-│  │ Serves :3000│      │ Loads :3000   │                          │
-│  └──────────────┘      └───────────────┘                          │
-│                                                                     │
-│  USER EXPERIENCE                                                   │
-│                                                                     │
-│  • Mobile: Native app (iOS/Android)                                │
-│  • Web: Browser (Chrome/Safari/Firefox)                           │
-│  • Desktop: Electron window                                        │
-│                                                                     │
-│  ALL THREE SEE EXACTLY THE SAME UI                                 │
+│  DEVELOPER WORKFLOW                                                 │
+│                                                                      │
+│  1. Edit code in apps/mobile/ (React Native + Expo)                 │
+│                     │                                                │
+│                     ▼                                                │
+│  2. npx expo export --platform web                                  │
+│                     │                                                │
+│                     ▼                                                │
+│  3. apps/mobile/dist (static SPA files)                             │
+│                     │                                                │
+│         ┌───────────┴───────────┐                                   │
+│         ▼                       ▼                                   │
+│  ┌──────────────┐      ┌───────────────┐                           │
+│  │ Web Server   │      │ Desktop       │                           │
+│  │ (Hono)       │      │ (Electron)    │                           │
+│  │ Serves :3000 │      │ Loads :3000   │                           │
+│  │ + API routes │      │               │                           │
+│  └──────────────┘      └───────────────┘                           │
+│                                                                      │
+│  USER EXPERIENCE                                                     │
+│                                                                      │
+│  • Mobile: Native app (iOS/Android) via Expo Go / EAS Build         │
+│  • Web: Browser at http://localhost:3000                             │
+│  • Desktop: Electron window loading http://localhost:3000            │
+│                                                                      │
+│  ALL THREE SEE EXACTLY THE SAME UI                                   │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -94,50 +93,65 @@ When you write `<View>` and `<Text>` in React Native:
 ```
 omnicalc/
 ├── apps/
-│   ├── mobile/                    # ⭐ SINGLE SOURCE OF TRUTH
+│   ├── mobile/                    # ⭐ SINGLE SOURCE OF TRUTH (UI)
 │   │   ├── app/                   # Expo Router pages
-│   │   │   ├── _layout.tsx       # Root layout with navigation
+│   │   │   ├── _layout.tsx       # Root layout with ThemeProvider
 │   │   │   ├── index.tsx         # Calculator screen
 │   │   │   └── login.tsx         # Auth screen
 │   │   ├── lib/                  # Auth, API client
-│   │   ├── stores/               # Zustand state
-│   │   ├── components/           # Shared components
-│   │   └── dist/                 # Web export (generated)
+│   │   ├── stores/               # Zustand stores (calculator, auth)
+│   │   ├── global.css            # Design system CSS variables
+│   │   └── dist/                 # Web export (generated by expo export)
 │   │
-│   ├── web/                      # Static file server + API
+│   ├── web/                      # Hono unified server (API + SPA)
 │   │   └── src/
-│   │       └── server/           # Hono API server
-│   │           ├── serve.ts       # Static file server (serves mobile/dist)
-│   │           ├── index.ts       # Hono app with API routes
-│   │           ├── auth.ts        # Better Auth config
-│   │           └── stripe.ts      # Stripe webhook handler
+│   │       └── server/           # All server code
+│   │           ├── dev.ts        # Dev server: serves mobile/dist + API
+│   │           ├── serve.ts      # Production server
+│   │           ├── index.ts      # Hono app with API routes
+│   │           ├── auth.ts       # Better Auth configuration
+│   │           └── stripe.ts     # Stripe checkout + webhooks
 │   │
-│   └── desktop/                   # Electron wrapper
+│   └── desktop/                  # Electron shell (thin wrapper)
 │       └── main/
 │           └── index.ts          # Loads http://localhost:3000
 │
 ├── packages/
 │   ├── ui/                       # Shared React Native components
 │   │   └── src/
-│   │       ├── Display.tsx        # Calculator display
-│   │       ├── NumericKeypad.tsx # 0-9, decimal
-│   │       ├── OperatorKeypad.tsx # +, -, ×, ÷, =
-│   │       ├── ScientificKeypad.tsx
-│   │       ├── HistoryPanel.tsx
-│   │       └── ThemeProvider.tsx
+│   │       ├── Button/           # Calculator buttons
+│   │       ├── Display/          # Calculator display
+│   │       ├── Keypad/           # Numeric, Operator, Scientific
+│   │       ├── HistoryPanel/     # Cloud Tape history
+│   │       ├── ThemeProvider/    # Light/dark theme context
+│   │       └── styles/           # Design system CSS
 │   │
 │   ├── core-math/                # Pure math engine (no UI deps)
 │   │   └── src/
 │   │       ├── calculator.ts     # State machine
 │   │       ├── operations.ts     # +, -, ×, ÷
 │   │       ├── scientific.ts     # sin, cos, tan, log, etc.
-│   │       └── parser.ts         # Expression evaluation
+│   │       ├── parser.ts         # Expression evaluation
+│   │       ├── constants.ts      # π, e
+│   │       ├── types.ts          # TypeScript types
+│   │       └── errors.ts         # Error classes
 │   │
-│   └── db/                       # Prisma schema + client
-│       └── prisma/schema.prisma
+│   ├── db/                       # Prisma schema + client
+│   │   └── prisma/schema.prisma
+│   │
+│   └── tsconfig/                 # Shared TypeScript configs
+│       ├── base.json
+│       ├── node.json
+│       └── react.json
 │
-├── turbo.json
-├── package.json
+├── docs/
+│   ├── adr/                      # Architecture Decision Records
+│   ├── design-system.md          # Visual design tokens
+│   └── math-engine.md            # Math engine specifications
+│
+├── .agents/                      # AI agent skills
+├── turbo.json                    # Turborepo config
+├── package.json                  # Root scripts
 └── pnpm-workspace.yaml
 ```
 
@@ -145,26 +159,26 @@ omnicalc/
 
 ## 4. Running the App
 
-### Development Mode (All 3 Platforms)
+### Development Mode
 
 ```bash
-# Terminal 1: Web server (serves mobile export on :3000)
-cd apps/web/dist/server
-node serve.js
+# Terminal 1: Web server (serves mobile/dist SPA + API on :3000)
+pnpm dev:web
 
-# Terminal 2: Mobile dev server (hot reload on :8081)
-cd apps/mobile
-npx expo start --web
+# Terminal 2: Mobile dev server (Expo with HMR on :19006)
+pnpm dev:mobile
 
-# Terminal 3: Desktop (loads localhost:3000)
-cd apps/desktop
-npx electron . --no-sandbox
+# Terminal 3: Desktop (Electron shell loading :3000)
+pnpm dev:desktop
+
+# Or run all at once:
+pnpm dev
 ```
 
 ### Production Build
 
 ```bash
-# 1. Export mobile to web
+# 1. Export mobile to web (SPA)
 cd apps/mobile
 npx expo export --platform web
 
@@ -172,8 +186,11 @@ npx expo export --platform web
 cd apps/web
 pnpm build:server
 
-# 3. Build desktop
+# 3. Build Electron main process
 cd apps/desktop
+pnpm build
+
+# Or build everything:
 pnpm build
 ```
 
@@ -181,29 +198,28 @@ pnpm build
 
 ## 5. Key Principles
 
-### 5.1 Universal Primitives
+### 5.1 Single Source of Truth
 
-```tsx
-// This code runs NATIVELY on iOS, Android, AND renders to HTML on web
+All UI lives in `apps/mobile/`. Web and desktop consume the same build:
 
-import { View, Text, Pressable } from 'react-native';
+- **Web**: Hono server serves `apps/mobile/dist` as a SPA + handles `/api/*` routes
+- **Desktop**: Electron `BrowserWindow` loads `http://localhost:3000`
+- **Mobile**: Expo renders natively on iOS/Android
 
-function CalculatorButton({ label, onPress }) {
-  return (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-    >
-      <Text style={styles.buttonText}>{label}</Text>
-    </Pressable>
-  );
-}
+### 5.2 Platform-Specific Files
+
+When you need different behavior per platform, use Expo's file extensions:
+
+```
+components/
+├── BotonInstalar.tsx        # Shared (default)
+├── BotonInstalar.web.tsx    # Web/Desktop overrides
+└── BotonInstalar.native.tsx # Mobile overrides
 ```
 
-- **Mobile**: `Pressable` → Native touchable component
-- **Web**: `Pressable` → `<button>` via react-native-web
+### 5.3 Adaptive Design
 
-### 5.2 Adaptive Design
+The same UI adapts to different screen sizes using `useWindowDimensions`:
 
 ```tsx
 import { useWindowDimensions } from 'react-native';
@@ -211,127 +227,46 @@ import { useWindowDimensions } from 'react-native';
 function AppLayout({ children }) {
   const { width } = useWindowDimensions();
 
-  // Desktop/web: show sidebar
+  // Desktop/web: wider layout
   if (width >= 768) {
-    return <SidebarLayout>{children}</SidebarLayout>;
+    return <WideLayout>{children}</WideLayout>;
   }
 
-  // Mobile: show bottom tabs
-  return <BottomTabLayout>{children}</BottomTabLayout>;
+  // Mobile: compact layout
+  return <MobileLayout>{children}</MobileLayout>;
 }
-```
-
-### 5.3 Platform-Specific Files
-
-When you need different behavior per platform:
-
-```
-components/
-├── BotonInstalar.tsx      # Shared logic
-├── BotonInstalar.web.tsx   # Web/Desktop (hover effects, keyboard)
-└── BotonInstalar.native.tsx # Mobile (haptic feedback)
 ```
 
 ---
 
 ## 6. Deployment
 
-| Platform    | Source                  | Output       | Deployment      |
-| ----------- | ----------------------- | ------------ | --------------- |
-| **iOS**     | `apps/mobile`           | Native app   | Expo EAS        |
-| **Android** | `apps/mobile`           | APK/AAB      | Expo EAS        |
-| **Web**     | `apps/mobile` → `dist/` | Static files | Vercel/Netlify  |
-| **Desktop** | `apps/mobile` → `dist/` | Electron     | GitHub Releases |
+| Platform    | Source                  | Output     | Deployment      |
+| ----------- | ----------------------- | ---------- | --------------- |
+| **iOS**     | `apps/mobile`           | Native app | Expo EAS        |
+| **Android** | `apps/mobile`           | APK/AAB    | Expo EAS        |
+| **Web**     | `apps/mobile` → `dist/` | Static SPA | Vercel/Netlify  |
+| **Desktop** | `apps/mobile` → `dist/` | Electron   | GitHub Releases |
 
 ---
 
 ## 7. External Services
 
-| Service     | Purpose                            |
-| ----------- | ---------------------------------- |
-| Neon        | PostgreSQL database                |
-| Better Auth | Authentication                     |
-| Stripe      | Web/Desktop payments               |
-| RevenueCat  | Mobile payments (iOS/Android)      |
-| Expo        | Mobile builds + push notifications |
-| Sentry      | Error monitoring                   |
+| Service     | Purpose                            | Config               |
+| ----------- | ---------------------------------- | -------------------- |
+| Neon        | PostgreSQL database                | `DATABASE_URL`       |
+| Better Auth | Authentication                     | `BETTER_AUTH_SECRET` |
+| Stripe      | Web/Desktop payments               | `STRIPE_SECRET_KEY`  |
+| RevenueCat  | Mobile payments (iOS/Android)      | `REVENUECAT_API_KEY` |
+| Expo EAS    | Mobile builds + push notifications | Expo account         |
+| Resend      | Transactional emails               | `RESEND_API_KEY`     |
+| Sentry      | Error monitoring                   | `SENTRY_DSN`         |
 
 ---
 
-_Document version: 0.2.0 - Multiplatform architecture confirmed working_
+## 8. Data Flow
 
----
-
-## 3. Component Responsibilities
-
-### 3.1 `apps/web` — Backend for Frontend (BFF)
-
-- **Framework:** Hono
-- **Deployment:** Vercel (or Railway)
-- **Responsibilities:**
-  - API routes for authentication (Better Auth integration)
-  - API routes for CRUD operations on calculations and settings
-  - Stripe webhook handler
-  - RevenueCat webhook handler
-  - Landing page serving
-  - CORS, rate limiting, and security middleware
-
-### 3.2 `apps/mobile` — Expo Universal App
-
-- **Framework:** Expo + Expo Router
-- **Deployment:** Expo EAS (iOS/Android) + Vercel (Web export)
-- **Responsibilities:**
-  - Universal calculator UI (iOS, Android, Web)
-  - Zustand state management
-  - TanStack Query for API communication
-  - RevenueCat SDK for mobile payments
-  - Offline-first calculation storage
-
-### 3.3 `apps/desktop` — Electron App
-
-- **Framework:** Electron + React (Vite)
-- **Deployment:** GitHub Releases via GitHub Actions
-- **Responsibilities:**
-  - Native desktop experience (Windows, macOS, Linux)
-  - Reuses `packages/ui` and `packages/core-math`
-  - Stripe payment flow (opens browser for Checkout)
-  - Auto-update mechanism via Electron Updater
-
-### 3.4 `packages/core-math` — Math Engine
-
-- **Pure TypeScript** — zero React/UI dependencies
-- **Library:** decimal.js for all arithmetic
-- **Responsibilities:**
-  - All mathematical operations (basic + scientific)
-  - Expression parsing and evaluation
-  - Error handling (division by zero, overflow)
-  - 100% unit test coverage target
-- **Key rule:** No native JS arithmetic operators (`+`, `-`, `*`, `/`) for float calculations
-
-### 3.5 `packages/ui` — Shared Components
-
-- **Styling:** NativeWind (Tailwind for React Native) + Gluestack UI
-- **Responsibilities:**
-  - Button, Display, Keypad, HistoryPanel components
-  - Design tokens (colors, typography, spacing)
-  - Responsive layouts
-  - Accessibility (a11y) compliance
-
-### 3.6 `packages/db` — Database Layer
-
-- **ORM:** Prisma
-- **Database:** PostgreSQL on Neon Serverless
-- **Responsibilities:**
-  - Prisma schema definition
-  - Generated Prisma Client for type-safe queries
-  - Database migrations
-  - Seed data for development
-
----
-
-## 4. Data Flow
-
-### 4.1 Calculation Flow (Pro User)
+### 8.1 Calculation Flow
 
 ```
 User presses "=" on any device
@@ -344,30 +279,22 @@ User presses "=" on any device
          │ returns { expression, result }
          ▼
 ┌─────────────────┐
-│ Zustand Store    │  ← Updates UI state (currentValue, expression)
-│ (useCalcStore)   │  ← Saves to local queue
+│ Zustand Store    │  ← Updates UI state (display, expression)
+│ (useCalcStore)   │  ← Adds to history
 └────────┬────────┘
-         │ background mutation
+         │ (Pro users only — background sync)
          ▼
 ┌─────────────────┐
-│ TanStack Query   │  ← POST /api/calculations
-│ (mutation)       │  ← Retry with exponential backoff on failure
+│ POST /api/calc   │  ← Save to database
+│                  │
 └────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│ Hono BFF         │  ← Validates auth, checks Pro status
-│ (API route)      │
-└────────┬────────┘
-         │
          ▼
 ┌─────────────────┐
 │ Prisma → Neon    │  ← INSERT into calculations table
-│ (PostgreSQL)     │
 └─────────────────┘
 ```
 
-### 4.2 Payment Flow (Web/Desktop → Stripe)
+### 8.2 Payment Flow (Web/Desktop → Stripe)
 
 ```
 User clicks "Upgrade to Pro"
@@ -385,10 +312,10 @@ Stripe fires webhook  →  POST /api/webhooks/stripe
 Server updates users.plan = 'pro'
         │
         ▼
-Client refetches session → UI expands to Pro mode
+Client refetches session → UI unlocks Pro features
 ```
 
-### 4.3 Payment Flow (Mobile → RevenueCat)
+### 8.3 Payment Flow (Mobile → RevenueCat)
 
 ```
 User clicks "Upgrade to Pro" (iOS/Android)
@@ -406,12 +333,12 @@ RevenueCat fires webhook  →  POST /api/webhooks/revenuecat
 Server updates users.plan = 'pro'
         │
         ▼
-Client validates entitlement → UI expands to Pro mode
+Client validates entitlement → UI unlocks Pro features
 ```
 
 ---
 
-## 5. Security Architecture
+## 9. Security Architecture
 
 | Concern            | Mechanism                                                |
 | ------------------ | -------------------------------------------------------- |
@@ -422,35 +349,20 @@ Client validates entitlement → UI expands to Pro mode
 | Input Validation   | Zod schemas on all API inputs                            |
 | SQL Injection      | Prisma parameterized queries (never raw SQL)             |
 | CORS               | Strict origin allowlist                                  |
-| Rate Limiting      | Per-IP and per-user limits on API routes                 |
 | Secrets            | Environment variables only, never committed              |
 
 ---
 
-## 6. Key Architecture Decisions
+## 10. Architecture Decision Records
 
-| Decision                | Record                                         |
-| ----------------------- | ---------------------------------------------- |
-| Monorepo with Turborepo | [ADR-001](docs/adr/001-monorepo-turborepo.md)  |
-| Prisma over Drizzle ORM | [ADR-002](docs/adr/002-prisma-over-drizzle.md) |
-| Electron over Tauri     | [ADR-003](docs/adr/003-electron-over-tauri.md) |
-| Hono as BFF             | [ADR-004](docs/adr/004-hono-as-bff.md)         |
-| Better Auth             | [ADR-005](docs/adr/005-better-auth.md)         |
-
----
-
-## 7. Deployment Architecture
-
-| Component         | Platform           | Trigger           |
-| ----------------- | ------------------ | ----------------- |
-| Web + BFF         | Vercel             | Push to `main`    |
-| Database          | Neon Serverless    | Prisma migrations |
-| Mobile (iOS)      | App Store via EAS  | Release tag       |
-| Mobile (Android)  | Play Store via EAS | Release tag       |
-| Desktop (Windows) | GitHub Releases    | Release tag       |
-| Desktop (macOS)   | GitHub Releases    | Release tag       |
-| Desktop (Linux)   | GitHub Releases    | Release tag       |
+| Decision                | Record                                           |
+| ----------------------- | ------------------------------------------------ |
+| Monorepo with Turborepo | [ADR-001](docs/adr/001-monorepo-turborepo.md)    |
+| Prisma over Drizzle ORM | [ADR-002](docs/adr/002-prisma-over-drizzle.md)   |
+| Decimal.js for math     | [ADR-003](docs/adr/003-decimal-js-for-math.md)   |
+| Better Auth             | [ADR-004](docs/adr/004-better-auth.md)           |
+| Dual payment strategy   | [ADR-005](docs/adr/005-dual-payment-strategy.md) |
 
 ---
 
-_Document version: 0.1.0_
+_Document version: 0.3.0 — Unified multiplatform architecture_

@@ -24,26 +24,28 @@ export function HistoryPanel({
 
   if (!isPro) {
     return (
-      <View className={`${isDark ? 'bg-[#141420]' : 'bg-[#F5F5FA]'} rounded-2xl p-4 ${className}`}>
+      <View className={`${isDark ? 'bg-[#141420]' : 'bg-[#f2f4f6]'} rounded-2xl p-4 ${className}`}>
         <View className="flex-row justify-between items-center mb-4">
           <Text
-            className={`text-heading-md font-heading ${isDark ? 'text-white' : 'text-[#1A1A2A]'}`}
+            className={`text-[10px] font-bold tracking-widest uppercase ${isDark ? 'text-[#c3c0ff]' : 'text-[#392cc1]'}`}
           >
-            History
+            Cloud Tape History
           </Text>
-          <View className="bg-[#4648D4]/10 rounded-full px-3 py-1">
-            <Text className="text-label text-[#4648D4]">Pro</Text>
+          <View className="bg-[#4648d4]/10 rounded-full px-3 py-1">
+            <Text className="text-[10px] font-bold text-[#4648d4] uppercase tracking-wider">
+              Pro
+            </Text>
           </View>
         </View>
-        <View className={`${isDark ? 'bg-[#0A0A0F]' : 'bg-white'} rounded-xl p-4 items-center`}>
-          <Text className={`text-body-md ${isDark ? 'text-[#A0A0B8]' : 'text-[#505F76]'} mb-2`}>
-            Cloud Tape
+        <View className={`${isDark ? 'bg-[#1a1a2e]' : 'bg-[#ffffff]'} rounded-xl p-4 items-center`}>
+          <Text className={`text-[14px] ${isDark ? 'text-[#a0a0b8]' : 'text-[#464555]'} mb-3`}>
+            Upgrade to unlock Cloud Tape
           </Text>
           <Pressable
             onPress={onUpgradeToPro}
-            className={`${isDark ? 'bg-[#6366F1]' : 'bg-[#4648D4]'} rounded-full px-4 py-2 active:scale-95 transition-all`}
+            className="bg-gradient-to-br from-[#392cc1] to-[#534ad9] rounded-xl px-6 py-3 active:scale-95 transition-all shadow-lg shadow-primary/30"
           >
-            <Text className="text-button text-white uppercase tracking-widest font-heading">
+            <Text className="text-white font-bold uppercase tracking-wider text-[12px]">
               Upgrade to Pro
             </Text>
           </Pressable>
@@ -53,52 +55,48 @@ export function HistoryPanel({
   }
 
   return (
-    <View className={`${isDark ? 'bg-[#141420]' : 'bg-[#F5F5FA]'} rounded-2xl p-4 ${className}`}>
+    <View className={`${isDark ? 'bg-[#141420]' : 'bg-[#f2f4f6]'} rounded-2xl p-4 ${className}`}>
       <View className="flex-row justify-between items-center mb-4">
         <Text
-          className={`text-heading-md font-heading ${isDark ? 'text-white' : 'text-[#1A1A2A]'}`}
+          className={`text-[10px] font-bold tracking-widest uppercase ${isDark ? 'text-[#c3c0ff]' : 'text-[#392cc1]'}`}
         >
-          History
+          Cloud Tape History
         </Text>
         {entries.length > 0 && (
           <Pressable onPress={onClearHistory} className="px-3 py-1">
-            <Text className="text-label text-[#DC2626]">Clear</Text>
+            <Text className="text-[12px] font-semibold text-[#ba1a1a]">Clear</Text>
           </Pressable>
         )}
       </View>
       <ScrollView className="max-h-64" showsVerticalScrollIndicator={false}>
         {entries.length === 0 ? (
           <View className="items-center py-8">
-            <Text className={`text-body-md ${isDark ? 'text-[#A0A0B8]' : 'text-[#505F76]'}`}>
+            <Text className={`text-[14px] ${isDark ? 'text-[#a0a0b8]' : 'text-[#464555]'}`}>
               No calculations yet
             </Text>
           </View>
         ) : (
-          entries.map((entry, _index) => (
+          entries.map((entry, index) => (
             <Pressable
               key={entry.timestamp}
               onPress={() => onSelectEntry?.(entry)}
-              className={`flex-row justify-between items-center py-3 ${isDark ? 'border-white/10' : 'border-[#D4D4E0]/20'}`}
+              className={`py-3 px-3 rounded-xl ${index % 2 === 0 ? (isDark ? 'bg-[#1a1a2e]' : 'bg-[#f7f9fb]') : ''}`}
             >
-              <View className="flex-1">
-                <Text
-                  className={`text-body-md font-mono ${isDark ? 'text-[#A0A0B8]' : 'text-[#505F76]'}`}
-                  numberOfLines={1}
-                >
-                  {entry.expression}
-                </Text>
-                <Text
-                  className={`text-body-lg font-semibold ${isDark ? 'text-white' : 'text-[#1A1A2A]'}`}
-                >
-                  = {entry.result}
-                </Text>
+              <View className="flex-row justify-between items-center">
+                <View className="flex-1 items-end">
+                  <Text
+                    className={`text-[12px] tracking-tight ${isDark ? 'text-[#a0a0b8]' : 'text-[#464555]'}`}
+                    numberOfLines={1}
+                  >
+                    {entry.expression}
+                  </Text>
+                  <Text
+                    className={`text-[16px] font-bold ${isDark ? 'text-[#c3c0ff]' : 'text-[#392cc1]'}`}
+                  >
+                    {entry.result}
+                  </Text>
+                </View>
               </View>
-              <Text className={`text-label ${isDark ? 'text-[#A0A0B8]' : 'text-[#505F76]'} ml-4`}>
-                {new Date(entry.timestamp).toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </Text>
             </Pressable>
           ))
         )}

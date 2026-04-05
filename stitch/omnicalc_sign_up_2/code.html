@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create Your Account - OmniCalc</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-tertiary-container": "#ffd2be",
+            "on-primary": "#ffffff",
+            "tertiary-fixed-dim": "#ffb695",
+            "on-secondary-fixed": "#07006c",
+            "on-primary-fixed": "#100069",
+            "primary-fixed-dim": "#c3c0ff",
+            "surface-container-highest": "#e0e3e5",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6",
+            "surface-container-low": "#f2f4f6",
+            "inverse-surface": "#2d3133",
+            "tertiary-fixed": "#ffdbcc",
+            "surface-container-high": "#e6e8ea",
+            "error": "#ba1a1a",
+            "primary-fixed": "#e3dfff",
+            "background": "#f7f9fb",
+            "on-secondary-fixed-variant": "#2f2ebe",
+            "tertiary": "#7e3000",
+            "surface-tint": "#5148d7",
+            "inverse-primary": "#c3c0ff",
+            "on-tertiary-fixed-variant": "#7b2f00",
+            "on-secondary-container": "#fffbff",
+            "surface-container": "#eceef0",
+            "surface": "#f7f9fb",
+            "outline": "#777587",
+            "tertiary-container": "#a44100",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-fixed-variant": "#372abf",
+            "secondary-container": "#6063ee",
+            "on-surface": "#191c1e",
+            "on-surface-variant": "#464555",
+            "surface-bright": "#f7f9fb",
+            "on-tertiary": "#ffffff",
+            "primary": "#392cc1",
+            "surface-variant": "#e0e3e5",
+            "on-primary-container": "#dbd7ff",
+            "primary-container": "#534ad9",
+            "surface-dim": "#d8dadc",
+            "on-tertiary-fixed": "#351000",
+            "outline-variant": "#c7c4d8",
+            "on-secondary": "#ffffff",
+            "secondary": "#4648d4",
+            "inverse-on-surface": "#eff1f3",
+            "on-background": "#191c1e",
+            "secondary-fixed-dim": "#c0c1ff",
+            "secondary-fixed": "#e1e0ff",
+            "on-error-container": "#93000a"
+          },
+          fontFamily: {
+            "headline": ["Manrope"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    h1, h2, h3 {
+      font-family: 'Manrope', sans-serif;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<!-- Sign-up screen suppressed TopAppBar and BottomNavBar per shell visibility rules for transactional flows -->
+<main class="flex-grow flex items-center justify-center p-6 md:p-12 relative overflow-hidden"><a class="absolute top-6 left-6 md:top-12 md:left-12 flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors duration-200 z-20 group font-body text-sm font-semibold" href="#">
+<span class="material-symbols-outlined text-lg transition-transform group-hover:-translate-x-1">arrow_back</span>
+<span>Back</span>
+</a>
+<!-- Atmospheric Layering Background Decor -->
+<div class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden z-0">
+<div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-primary/5 blur-[120px]"></div>
+<div class="absolute bottom-[0%] right-[0%] w-[30%] h-[30%] rounded-full bg-secondary/10 blur-[100px]"></div>
+</div>
+<!-- Layout Container -->
+<div class="grid grid-cols-1 lg:grid-cols-2 max-w-6xl w-full gap-12 items-center relative z-10">
+<!-- Content Section (Editorial/Brand) -->
+<div class="hidden lg:flex flex-col space-y-8 pr-12">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="calculate">calculate</span>
+<span class="text-3xl font-extrabold font-headline tracking-tighter text-primary">OmniCalc</span>
+</div>
+<div class="space-y-4">
+<h2 class="text-5xl font-extrabold font-headline tracking-tight leading-tight text-on-surface">
+            Precision in every <br/>
+<span class="text-primary-container">Ethereal Logic.</span>
+</h2>
+<p class="text-lg text-on-surface-variant font-body max-w-md leading-relaxed">
+            Join the elite community of researchers, scientists, and architects using the world's most sophisticated computational interface.
+          </p>
+</div>
+<div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-2xl">
+<img alt="Mathematical visualization" class="object-cover w-full h-full" data-alt="Abstract 3D mathematical geometry with flowing violet and blue light trails in a dark minimalist void environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_Np7mar45IyH_1E2vKtKqEw16otKV9pYS97WYfypju6bjXmRBecVCfnYuW1vThGnA-ChMINc32SpZmrUF39o4Cqy44mPQcjNX62klXy5loKgImqFx9vk3XRPVvkAQuvDbMKOKU-mNpjrv7yiX81AZbBKR78wolMADOukAmmlhHz8T6zc5rcl0xqx0LC50NkW8uqtS_pHYS_M9jEExjjgTHmQW9nGfEuuY8MC7GUTdbsy3WJtVJZGZylVwTmKDBwONh4eF182sfsN6"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+</div>
+</div>
+<!-- Form Section (Transactional Shell) -->
+<div class="w-full max-w-md mx-auto">
+<div class="bg-surface-container-lowest p-8 md:p-10 rounded-xl shadow-[0_24px_48px_-12px_rgba(57,44,193,0.08)]">
+<div class="mb-8 text-center lg:text-left">
+<div class="lg:hidden flex justify-center mb-6">
+<span class="material-symbols-outlined text-primary text-5xl" data-icon="calculate">calculate</span>
+</div>
+<h1 class="text-3xl font-extrabold font-headline text-on-surface tracking-tight mb-2">Create Your Account</h1>
+<p class="text-on-surface-variant text-sm font-body">Start calculating with ethereal precision today.</p>
+</div>
+<form class="space-y-6">
+<!-- Full Name -->
+<div class="space-y-2">
+<label class="block text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/80 ml-1" for="full-name">Full Name</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-lg" data-icon="person">person</span>
+</div>
+<input class="w-full pl-11 pr-4 py-3.5 bg-surface-container-low border-none rounded-lg text-on-surface placeholder:text-outline/50 focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all duration-200 outline-none" id="full-name" placeholder="John Doe" type="text"/>
+</div>
+</div>
+<!-- Email -->
+<div class="space-y-2">
+<label class="block text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/80 ml-1" for="email">Email</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-lg" data-icon="mail">mail</span>
+</div>
+<input class="w-full pl-11 pr-4 py-3.5 bg-surface-container-low border-none rounded-lg text-on-surface placeholder:text-outline/50 focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all duration-200 outline-none" id="email" placeholder="name@company.com" type="email"/>
+</div>
+</div>
+<!-- Password -->
+<div class="space-y-2">
+<label class="block text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/80 ml-1" for="password">Password</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-lg" data-icon="lock">lock</span>
+</div>
+<input class="w-full pl-11 pr-12 py-3.5 bg-surface-container-low border-none rounded-lg text-on-surface placeholder:text-outline/50 focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all duration-200 outline-none" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute inset-y-0 right-0 pr-4 flex items-center text-outline hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<!-- CTA -->
+<button class="w-full py-4 bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold rounded-lg shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-[0.98] transition-all duration-150" type="submit">
+              Create Account
+            </button>
+</form>
+<!-- Social Logins -->
+<div class="mt-8">
+<div class="relative flex items-center mb-6">
+<div class="flex-grow border-t border-outline-variant/30"></div>
+<span class="flex-shrink mx-4 text-[10px] font-bold uppercase tracking-[0.2em] text-outline">Or join with</span>
+<div class="flex-grow border-t border-outline-variant/30"></div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-surface-container-low border border-transparent hover:bg-surface-container-high transition-colors group">
+<img alt="Google" class="w-5 h-5 grayscale group-hover:grayscale-0 transition-all" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1rlUzGNnu3sP39DGIFUsY8PmV3iz1p_BDG9S-i80ObqVm8e924S2JVOetZtNjXpABHVI90IBH3HHCWz_EWAZdMeiQ_nYPJv22XztJj--VD9K_JBUEMU-kPvLv2TLo9A7bk-mMGX39IpMXdcV_gDygM7o1IWAjxcDxTv9OBH1S31cdQ9Qoxc1MiMbZL43fhf8zYWYnjgAmOvqyP8mZOPRt4qcJ6XRd3U15r5yqhDTEMtM6doNPuM8_Mpoa_UQsKyLUMqGo4rDA3VbI"/>
+<span class="text-sm font-semibold text-on-surface-variant">Google</span>
+</button>
+<button class="flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-surface-container-low border border-transparent hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-xl text-on-surface" style="font-variation-settings: 'FILL' 1;">ios</span>
+<span class="text-sm font-semibold text-on-surface-variant">Apple</span>
+</button>
+</div>
+</div>
+<!-- Footer Link -->
+<p class="mt-10 text-center text-sm font-body text-on-surface-variant">
+            Already have an account? 
+            <a class="text-primary font-bold hover:underline ml-1" href="#">Sign in</a>
+</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component Template) -->
+<footer class="w-full py-12 px-8 flex flex-col md:flex-row justify-between items-center gap-6 bg-slate-50 border-t border-slate-100">
+<div class="font-manrope font-bold text-slate-900">OmniCalc Ethereal Logic</div>
+<div class="flex gap-6">
+<a class="font-inter text-xs text-slate-500 transition-all hover:opacity-80" href="#">Terms</a>
+<a class="font-inter text-xs text-slate-500 transition-all hover:opacity-80" href="#">Privacy</a>
+<a class="font-inter text-xs text-slate-500 transition-all hover:opacity-80" href="#">Support</a>
+<a class="font-inter text-xs text-slate-500 transition-all hover:opacity-80" href="#">Contact</a>
+</div>
+<div class="font-inter text-xs text-slate-500 text-center md:text-right">
+      © 2024 OmniCalc Ethereal Logic. All rights reserved.
+    </div>
+</footer>
+</body></html>

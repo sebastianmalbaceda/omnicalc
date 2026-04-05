@@ -1,27 +1,13 @@
 {
-  "extends": "@omnicalc/tsconfig/react.json",
+  "extends": "@omnicalc/tsconfig/base.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "target": "ES2020",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
+    "outDir": "dist/main",
+    "module": "CommonJS",
+    "target": "ES2022",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@omnicalc/core-math": ["../packages/core-math/src"]
-    }
+    "noEmit": false
   },
-  "include": ["src", "vite.config.ts"],
-  "exclude": ["node_modules", "dist", "out", "main", "preload.ts"]
+  "include": ["main/**/*.ts"]
 }

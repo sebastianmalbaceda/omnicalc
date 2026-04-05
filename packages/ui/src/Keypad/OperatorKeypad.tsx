@@ -12,11 +12,6 @@ interface OperatorKeypadProps {
   className?: string;
 }
 
-const OPERATOR_ROWS: Operator[][] = [
-  ['+', '-'],
-  ['*', '/'],
-];
-
 export function OperatorKeypad({
   onOperator,
   onEquals,
@@ -26,24 +21,23 @@ export function OperatorKeypad({
   className = '',
 }: OperatorKeypadProps): React.ReactElement {
   return (
-    <View className={`gap-2 ${className}`}>
-      <View className="flex-row gap-2">
+    <View className={`gap-3 ${className}`}>
+      <View className="flex-row gap-3">
         <Button label="MC" onPress={onMemoryClear} variant="memory" />
         <Button label="MR" onPress={onMemoryRecall} variant="memory" />
         <Button label="M+" onPress={onMemoryAdd} variant="memory" />
       </View>
-      {OPERATOR_ROWS.map((row, rowIndex) => (
-        <View key={rowIndex} className="flex-row gap-2">
-          {row.map((op) => (
-            <View key={op} className="flex-1">
-              <Button label={op} onPress={() => onOperator(op)} variant="operator" />
-            </View>
-          ))}
-        </View>
-      ))}
-      <View className="flex-row gap-2">
+      <View className="flex-row gap-3">
+        <Button label="+" onPress={() => onOperator('+')} variant="operator" />
+        <Button label="−" onPress={() => onOperator('-')} variant="operator" />
+      </View>
+      <View className="flex-row gap-3">
+        <Button label="×" onPress={() => onOperator('*')} variant="operator" />
+        <Button label="÷" onPress={() => onOperator('/')} variant="operator" />
+      </View>
+      <View className="flex-row gap-3">
         <View className="flex-1">
-          <Button label="=" onPress={onEquals} variant="primary" />
+          <Button label="=" onPress={onEquals} variant="operator" />
         </View>
       </View>
     </View>

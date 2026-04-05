@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OmniCalc - Ethereal Logic</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-container": "#ffd2be",
+              "on-primary": "#ffffff",
+              "tertiary-fixed-dim": "#ffb695",
+              "on-secondary-fixed": "#07006c",
+              "on-primary-fixed": "#100069",
+              "primary-fixed-dim": "#c3c0ff",
+              "surface-container-highest": "#e0e3e5",
+              "on-error": "#ffffff",
+              "error-container": "#ffdad6",
+              "surface-container-low": "#f2f4f6",
+              "inverse-surface": "#2d3133",
+              "tertiary-fixed": "#ffdbcc",
+              "surface-container-high": "#e6e8ea",
+              "error": "#ba1a1a",
+              "primary-fixed": "#e3dfff",
+              "background": "#f7f9fb",
+              "on-secondary-fixed-variant": "#2f2ebe",
+              "tertiary": "#7e3000",
+              "surface-tint": "#5148d7",
+              "inverse-primary": "#c3c0ff",
+              "on-tertiary-fixed-variant": "#7b2f00",
+              "on-secondary-container": "#fffbff",
+              "surface-container": "#eceef0",
+              "surface": "#f7f9fb",
+              "outline": "#777587",
+              "tertiary-container": "#a44100",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-fixed-variant": "#372abf",
+              "secondary-container": "#6063ee",
+              "on-surface": "#191c1e",
+              "on-surface-variant": "#464555",
+              "surface-bright": "#f7f9fb",
+              "on-tertiary": "#ffffff",
+              "primary": "#392cc1",
+              "surface-variant": "#e0e3e5",
+              "on-primary-container": "#dbd7ff",
+              "primary-container": "#534ad9",
+              "surface-dim": "#d8dadc",
+              "on-tertiary-fixed": "#351000",
+              "outline-variant": "#c7c4d8",
+              "on-secondary": "#ffffff",
+              "secondary": "#4648d4",
+              "inverse-on-surface": "#eff1f3",
+              "on-background": "#191c1e",
+              "secondary-fixed-dim": "#c0c1ff",
+              "secondary-fixed": "#e1e0ff",
+              "on-error-container": "#93000a"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body selection:bg-primary/20 selection:text-primary">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center px-6 py-4 w-full sticky top-0 z-50 bg-white dark:bg-slate-950 shadow-sm dark:shadow-none">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-indigo-600 dark:text-indigo-400 text-2xl" data-icon="calculate">calculate</span>
+<span class="text-2xl font-extrabold font-headline tracking-tighter text-indigo-600 dark:text-indigo-400">OmniCalc</span>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-indigo-600 dark:text-indigo-400 font-bold font-headline text-sm tracking-tight transition-colors" href="#">Standard</a>
+<a class="text-slate-500 dark:text-slate-400 font-medium font-headline text-sm tracking-tight hover:bg-slate-100 dark:hover:bg-indigo-900/20 transition-colors px-3 py-2 rounded-lg" href="#">Scientific</a>
+<a class="text-slate-500 dark:text-slate-400 font-medium font-headline text-sm tracking-tight hover:bg-slate-100 dark:hover:bg-indigo-900/20 transition-colors px-3 py-2 rounded-lg" href="#">Pricing</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="Professional male user profile avatar in a minimalist studio setting with soft indigo lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACRzV3H1PRWtlUxpUrXHb5Ti8t0V5Mtmxcvrxq5f0HmlamS-Aiq0KTJW87WGnIfBj2IF0QenmBriCJHk9BaZFrPulNZwmigZK5UnE_7mwPkBLdYWGKPabkiS-boME2eP5AR_wGfo8Hu4h16VT9RjihmJ8DDPgEDFrJ1mmTBn-drj4PzpN_hZIA-MDpAbzwm7dVgn7jQiZeHsyf1qG5SpvHboCsgpHwK-8EsGaPEYkSsbnZU6_fodCcPJdXP7MGsb7z8pVgNntRTvlm"/>
+</div>
+</div>
+</header>
+<main>
+<!-- Hero Section -->
+<section class="relative min-h-[707px] flex flex-col items-center justify-center px-6 pt-12 pb-24 overflow-hidden">
+<div class="absolute inset-0 z-0 opacity-40 pointer-events-none">
+<div class="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-secondary/15 blur-[100px] rounded-full"></div>
+</div>
+<div class="z-10 max-w-4xl w-full text-center space-y-8">
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant text-xs font-semibold tracking-wide uppercase">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                    Introducing The Ethereal Logic
+                </div>
+<h1 class="text-5xl md:text-7xl font-extrabold font-headline tracking-tighter text-on-surface leading-[1.1]">
+                    Precision Redefined in <span class="text-transparent bg-clip-text bg-gradient-to-br from-primary to-primary-container">Every Pixel.</span>
+</h1>
+<p class="text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto font-body leading-relaxed">
+                    The premium multi-platform calculator that bridges the gap between mathematical rigor and editorial design. Fluid across web, mobile, and desktop.
+                </p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+<button class="w-full sm:w-auto px-8 py-4 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-xl font-headline font-bold text-lg shadow-xl shadow-primary/20 active:scale-95 transition-all duration-150 flex items-center justify-center gap-2">
+                        Start Calculating
+                        <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<button class="w-full sm:w-auto px-8 py-4 bg-surface-container-lowest text-primary border border-outline-variant/15 rounded-xl font-headline font-bold text-lg hover:bg-surface-container-low active:scale-95 transition-all duration-150">
+                        View Demo
+                    </button>
+</div>
+</div>
+<!-- Floating Device Preview (Asymmetric Layout) -->
+<div class="relative mt-20 w-full max-w-5xl px-4">
+<div class="grid grid-cols-12 gap-6 items-end">
+<div class="col-span-12 md:col-span-7 rounded-2xl overflow-hidden shadow-2xl bg-surface-container-highest aspect-[16/10]">
+<img class="w-full h-full object-cover" data-alt="Clean software interface on a laptop screen showing a high-end calculator app with glassmorphism effects and indigo accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnMit0sYIvokIWSwIHLEaRPj1vVy9CZZufTlCm8VxB5F-QfiKbqmbF0gxf1JLigWRUnvkTtj45K8jO8gODcfxuMF_ET54jan6Ae3icONNyyIeSKeQiD2ouSSN5RbHM0c449w4aEx0KLg9uZCAB_Xqj9o7G96MStUVdkjiK0CirAaE5RCuhUVPWDVZ_sEoFYJOwh2NuhGF0cgze9K0BpngX5SSKiI1vGt1CU_m4ND6zFNBNsle_pMe2Vc4HHaOE5P4ALWFOyBxFVBuu"/>
+</div>
+<div class="hidden md:block col-span-5 rounded-2xl overflow-hidden shadow-2xl bg-surface-container-highest aspect-[3/4] -mb-12">
+<img class="w-full h-full object-cover" data-alt="Mobile phone display showing a beautiful scientific calculator app with a violet and indigo color palette" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZUaW6ZQsqSZCMHHfQcF55p3uSht4abhToJB-GAI_W37yCfK033PtZr-dzKCyXJzVINGxRUhbrIyMo0ZV9gUOvI-wp1Ss1gJcJTc9HrLmorHjMJ1K5rPXNJOpoO_SshWJBEIIRUNQeyQjUOmDGbNS1sPVseCaUX64jjHbxHAlMVEHLNCC-SsZz8uK2DohlB8KYtvBq9cQrQ9Ap4dVPRVcN2yCapjRKcB-fA_BfSxS0s4mg7vU0bDfifNs5_tBugSN-HCsKLNMqtdcM"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Platform Selection Section (Bento Style) -->
+<section class="max-w-7xl mx-auto px-6 py-24">
+<div class="mb-12">
+<h2 class="text-3xl font-extrabold font-headline tracking-tight">Available Platforms</h2>
+<div class="h-1.5 w-12 bg-primary mt-2 rounded-full"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Web Platform -->
+<div class="group p-8 rounded-3xl bg-surface-container-low hover:bg-surface-container-lowest transition-all duration-300 border border-transparent hover:border-outline-variant/20 shadow-sm flex flex-col justify-between min-h-[320px]">
+<div>
+<div class="w-14 h-14 rounded-2xl bg-primary-fixed flex items-center justify-center text-primary mb-6">
+<span class="material-symbols-outlined text-3xl" data-icon="language">language</span>
+</div>
+<h3 class="text-2xl font-bold font-headline mb-2">Web App</h3>
+<p class="text-on-surface-variant font-body">Full-featured calculator accessible through any modern browser. No installation required.</p>
+</div>
+<button class="mt-8 py-3 px-6 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 group-hover:bg-primary-container transition-colors">
+                        Launch Web
+                        <span class="material-symbols-outlined text-sm" data-icon="open_in_new">open_in_new</span>
+</button>
+</div>
+<!-- Mobile Platform -->
+<div class="group p-8 rounded-3xl bg-surface-container-low hover:bg-surface-container-lowest transition-all duration-300 border border-transparent hover:border-outline-variant/20 shadow-sm flex flex-col justify-between min-h-[320px]">
+<div>
+<div class="w-14 h-14 rounded-2xl bg-secondary-fixed flex items-center justify-center text-secondary mb-6">
+<span class="material-symbols-outlined text-3xl" data-icon="smartphone">smartphone</span>
+</div>
+<h3 class="text-2xl font-bold font-headline mb-2">Mobile</h3>
+<p class="text-on-surface-variant font-body">Native performance for on-the-go complex calculations and unit conversions.</p>
+</div>
+<div class="mt-8 flex flex-wrap gap-3">
+<div class="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-surface-container-highest rounded-xl text-xs font-bold">
+<span class="material-symbols-outlined text-base" data-icon="phone_iphone">phone_iphone</span>
+                            iOS
+                        </div>
+<div class="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-surface-container-highest rounded-xl text-xs font-bold">
+<span class="material-symbols-outlined text-base" data-icon="phone_android">phone_android</span>
+                            Android
+                        </div>
+</div>
+</div>
+<!-- Desktop Platform -->
+<div class="group p-8 rounded-3xl bg-surface-container-low hover:bg-surface-container-lowest transition-all duration-300 border border-transparent hover:border-outline-variant/20 shadow-sm flex flex-col justify-between min-h-[320px]">
+<div>
+<div class="w-14 h-14 rounded-2xl bg-tertiary-fixed flex items-center justify-center text-tertiary mb-6">
+<span class="material-symbols-outlined text-3xl" data-icon="desktop_windows">desktop_windows</span>
+</div>
+<h3 class="text-2xl font-bold font-headline mb-2">Desktop</h3>
+<p class="text-on-surface-variant font-body">Powerful workstation companion with global keyboard shortcuts and history tape.</p>
+</div>
+<div class="mt-8 flex flex-wrap gap-2">
+<div class="flex-1 flex items-center justify-center gap-1.5 py-2 px-2 bg-surface-container-highest rounded-lg text-[10px] font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm" data-icon="window">window</span>
+                            Win
+                        </div>
+<div class="flex-1 flex items-center justify-center gap-1.5 py-2 px-2 bg-surface-container-highest rounded-lg text-[10px] font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm" data-icon="laptop_mac">laptop_mac</span>
+                            Mac
+                        </div>
+<div class="flex-1 flex items-center justify-center gap-1.5 py-2 px-2 bg-surface-container-highest rounded-lg text-[10px] font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm" data-icon="terminal">terminal</span>
+                            Linux
+                        </div>
+</div>
+</div>
+</div>
+</section>
+<!-- Product Preview Detail -->
+<section class="bg-surface-container-low py-24">
+<div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+<div class="order-2 md:order-1 relative">
+<div class="relative z-10 rounded-3xl overflow-hidden shadow-2xl glass-panel p-4">
+<img class="rounded-2xl w-full h-auto" data-alt="Close up of a minimalist data dashboard with sleek line charts and indigo interface elements" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHaQzH30YdH57vBFw3pMV0D4GRBwiDgbCUF36PKpZEZLFbsJA0ltl2LqVSH6C0g6SLLv86WjBADGFb1XGszho1Mf2RaSR_zKMYOZqpUgL1fBexDkMYlP2ptaS7jBAOVSlwMq1cwlcBsg9-dPnJh6-oyNym6Bpwn_yGcdL3qbS-Nzjr9azfcVQ_pSPHyr23XjpQRrQHUnjYNpFu1uYO-DWWzt_JzMj4x63B0zIHL0F_pprrAbtOPRz01Digsu7hv15cqqtndIDBl0FP"/>
+</div>
+<div class="absolute -top-10 -left-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl z-0"></div>
+</div>
+<div class="order-1 md:order-2 space-y-6">
+<h2 class="text-4xl font-extrabold font-headline tracking-tighter">Mathematical beauty, engineered for focus.</h2>
+<p class="text-on-surface-variant text-lg font-body leading-relaxed">
+                        OmniCalc uses "Atmospheric Layering" to create a workspace where complex numbers feel lightweight. Every interaction is mapped to the "Indigo Logic" system—providing tactile feedback through visual depth rather than distracting lines.
+                    </p>
+<ul class="space-y-4">
+<li class="flex items-center gap-3 font-medium text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                            Cloud-synced history across all devices
+                        </li>
+<li class="flex items-center gap-3 font-medium text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                            Advanced scientific &amp; financial modes
+                        </li>
+<li class="flex items-center gap-3 font-medium text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                            Customizable themes with OLED dark mode
+                        </li>
+</ul>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 px-8 flex flex-col md:flex-row justify-between items-center gap-6 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-900">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="font-manrope font-bold text-slate-900 dark:text-white text-xl">OmniCalc</span>
+<p class="font-inter text-xs text-slate-500 dark:text-slate-400">© 2024 OmniCalc Ethereal Logic. All rights reserved.</p>
+</div>
+<div class="flex gap-8">
+<a class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80" href="#">Terms</a>
+<a class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80" href="#">Privacy</a>
+<a class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80" href="#">Support</a>
+<a class="font-inter text-xs text-slate-500 hover:text-indigo-600 transition-all hover:opacity-80" href="#">Contact</a>
+</div>
+</footer>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed md:hidden bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-[0_-4px_20px_0_rgba(79,70,229,0.05)] rounded-t-2xl">
+<div class="flex flex-col items-center justify-center bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded-xl px-5 py-1.5 active:scale-90 transition-transform">
+<span class="material-symbols-outlined mb-1" data-icon="grid_view">grid_view</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider">Standard</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-1.5 hover:text-indigo-500 dark:hover:text-indigo-300 active:scale-90 transition-transform">
+<span class="material-symbols-outlined mb-1" data-icon="science">science</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider">Scientific</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-1.5 hover:text-indigo-500 dark:hover:text-indigo-300 active:scale-90 transition-transform">
+<span class="material-symbols-outlined mb-1" data-icon="payments">payments</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider">Pricing</span>
+</div>
+</nav>
+</body></html>

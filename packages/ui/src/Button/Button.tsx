@@ -21,60 +21,53 @@ export function Button({
 }: ButtonProps): React.ReactElement {
   const { isDark } = useTheme();
 
-  const getVariantClasses = () => {
+  const getVariantClasses = (): { base: string; text: string } => {
     switch (variant) {
       case 'primary':
         return {
-          base: isDark ? 'bg-[#6366F1]' : 'bg-[#4648D4]',
+          base: 'bg-[#392cc1]',
           text: 'text-white',
-          active: isDark ? 'active:bg-[#8084F4]' : 'active:bg-[#3730A3]',
         };
       case 'secondary':
         return {
-          base: isDark ? 'bg-[#0A0A0F]' : 'bg-[#FAFAFA]',
-          text: isDark ? 'text-white' : 'text-[#1A1A2A]',
-          active: '',
+          base: isDark ? 'bg-[#1e1e32]' : 'bg-[#e6e8ea]',
+          text: isDark ? 'text-[#e8e8f0]' : 'text-[#191c1e]',
         };
       case 'operator':
         return {
-          base: isDark ? 'bg-[#2f2ebe]/30' : 'bg-[#EEF2FF]',
-          text: isDark ? 'text-[#C0C1FF]' : 'text-[#4648D4]',
-          active: isDark ? 'active:bg-[#2f2ebe]/50' : 'active:bg-[#EEF2FF]',
+          base: 'bg-gradient-to-br from-[#392cc1] to-[#534ad9]',
+          text: 'text-white',
         };
       case 'memory':
         return {
-          base: isDark ? 'bg-[#64748B]/10' : 'bg-[#505F76]/10',
-          text: isDark ? 'text-[#64748B]' : 'text-[#505F76]',
-          active: '',
+          base: isDark ? 'bg-[#252540]' : 'bg-[#e0e3e5]',
+          text: isDark ? 'text-[#e8e8f0]' : 'text-[#191c1e]',
         };
       case 'function':
         return {
-          base: isDark ? 'bg-[#10B981]/10' : 'bg-[#006C49]/10',
-          text: isDark ? 'text-[#10B981]' : 'text-[#006C49]',
-          active: '',
+          base: isDark ? 'bg-[#141420]' : 'bg-[#ffffff]',
+          text: isDark ? 'text-[#c3c0ff]' : 'text-[#392cc1]',
         };
       default:
         return {
-          base: isDark ? 'bg-[#0A0A0F]' : 'bg-[#FAFAFA]',
-          text: isDark ? 'text-white' : 'text-[#1A1A2A]',
-          active: '',
+          base: isDark ? 'bg-[#1e1e32]' : 'bg-[#e6e8ea]',
+          text: isDark ? 'text-[#e8e8f0]' : 'text-[#191c1e]',
         };
     }
   };
 
-  const { base, text, active } = getVariantClasses();
+  const { base, text } = getVariantClasses();
 
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled}
       className={`
-        flex-1 items-center justify-center rounded-2xl p-4
-        transition-all duration-150 ease-out
-        active:scale-95
-        ${base}
-        ${active}
+        flex-1 items-center justify-center rounded-xl p-4
+        active:scale-95 transition-all
+        ${variant === 'operator' || variant === 'primary' ? 'shadow-lg shadow-primary/30' : ''}
         ${disabled ? 'opacity-40' : ''}
+        ${base}
         ${className}
       `}
       accessibilityRole="button"
@@ -83,7 +76,7 @@ export function Button({
     >
       <Text
         className={`
-          text-body-lg font-semibold
+          ${variant === 'operator' || variant === 'primary' ? 'text-[24px] font-bold' : variant === 'function' ? 'text-[14px] font-semibold' : 'text-[20px] font-semibold'}
           ${text}
         `}
       >
