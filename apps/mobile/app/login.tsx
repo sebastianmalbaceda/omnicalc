@@ -218,11 +218,23 @@ export default function LoginScreen(): React.ReactElement {
                 <TouchableOpacity
                   style={[styles.socialButton, { backgroundColor: surfaceContainerLow }]}
                   activeOpacity={0.7}
-                  onPress={() => {
-                    if (Platform.OS === 'web') {
-                      window.location.href = `${API_URL}/api/auth/sign-in/google`;
-                    } else {
-                      Linking.openURL(`${API_URL}/api/auth/sign-in/google`);
+                  onPress={async () => {
+                    try {
+                      const res = await fetch(`${API_URL}/api/auth/sign-in/social`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ provider: 'google', callbackURL: API_URL }),
+                      });
+                      const data = await res.json();
+                      if (data.url) {
+                        if (Platform.OS === 'web') {
+                          window.location.href = data.url;
+                        } else {
+                          await Linking.openURL(data.url);
+                        }
+                      }
+                    } catch (err) {
+                      console.error('Google OAuth error:', err);
                     }
                   }}
                 >
@@ -232,11 +244,23 @@ export default function LoginScreen(): React.ReactElement {
                 <TouchableOpacity
                   style={[styles.socialButton, { backgroundColor: surfaceContainerLow }]}
                   activeOpacity={0.7}
-                  onPress={() => {
-                    if (Platform.OS === 'web') {
-                      window.location.href = `${API_URL}/api/auth/sign-in/github`;
-                    } else {
-                      Linking.openURL(`${API_URL}/api/auth/sign-in/github`);
+                  onPress={async () => {
+                    try {
+                      const res = await fetch(`${API_URL}/api/auth/sign-in/social`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ provider: 'github', callbackURL: API_URL }),
+                      });
+                      const data = await res.json();
+                      if (data.url) {
+                        if (Platform.OS === 'web') {
+                          window.location.href = data.url;
+                        } else {
+                          await Linking.openURL(data.url);
+                        }
+                      }
+                    } catch (err) {
+                      console.error('GitHub OAuth error:', err);
                     }
                   }}
                 >
