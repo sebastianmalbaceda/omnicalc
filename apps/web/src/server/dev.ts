@@ -143,7 +143,7 @@ app.all('/api/auth/*', async (c) => {
 <body style="font-family:system-ui;text-align:center;padding:60px 20px;background:#0a0a0f;color:#e8e8f0;">
 <h2>Sign-in ${errorParam === 'access_denied' || errorParam === 'state_mismatch' ? 'cancelled' : 'failed'}</h2>
 <p>You can close this tab and return to OmniCalc.</p>
-<script>window.close();setTimeout(()=>{document.body.innerHTML='<p>Tab did not close automatically. You can close it manually.</p>'},3000);</script>
+<script>try{window.opener.postMessage({type:'oauth-cancel'},'*')}catch(e){}window.close();setTimeout(()=>{document.body.innerHTML='<p>Tab did not close automatically. You can close it manually.</p>'},3000);</script>
 </body></html>`);
   }
 
@@ -156,7 +156,28 @@ app.all('/api/auth/*', async (c) => {
 <body style="font-family:system-ui;text-align:center;padding:60px 20px;background:#0a0a0f;color:#e8e8f0;">
 <h2>Sign-in cancelled</h2>
 <p>You can close this tab and return to OmniCalc.</p>
-<script>window.close();setTimeout(()=>{document.body.innerHTML='<p>Tab did not close automatically. You can close it manually.</p>'},3000);</script>
+<script>try{window.opener.postMessage({type:'oauth-cancel'},'*')}catch(e){}window.close();setTimeout(()=>{document.body.innerHTML='<p>Tab did not close automatically. You can close it manually.</p>'},3000);</script>
+</body></html>`);
+    }
+    // Success — notify opener and close
+    return c.html(`<!DOCTYPE html><html><head><title>OmniCalc — Sign In</title></head>
+<body style="font-family:system-ui;text-align:center;padding:60px 20px;background:#0a0a0f;color:#e8e8f0;">
+<h2>Sign-in successful!</h2>
+<p>Returning to OmniCalc...</p>
+<script>try{window.opener.postMessage({type:'oauth-success'},'*')}catch(e){}window.close();setTimeout(()=>{document.body.innerHTML='<p>Tab did not close automatically. You can close it manually.</p>'},3000);</script>
+</body></html>`);
+  }
+
+  // Handle OAuth callback — serve self-closing HTML
+  if (c.req.path.includes('/api/auth/callback')) {
+    const url = new URL(c.req.url);
+    const errorParam = url.searchParams.get('error');
+    if (errorParam) {
+      return c.html(`<!DOCTYPE html><html><head><title>OmniCalc — Sign In</title></head>
+<body style="font-family:system-ui;text-align:center;padding:60px 20px;background:#0a0a0f;color:#e8e8f0;">
+<h2>Sign-in cancelled</h2>
+<p>You can close this tab and return to OmniCalc.</p>
+<script>try{window.opener.postMessage({type:'oauth-cancel'},'*')}catch(e){}window.close();setTimeout(()=>{document.body.innerHTML='<p>Tab did not close automatically. You can close it manually.</p>'},3000);</script>
 </body></html>`);
     }
     // Success — notify opener and close

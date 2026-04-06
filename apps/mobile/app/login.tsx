@@ -58,32 +58,23 @@ export default function LoginScreen(): React.ReactElement {
     checkOAuthCallback();
   }, []);
 
+  // Listen for postMessage from OAuth callback popup (web only)
   useEffect(() => {
-    if (params.error) {
-      const errorMessages: Record<string, string> = {
-        state_mismatch: 'Authentication cancelled. Please try again.',
-        access_denied: 'You cancelled the sign-in request.',
-        invalid_callback: 'Invalid callback URL. Please try again.',
-        auth_failed: 'Authentication failed. Please try again.',
-      };
-      const errorMsg = params.error as string;
-      setError(errorMessages[errorMsg] || 'Authentication failed. Please try again.');
-    }
-  }, [params.error]);
-
-  useEffect(() => {
-    async function checkOAuthCallback(): Promise<void> {
-      try {
-        const session = await getSession();
-        if (session?.user) {
-          setUser(session.user);
-          router.replace('/');
-        }
-      } catch {
-        // No session yet — user may still be completing OAuth
+    if (Platform.OS !== 'web') return;
+    const handler = (event: MessageEvent) => {
+      if (event.data?.type === 'oauth-success') {
+        getSession().then((session) => {
+          if (session?.user) {
+            setUser(session.user);
+            router.replace('/');
+          }
+        });
+      } else if (event.data?.type === 'oauth-cancel') {
+        setError('You cancelled the sign-in request.');
       }
-    }
-    checkOAuthCallback();
+    };
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
   }, []);
 
   const isSmallHeight = height < 600;
