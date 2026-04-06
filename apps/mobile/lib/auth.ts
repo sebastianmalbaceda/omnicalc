@@ -117,7 +117,9 @@ export async function getSession(): Promise<{ user: AuthUser | null } | null> {
     const url = token
       ? `${API_URL}/api/auth/get-session?token=${token}`
       : `${API_URL}/api/auth/session`;
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      credentials: 'include',
+    });
     if (!res.ok) {
       await clearStoredToken();
       return null;
@@ -127,8 +129,9 @@ export async function getSession(): Promise<{ user: AuthUser | null } | null> {
       await clearStoredToken();
       return null;
     }
-    if (token) {
-      await storeToken(token);
+    // Store token if server returns one
+    if (data.session?.token) {
+      await storeToken(data.session.token);
     }
     return { user: data.user as AuthUser };
   } catch {

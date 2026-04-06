@@ -30,19 +30,7 @@ export default function LoginScreen(): React.ReactElement {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    if (params.error) {
-      const errorMessages: Record<string, string> = {
-        state_mismatch: 'Authentication cancelled. Please try again.',
-        access_denied: 'You cancelled the sign-in request.',
-        invalid_callback: 'Invalid callback URL. Please try again.',
-        auth_failed: 'Authentication failed. Please try again.',
-      };
-      const errorMsg = params.error as string;
-      setError(errorMessages[errorMsg] || 'Authentication failed. Please try again.');
-    }
-  }, [params.error]);
-
+  // Detect OAuth callback: Better Auth sets a cookie, we just need to check session
   useEffect(() => {
     async function checkOAuthCallback(): Promise<void> {
       try {
@@ -52,7 +40,7 @@ export default function LoginScreen(): React.ReactElement {
           router.replace('/');
         }
       } catch {
-        // No session yet — user may still be completing OAuth
+        // No session yet
       }
     }
     checkOAuthCallback();
@@ -277,43 +265,8 @@ export default function LoginScreen(): React.ReactElement {
                         }),
                       });
                       const data = await res.json();
-                      if (!data.url) return;
-                      if (Platform.OS === 'web') {
-                        const win = window.open(
-                          data.url,
-                          '_blank',
-                          'width=500,height=600,menubar=no,toolbar=no',
-                        );
-                        const poll = setInterval(async () => {
-                          try {
-                            if (win?.closed) {
-                              clearInterval(poll);
-                              const session = await getSession();
-                              if (session?.user) {
-                                setUser(session.user);
-                                router.replace('/');
-                              } else {
-                                setError('You cancelled the sign-in request.');
-                              }
-                            }
-                          } catch {
-                            // Tab still loading
-                          }
-                        }, 500);
-                      } else {
-                        const result = await WebBrowser.openAuthSessionAsync(
-                          data.url,
-                          `${API_URL}/login`,
-                        );
-                        if (result.type === 'cancel' || result.type === 'dismiss') {
-                          setError('You cancelled the sign-in request.');
-                          return;
-                        }
-                        const session = await getSession();
-                        if (session?.user) {
-                          setUser(session.user);
-                          router.replace('/');
-                        }
+                      if (data.url) {
+                        window.location.href = data.url;
                       }
                     } catch (err) {
                       console.error('Google OAuth error:', err);
@@ -338,43 +291,8 @@ export default function LoginScreen(): React.ReactElement {
                         }),
                       });
                       const data = await res.json();
-                      if (!data.url) return;
-                      if (Platform.OS === 'web') {
-                        const win = window.open(
-                          data.url,
-                          '_blank',
-                          'width=500,height=600,menubar=no,toolbar=no',
-                        );
-                        const poll = setInterval(async () => {
-                          try {
-                            if (win?.closed) {
-                              clearInterval(poll);
-                              const session = await getSession();
-                              if (session?.user) {
-                                setUser(session.user);
-                                router.replace('/');
-                              } else {
-                                setError('You cancelled the sign-in request.');
-                              }
-                            }
-                          } catch {
-                            // Tab still loading
-                          }
-                        }, 500);
-                      } else {
-                        const result = await WebBrowser.openAuthSessionAsync(
-                          data.url,
-                          `${API_URL}/login`,
-                        );
-                        if (result.type === 'cancel' || result.type === 'dismiss') {
-                          setError('You cancelled the sign-in request.');
-                          return;
-                        }
-                        const session = await getSession();
-                        if (session?.user) {
-                          setUser(session.user);
-                          router.replace('/');
-                        }
+                      if (data.url) {
+                        window.location.href = data.url;
                       }
                     } catch (err) {
                       console.error('GitHub OAuth error:', err);
