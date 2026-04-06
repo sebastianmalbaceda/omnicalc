@@ -28,7 +28,7 @@ import {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-config({ path: resolve(__dirname, '../../.env') });
+config({ path: resolve(__dirname, '../../../../.env') });
 
 const PROJECT_ROOT = resolve(__dirname, '../../../../');
 const MOBILE_DIST = join(PROJECT_ROOT, 'apps', 'mobile', 'dist');
@@ -39,12 +39,18 @@ console.log('[Server] Exists:', existsSync(MOBILE_DIST));
 
 const prisma = new PrismaClient();
 
-const socialProviders: Record<string, { clientId: string; clientSecret: string }> = {};
+const socialProviders: Record<
+  string,
+  { clientId: string; clientSecret: string; redirectURI?: string }
+> = {};
+
+const AUTH_URL = process.env.BETTER_AUTH_URL || 'http://localhost:3000';
 
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   socialProviders.google = {
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    redirectURI: `${AUTH_URL}/api/auth/callback/google`,
   };
 }
 
@@ -52,8 +58,11 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
   socialProviders.github = {
     clientId: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    redirectURI: `${AUTH_URL}/api/auth/callback/github`,
   };
 }
+
+console.log('[Auth] Social providers:', Object.keys(socialProviders).join(', ') || 'none');
 
 const auth = betterAuth({
   trustedOrigins: [
@@ -100,20 +109,32 @@ app.use(
   }),
 );
 
-app.get('/api/auth/test', (c) => c.json({ message: 'auth test endpoint works' }));
-app.post('/api/auth/test', (c) => c.json({ message: 'auth test POST endpoint works' }));
-
-app.all('/api/auth/*', async (c) => {
-  return auth.handler(c.req.raw);
-});
-
 app.get('/api/debug/env', (c) =>
   c.json({
     DATABASE_URL: process.env.DATABASE_URL ? 'SET' : 'NOT SET',
-    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL ? 'SET' : 'NOT SET',
+    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL || 'default',
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ? 'SET' : 'NOT SET',
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT SET',
+    GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID ? 'SET' : 'NOT SET',
+    GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET ? 'SET' : 'NOT SET',
+    socialProviders: Object.keys(socialProviders),
   }),
 );
+
+app.get('/api/auth/sign-in/google', (c) => {
+  console.log('[Auth] Google sign-in requested');
+  return auth.handler(c.req.raw);
+});
+
+app.get('/api/auth/sign-in/github', (c) => {
+  console.log('[Auth] GitHub sign-in requested');
+  return auth.handler(c.req.raw);
+});
+
+app.all('/api/auth/*', async (c) => {
+  console.log('[Auth] Route:', c.req.path, c.req.method);
+  return auth.handler(c.req.raw);
+});
 
 app.get('/api/health', (c) => c.json({ status: 'ok', timestamp: Date.now() }));
 
