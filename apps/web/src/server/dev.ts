@@ -135,8 +135,17 @@ app.all('/api/auth/*', async (c) => {
   console.log('[Auth] Route:', c.req.path, c.req.method);
   const response = await auth.handler(c.req.raw);
 
-  // Handle OAuth errors — redirect to login with error param
-  if (response.status >= 400 && c.req.path.includes('/api/auth/')) {
+  // Handle /api/auth/error page — Better Auth returns 200 HTML with error in URL
+  if (c.req.path.includes('/api/auth/error')) {
+    const url = new URL(c.req.url);
+    const errorParam = url.searchParams.get('error') || 'auth_failed';
+    const loginUrl = new URL('/login', url.origin);
+    loginUrl.searchParams.set('error', errorParam);
+    return Response.redirect(loginUrl.toString(), 302);
+  }
+
+  // Handle OAuth callback errors
+  if (response.status >= 400) {
     const url = new URL(c.req.url);
     const loginUrl = new URL('/login', url.origin);
     const errorParam = url.searchParams.get('error') || 'auth_failed';

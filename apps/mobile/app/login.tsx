@@ -280,7 +280,10 @@ export default function LoginScreen(): React.ReactElement {
                       const res = await fetch(`${API_URL}/api/auth/sign-in/social`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ provider: 'google', callbackURL: API_URL }),
+                        body: JSON.stringify({
+                          provider: 'google',
+                          callbackURL: `${API_URL}/login`,
+                        }),
                       });
                       const data = await res.json();
                       if (data.url) {
@@ -292,6 +295,7 @@ export default function LoginScreen(): React.ReactElement {
                       }
                     } catch (err) {
                       console.error('Google OAuth error:', err);
+                      setError('Failed to start Google sign-in');
                     }
                   }}
                 >
@@ -306,7 +310,10 @@ export default function LoginScreen(): React.ReactElement {
                       const res = await fetch(`${API_URL}/api/auth/sign-in/social`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ provider: 'github', callbackURL: API_URL }),
+                        body: JSON.stringify({
+                          provider: 'github',
+                          callbackURL: `${API_URL}/login`,
+                        }),
                       });
                       const data = await res.json();
                       if (data.url) {
@@ -318,6 +325,7 @@ export default function LoginScreen(): React.ReactElement {
                       }
                     } catch (err) {
                       console.error('GitHub OAuth error:', err);
+                      setError('Failed to start GitHub sign-in');
                     }
                   }}
                 >
