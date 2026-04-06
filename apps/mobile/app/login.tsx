@@ -287,44 +287,18 @@ export default function LoginScreen(): React.ReactElement {
                       });
                       const data = await res.json();
                       if (!data.url) return;
-                      if (Platform.OS === 'web') {
-                        const win = window.open(
-                          data.url,
-                          'oauth-popup',
-                          'width=600,height=700,menubar=no,toolbar=no,location=no',
-                        );
-                        const checkSession = setInterval(async () => {
-                          try {
-                            if (win?.closed) {
-                              clearInterval(checkSession);
-                              setError('You cancelled the sign-in request.');
-                              return;
-                            }
-                            const session = await getSession();
-                            if (session?.user) {
-                              clearInterval(checkSession);
-                              win?.close();
-                              setUser(session.user);
-                              router.replace('/');
-                            }
-                          } catch {
-                            // Not authenticated yet
-                          }
-                        }, 1000);
-                      } else {
-                        const result = await WebBrowser.openAuthSessionAsync(
-                          data.url,
-                          `${API_URL}/login`,
-                        );
-                        if (result.type === 'cancel' || result.type === 'dismiss') {
-                          setError('You cancelled the sign-in request.');
-                          return;
-                        }
-                        const session = await getSession();
-                        if (session?.user) {
-                          setUser(session.user);
-                          router.replace('/');
-                        }
+                      const result = await WebBrowser.openAuthSessionAsync(
+                        data.url,
+                        `${API_URL}/login`,
+                      );
+                      if (result.type === 'cancel' || result.type === 'dismiss') {
+                        setError('You cancelled the sign-in request.');
+                        return;
+                      }
+                      const session = await getSession();
+                      if (session?.user) {
+                        setUser(session.user);
+                        router.replace('/');
                       }
                     } catch (err) {
                       console.error('Google OAuth error:', err);
@@ -350,44 +324,18 @@ export default function LoginScreen(): React.ReactElement {
                       });
                       const data = await res.json();
                       if (!data.url) return;
-                      if (Platform.OS === 'web') {
-                        const win = window.open(
-                          data.url,
-                          'oauth-popup',
-                          'width=600,height=700,menubar=no,toolbar=no,location=no',
-                        );
-                        const checkSession = setInterval(async () => {
-                          try {
-                            if (win?.closed) {
-                              clearInterval(checkSession);
-                              setError('You cancelled the sign-in request.');
-                              return;
-                            }
-                            const session = await getSession();
-                            if (session?.user) {
-                              clearInterval(checkSession);
-                              win?.close();
-                              setUser(session.user);
-                              router.replace('/');
-                            }
-                          } catch {
-                            // Not authenticated yet
-                          }
-                        }, 1000);
-                      } else {
-                        const result = await WebBrowser.openAuthSessionAsync(
-                          data.url,
-                          `${API_URL}/login`,
-                        );
-                        if (result.type === 'cancel' || result.type === 'dismiss') {
-                          setError('You cancelled the sign-in request.');
-                          return;
-                        }
-                        const session = await getSession();
-                        if (session?.user) {
-                          setUser(session.user);
-                          router.replace('/');
-                        }
+                      const result = await WebBrowser.openAuthSessionAsync(
+                        data.url,
+                        `${API_URL}/login`,
+                      );
+                      if (result.type === 'cancel' || result.type === 'dismiss') {
+                        setError('You cancelled the sign-in request.');
+                        return;
+                      }
+                      const session = await getSession();
+                      if (session?.user) {
+                        setUser(session.user);
+                        router.replace('/');
                       }
                     } catch (err) {
                       console.error('GitHub OAuth error:', err);
