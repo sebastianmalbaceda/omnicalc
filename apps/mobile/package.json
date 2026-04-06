@@ -15,7 +15,7 @@
     "@expo/metro-runtime": "~4.0.1",
     "@omnicalc/core-math": "workspace:*",
     "@omnicalc/ui": "workspace:*",
-    "@react-native-async-storage/async-storage": "^3.0.2",
+    "@react-native-async-storage/async-storage": "^1.23.1",
     "better-auth": "^1.5.6",
     "expo": "~52.0.0",
     "expo-router": "~4.0.0",

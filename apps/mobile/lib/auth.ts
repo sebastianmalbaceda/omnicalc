@@ -106,6 +106,7 @@ export async function signOut(): Promise<void> {
   await fetch(`${API_URL}/api/auth/sign-out`, {
     method: 'POST',
     headers: authHeaders(token ?? undefined),
+    body: JSON.stringify({}),
   });
   await clearStoredToken();
 }

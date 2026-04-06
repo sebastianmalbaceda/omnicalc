@@ -1,10 +1,10 @@
-/**
+﻿/**
  * @omnicalc/mobile — Calculator Screen
  *
  * Main calculator UI connecting to core-math via Zustand store.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Pressable, Text, Platform, Linking, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@omnicalc/ui';
@@ -17,6 +17,7 @@ export default function CalculatorScreen(): React.ReactElement {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const { toggleTheme, isDark } = useTheme();
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const handleUpgradeToPro = async (): Promise<void> => {
     if (!user) {
@@ -116,20 +117,42 @@ export default function CalculatorScreen(): React.ReactElement {
         </View>
         <View className="flex-row items-center gap-3">
           {user ? (
-            <Pressable
-              onPress={handleSignOut}
-              className={`${isDark ? 'bg-[#1a1a2e]' : 'bg-[#eef2ff]'} rounded-full px-3 py-1.5 flex-row items-center gap-1.5`}
-            >
-              <Text
-                className={`text-[10px] font-bold ${isDark ? 'text-[#c3c0ff]' : 'text-[#392cc1]'} max-w-[120px]`}
-                numberOfLines={1}
+            <View>
+              <Pressable
+                onPress={() => setShowUserMenu(!showUserMenu)}
+                className={`${isDark ? 'bg-[#1a1a2e]' : 'bg-[#eef2ff]'} rounded-full px-3 py-1.5 flex-row items-center gap-1.5`}
               >
-                {user.name || user.email}
-              </Text>
-              <Text className={`text-[10px] ${isDark ? 'text-[#a0a0b8]' : 'text-[#464555]'}`}>
-                →
-              </Text>
-            </Pressable>
+                <Text
+                  className={`text-[10px] font-bold ${isDark ? 'text-[#c3c0ff]' : 'text-[#392cc1]'} max-w-[100px]`}
+                  numberOfLines={1}
+                >
+                  {user.name || user.email}
+                </Text>
+                <Text className={`text-[10px] ${isDark ? 'text-[#a0a0b8]' : 'text-[#464555]'}`}>
+                  {showUserMenu ? '▲' : '▼'}
+                </Text>
+              </Pressable>
+              {showUserMenu && (
+                <View
+                  className={`absolute top-10 right-0 ${isDark ? 'bg-[#1e1e32]' : 'bg-[#ffffff]'} rounded-xl shadow-lg p-2 min-w-[140px] z-50`}
+                >
+                  <Pressable
+                    onPress={() => {
+                      setShowUserMenu(false);
+                      handleSignOut();
+                    }}
+                    className="flex-row items-center gap-2 px-3 py-2 rounded-lg active:opacity-60"
+                  >
+                    <Text className="text-[12px]">🚪</Text>
+                    <Text
+                      className={`text-[12px] font-semibold ${isDark ? 'text-[#e8e8f0]' : 'text-[#191c1e]'}`}
+                    >
+                      Sign Out
+                    </Text>
+                  </Pressable>
+                </View>
+              )}
+            </View>
           ) : (
             <Pressable
               onPress={() => router.push('/login')}
