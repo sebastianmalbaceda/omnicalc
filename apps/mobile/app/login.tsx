@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,14 +11,15 @@ import {
   Platform,
   Linking,
 } from 'react-native';
-import { useRouter } from 'expo-router';
-import { signIn, signUp, useAuthStore } from '../lib/auth';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { signIn, signUp, useAuthStore, getSession } from '../lib/auth';
 import { useTheme } from '@omnicalc/ui';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
 
 export default function LoginScreen(): React.ReactElement {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const setUser = useAuthStore((state) => state.setUser);
   const { height } = useWindowDimensions();
   const { isDark } = useTheme();
@@ -28,6 +29,62 @@ export default function LoginScreen(): React.ReactElement {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (params.error) {
+      const errorMessages: Record<string, string> = {
+        state_mismatch: 'Authentication cancelled. Please try again.',
+        access_denied: 'You cancelled the sign-in request.',
+        invalid_callback: 'Invalid callback URL. Please try again.',
+        auth_failed: 'Authentication failed. Please try again.',
+      };
+      const errorMsg = params.error as string;
+      setError(errorMessages[errorMsg] || 'Authentication failed. Please try again.');
+    }
+  }, [params.error]);
+
+  useEffect(() => {
+    async function checkOAuthCallback(): Promise<void> {
+      try {
+        const session = await getSession();
+        if (session?.user) {
+          setUser(session.user);
+          router.replace('/');
+        }
+      } catch {
+        // No session yet — user may still be completing OAuth
+      }
+    }
+    checkOAuthCallback();
+  }, []);
+
+  useEffect(() => {
+    if (params.error) {
+      const errorMessages: Record<string, string> = {
+        state_mismatch: 'Authentication cancelled. Please try again.',
+        access_denied: 'You cancelled the sign-in request.',
+        invalid_callback: 'Invalid callback URL. Please try again.',
+        auth_failed: 'Authentication failed. Please try again.',
+      };
+      const errorMsg = params.error as string;
+      setError(errorMessages[errorMsg] || 'Authentication failed. Please try again.');
+    }
+  }, [params.error]);
+
+  useEffect(() => {
+    async function checkOAuthCallback(): Promise<void> {
+      try {
+        const session = await getSession();
+        if (session?.user) {
+          setUser(session.user);
+          router.replace('/');
+        }
+      } catch {
+        // No session yet — user may still be completing OAuth
+      }
+    }
+    checkOAuthCallback();
+  }, []);
 
   const isSmallHeight = height < 600;
 

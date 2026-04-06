@@ -133,7 +133,18 @@ app.get('/api/auth/sign-in/github', (c) => {
 
 app.all('/api/auth/*', async (c) => {
   console.log('[Auth] Route:', c.req.path, c.req.method);
-  return auth.handler(c.req.raw);
+  const response = await auth.handler(c.req.raw);
+
+  // Handle OAuth errors — redirect to login with error param
+  if (response.status >= 400 && c.req.path.includes('/api/auth/')) {
+    const url = new URL(c.req.url);
+    const loginUrl = new URL('/login', url.origin);
+    const errorParam = url.searchParams.get('error') || 'auth_failed';
+    loginUrl.searchParams.set('error', errorParam);
+    return Response.redirect(loginUrl.toString(), 302);
+  }
+
+  return response;
 });
 
 app.get('/api/health', (c) => c.json({ status: 'ok', timestamp: Date.now() }));
