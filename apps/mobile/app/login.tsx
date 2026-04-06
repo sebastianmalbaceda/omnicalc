@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,10 +8,14 @@ import {
   StyleSheet,
   useWindowDimensions,
   ScrollView,
+  Platform,
+  Linking,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { signIn, signUp, useAuthStore } from '../lib/auth';
 import { useTheme } from '@omnicalc/ui';
+
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
 
 export default function LoginScreen(): React.ReactElement {
   const router = useRouter();
@@ -57,7 +61,11 @@ export default function LoginScreen(): React.ReactElement {
   };
 
   const handleGoBack = (): void => {
-    router.back();
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/');
+    }
   };
 
   const bg = isDark ? '#0a0a0f' : '#f7f9fb';
@@ -210,6 +218,13 @@ export default function LoginScreen(): React.ReactElement {
                 <TouchableOpacity
                   style={[styles.socialButton, { backgroundColor: surfaceContainerLow }]}
                   activeOpacity={0.7}
+                  onPress={() => {
+                    if (Platform.OS === 'web') {
+                      window.location.href = `${API_URL}/api/auth/sign-in/google`;
+                    } else {
+                      Linking.openURL(`${API_URL}/api/auth/sign-in/google`);
+                    }
+                  }}
                 >
                   <Text style={styles.socialIcon}>G</Text>
                   <Text style={[styles.socialText, { color: onSurface }]}>Google</Text>
@@ -217,9 +232,16 @@ export default function LoginScreen(): React.ReactElement {
                 <TouchableOpacity
                   style={[styles.socialButton, { backgroundColor: surfaceContainerLow }]}
                   activeOpacity={0.7}
+                  onPress={() => {
+                    if (Platform.OS === 'web') {
+                      window.location.href = `${API_URL}/api/auth/sign-in/github`;
+                    } else {
+                      Linking.openURL(`${API_URL}/api/auth/sign-in/github`);
+                    }
+                  }}
                 >
-                  <Text style={styles.socialIcon}>🍎</Text>
-                  <Text style={[styles.socialText, { color: onSurface }]}>Apple</Text>
+                  <Text style={styles.socialIcon}>⌘</Text>
+                  <Text style={[styles.socialText, { color: onSurface }]}>GitHub</Text>
                 </TouchableOpacity>
               </View>
 
