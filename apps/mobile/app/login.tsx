@@ -265,9 +265,24 @@ export default function LoginScreen(): React.ReactElement {
                         }),
                       });
                       const data = await res.json();
-                      if (data.url) {
-                        window.location.href = data.url;
-                      }
+                      if (!data.url) return;
+                      const win = window.open(data.url, '_blank', 'width=500,height=600');
+                      const poll = setInterval(async () => {
+                        try {
+                          if (win?.closed) {
+                            clearInterval(poll);
+                            const session = await getSession();
+                            if (session?.user) {
+                              setUser(session.user);
+                              router.replace('/');
+                            } else {
+                              setError('You cancelled the sign-in request.');
+                            }
+                          }
+                        } catch {
+                          // Tab still loading
+                        }
+                      }, 500);
                     } catch (err) {
                       console.error('Google OAuth error:', err);
                       setError('Failed to start Google sign-in');
@@ -291,9 +306,24 @@ export default function LoginScreen(): React.ReactElement {
                         }),
                       });
                       const data = await res.json();
-                      if (data.url) {
-                        window.location.href = data.url;
-                      }
+                      if (!data.url) return;
+                      const win = window.open(data.url, '_blank', 'width=500,height=600');
+                      const poll = setInterval(async () => {
+                        try {
+                          if (win?.closed) {
+                            clearInterval(poll);
+                            const session = await getSession();
+                            if (session?.user) {
+                              setUser(session.user);
+                              router.replace('/');
+                            } else {
+                              setError('You cancelled the sign-in request.');
+                            }
+                          }
+                        } catch {
+                          // Tab still loading
+                        }
+                      }, 500);
                     } catch (err) {
                       console.error('GitHub OAuth error:', err);
                       setError('Failed to start GitHub sign-in');
