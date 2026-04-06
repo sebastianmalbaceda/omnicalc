@@ -9,7 +9,7 @@ import { View, Pressable, Text, Platform, Linking, ScrollView } from 'react-nati
 import { useRouter } from 'expo-router';
 import { useTheme } from '@omnicalc/ui';
 import { useCalculatorStore } from '../stores/useCalculatorStore';
-import { useAuthStore } from '../lib/auth';
+import { useAuthStore, signOut } from '../lib/auth';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
 
@@ -43,6 +43,16 @@ export default function CalculatorScreen(): React.ReactElement {
       }
     } catch (err) {
       console.error('Upgrade failed', err);
+    }
+  };
+
+  const handleSignOut = async (): Promise<void> => {
+    try {
+      await signOut();
+      useAuthStore.getState().setUser(null);
+      router.replace('/login');
+    } catch {
+      // Sign out failed — non-critical
     }
   };
 
@@ -105,7 +115,34 @@ export default function CalculatorScreen(): React.ReactElement {
           )}
         </View>
         <View className="flex-row items-center gap-3">
-          {!isPro && (
+          {user ? (
+            <Pressable
+              onPress={handleSignOut}
+              className={`${isDark ? 'bg-[#1a1a2e]' : 'bg-[#eef2ff]'} rounded-full px-3 py-1.5 flex-row items-center gap-1.5`}
+            >
+              <Text
+                className={`text-[10px] font-bold ${isDark ? 'text-[#c3c0ff]' : 'text-[#392cc1]'} max-w-[120px]`}
+                numberOfLines={1}
+              >
+                {user.name || user.email}
+              </Text>
+              <Text className={`text-[10px] ${isDark ? 'text-[#a0a0b8]' : 'text-[#464555]'}`}>
+                →
+              </Text>
+            </Pressable>
+          ) : (
+            <Pressable
+              onPress={() => router.push('/login')}
+              className={`${isDark ? 'bg-[#1a1a2e]' : 'bg-[#eef2ff]'} rounded-full px-3 py-1.5`}
+            >
+              <Text
+                className={`text-[10px] font-bold ${isDark ? 'text-[#c3c0ff]' : 'text-[#392cc1]'}`}
+              >
+                Sign In
+              </Text>
+            </Pressable>
+          )}
+          {!isPro && user && (
             <Pressable
               onPress={handleUpgradeToPro}
               className={`${isDark ? 'bg-[#1a1a2e]' : 'bg-[#eef2ff]'} rounded-full px-3 py-1`}
