@@ -134,7 +134,7 @@ export default function CalculatorScreen(): React.ReactElement {
               </Pressable>
               {showUserMenu && (
                 <View
-                  className={`absolute top-10 right-0 ${isDark ? 'bg-[#1e1e32]' : 'bg-[#ffffff]'} rounded-xl shadow-lg p-2 min-w-[140px] z-50`}
+                  className={`${isDark ? 'bg-[#1e1e32]' : 'bg-[#ffffff]'} rounded-xl p-2 mt-1 shadow-lg`}
                 >
                   <Pressable
                     onPress={() => {
