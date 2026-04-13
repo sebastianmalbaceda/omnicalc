@@ -8,6 +8,11 @@
     "dev": "tsc && electron .",
     "build": "tsc",
     "start": "electron .",
+    "package": "tsc && electron-builder --dir",
+    "dist": "tsc && electron-builder",
+    "dist:win": "tsc && electron-builder --win",
+    "dist:mac": "tsc && electron-builder --mac",
+    "dist:linux": "tsc && electron-builder --linux",
     "type-check": "tsc --noEmit",
     "clean": "rimraf dist out"
   },
@@ -21,5 +26,47 @@
     "electron": "^34.0.0",
     "electron-builder": "^24.0.0",
     "typescript": "^5.7.0"
+  },
+  "build": {
+    "appId": "com.omnicalc.desktop",
+    "productName": "OmniCalc",
+    "directories": {
+      "output": "out"
+    },
+    "files": [
+      "dist/**/*",
+      "preload.js",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "sign": null
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.utilities"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
   }
 }
