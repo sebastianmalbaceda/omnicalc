@@ -1,10 +1,8 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
 const AUTH_TOKEN_KEY = 'omnicalc_auth_token';
-
-console.log('[Auth] API_URL:', API_URL);
 
 export interface AuthUser {
   id: string;
@@ -16,14 +14,6 @@ export interface AuthUser {
   subscriptionStatus?: string;
 }
 
-interface SignInError {
-  message: string;
-}
-
-interface SignUpError {
-  message: string;
-}
-
 async function getStoredToken(): Promise<string | null> {
   try {
     return await AsyncStorage.getItem(AUTH_TOKEN_KEY);
@@ -32,11 +22,11 @@ async function getStoredToken(): Promise<string | null> {
   }
 }
 
-async function storeToken(token: string): Promise<void> {
+export async function storeToken(token: string): Promise<void> {
   try {
     await AsyncStorage.setItem(AUTH_TOKEN_KEY, token);
   } catch {
-    // Storage error — non-critical
+    // Non-critical
   }
 }
 
@@ -44,7 +34,7 @@ async function clearStoredToken(): Promise<void> {
   try {
     await AsyncStorage.removeItem(AUTH_TOKEN_KEY);
   } catch {
-    // Storage error — non-critical
+    // Non-critical
   }
 }
 
@@ -67,14 +57,15 @@ export const signIn = {
       body: JSON.stringify(params),
     });
     if (!res.ok) {
-      const err: SignInError = await res.json();
+      const err = await res.json().catch(() => ({ message: 'Sign in failed' }));
       throw new Error(err.message || 'Sign in failed');
     }
     const data = await res.json();
-    if (data.token) {
-      await storeToken(data.token);
+    const token = data.session?.token || data.session?.id || '';
+    if (token) {
+      await storeToken(token);
     }
-    return { user: data.user, token: data.token };
+    return { user: data.user, token };
   },
 };
 
@@ -90,14 +81,15 @@ export const signUp = {
       body: JSON.stringify(params),
     });
     if (!res.ok) {
-      const err: SignUpError = await res.json();
+      const err = await res.json().catch(() => ({ message: 'Sign up failed' }));
       throw new Error(err.message || 'Sign up failed');
     }
     const data = await res.json();
-    if (data.token) {
-      await storeToken(data.token);
+    const token = data.session?.token || data.session?.id || '';
+    if (token) {
+      await storeToken(token);
     }
-    return { user: data.user, token: data.token };
+    return { user: data.user, token };
   },
 };
 
@@ -106,32 +98,27 @@ export async function signOut(): Promise<void> {
   await fetch(`${API_URL}/api/auth/sign-out`, {
     method: 'POST',
     headers: authHeaders(token ?? undefined),
-    body: JSON.stringify({}),
-  });
+  }).catch(() => {});
   await clearStoredToken();
 }
 
 export async function getSession(): Promise<{ user: AuthUser | null } | null> {
   try {
     const token = await getStoredToken();
-    const url = token
-      ? `${API_URL}/api/auth/get-session?token=${token}`
-      : `${API_URL}/api/auth/session`;
-    const res = await fetch(url, {
-      credentials: 'include',
+    if (!token) {
+      return null;
+    }
+    const res = await fetch(`${API_URL}/api/auth/get-session`, {
+      headers: authHeaders(token),
     });
     if (!res.ok) {
       await clearStoredToken();
       return null;
     }
     const data = await res.json();
-    if (!data.user) {
+    if (!data?.user) {
       await clearStoredToken();
       return null;
-    }
-    // Store token if server returns one
-    if (data.session?.token) {
-      await storeToken(data.session.token);
     }
     return { user: data.user as AuthUser };
   } catch {
@@ -154,5 +141,8 @@ export const useAuthStore = create<AuthStore>((set) => ({
   isAuthenticated: false,
   setUser: (user) => set({ user, isAuthenticated: !!user, isLoading: false }),
   setLoading: (isLoading) => set({ isLoading }),
-  logout: () => set({ user: null, isAuthenticated: false }),
+  logout: () => {
+    signOut();
+    set({ user: null, isAuthenticated: false });
+  },
 }));

@@ -76,9 +76,11 @@ pnpm db:studio
 pnpm dev
 
 # Or run specific apps
-pnpm dev:web       # Web/BFF at http://localhost:3001
-pnpm dev:mobile    # Expo at http://localhost:8081
-pnpm dev:desktop   # Electron app
+pnpm dev:api             # NestJS API at http://localhost:3001
+pnpm dev:marketing       # Next.js marketing at http://localhost:3000
+pnpm dev:web             # Vite web app at http://localhost:3002
+pnpm dev:mobile          # Expo at http://localhost:19006
+pnpm dev:desktop         # Electron app
 ```
 
 ---
@@ -98,14 +100,17 @@ pnpm test          # All tests should pass
 
 ### Where Things Live
 
-| What          | Where                 | Notes                       |
-| ------------- | --------------------- | --------------------------- |
-| Math engine   | `packages/core-math/` | Pure TypeScript, decimal.js |
-| UI components | `packages/ui/`        | NativeWind, cross-platform  |
-| Database      | `packages/db/`        | Prisma schema & client      |
-| API server    | `apps/web/`           | Hono BFF                    |
-| Mobile app    | `apps/mobile/`        | Expo + Expo Router          |
-| Desktop app   | `apps/desktop/`       | Electron + Vite             |
+| What              | Where                    | Notes                       |
+| ----------------- | ------------------------ | --------------------------- |
+| Math engine       | `packages/core-math/`    | Pure TypeScript, decimal.js |
+| UI components     | `packages/ui/`           | NativeWind, cross-platform  |
+| Shared types      | `packages/shared-types/` | Zod schemas + TS types      |
+| Database          | `packages/db/`           | Prisma schema & client      |
+| API server        | `apps/api/`              | NestJS central backend      |
+| Marketing site    | `apps/marketing/`        | Next.js (SSR/SSG for SEO)   |
+| Web app (product) | `apps/web/`              | Vite + React SPA            |
+| Mobile app        | `apps/mobile/`           | Expo + Expo Router          |
+| Desktop app       | `apps/desktop/`          | Electron (loads web)        |
 
 ### Key Documentation
 
@@ -139,9 +144,9 @@ pnpm test          # All tests should pass
 
 ### Adding an API Endpoint
 
-1. Create route file in `apps/web/src/routes/`
-2. Add Zod validation schema
-3. Add auth middleware for protected routes
+1. Create controller/service in `apps/api/src/module-name/`
+2. Add DTO with class-validator decorators
+3. Register module in `apps/api/src/app.module.ts`
 4. See `.agents/skills/create-api-endpoint/SKILL.md` for template
 
 ---

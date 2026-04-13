@@ -45,10 +45,13 @@ Turborepo resolves the dependency graph automatically:
 packages/tsconfig (no deps)
   └→ packages/core-math (depends on tsconfig)
   └→ packages/db (depends on tsconfig)
+  └→ packages/shared-types (depends on tsconfig)
   └→ packages/ui (depends on tsconfig, core-math)
-       └→ apps/mobile (depends on ui, core-math)
-       └→ apps/desktop (depends on ui, core-math)
-       └→ apps/web (depends on db, core-math)
+        └→ apps/mobile (depends on ui, core-math)
+        └→ apps/desktop (depends on core-math)
+        └→ apps/web (depends on core-math, shared-types)
+        └→ apps/marketing (depends on shared-types)
+        └→ apps/api (depends on db, shared-types)
 ```
 
 ---
@@ -65,15 +68,18 @@ packages:
 
 ### Package Naming
 
-| Package              | Name                  |
-| -------------------- | --------------------- |
-| `packages/core-math` | `@omnicalc/core-math` |
-| `packages/ui`        | `@omnicalc/ui`        |
-| `packages/db`        | `@omnicalc/db`        |
-| `packages/tsconfig`  | `@omnicalc/tsconfig`  |
-| `apps/web`           | `@omnicalc/web`       |
-| `apps/mobile`        | `@omnicalc/mobile`    |
-| `apps/desktop`       | `@omnicalc/desktop`   |
+| Package                 | Name                     |
+| ----------------------- | ------------------------ |
+| `packages/core-math`    | `@omnicalc/core-math`    |
+| `packages/ui`           | `@omnicalc/ui`           |
+| `packages/db`           | `@omnicalc/db`           |
+| `packages/shared-types` | `@omnicalc/shared-types` |
+| `packages/tsconfig`     | `@omnicalc/tsconfig`     |
+| `apps/api`              | `@omnicalc/api`          |
+| `apps/marketing`        | `@omnicalc/marketing`    |
+| `apps/web`              | `@omnicalc/web`          |
+| `apps/mobile`           | `@omnicalc/mobile`       |
+| `apps/desktop`          | `@omnicalc/desktop`      |
 
 ---
 
@@ -85,6 +91,8 @@ packages:
 {
   "scripts": {
     "dev": "turbo dev",
+    "dev:api": "turbo dev --filter=@omnicalc/api",
+    "dev:marketing": "turbo dev --filter=@omnicalc/marketing",
     "dev:web": "turbo dev --filter=@omnicalc/web",
     "dev:mobile": "turbo dev --filter=@omnicalc/mobile",
     "dev:desktop": "turbo dev --filter=@omnicalc/desktop",
@@ -97,7 +105,7 @@ packages:
     "db:generate": "pnpm --filter @omnicalc/db exec prisma generate",
     "db:migrate": "pnpm --filter @omnicalc/db exec prisma migrate dev",
     "db:studio": "pnpm --filter @omnicalc/db exec prisma studio",
-    "clean": "turbo clean && rm -rf node_modules"
+    "clean": "turbo clean && rimraf node_modules"
   }
 }
 ```

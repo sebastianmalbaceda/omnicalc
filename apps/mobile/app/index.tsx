@@ -1,68 +1,28 @@
-﻿/**
+/**
  * @omnicalc/mobile — Calculator Screen
  *
- * Main calculator UI connecting to core-math via Zustand store.
+ * Identical layout to web-app and desktop.
  */
 
-import React, { useState } from 'react';
-import { View, Pressable, Text, Platform, Linking, ScrollView } from 'react-native';
+import React from 'react';
+import { View, Pressable, Text, ScrollView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@omnicalc/ui';
 import { useCalculatorStore } from '../stores/useCalculatorStore';
 import { useAuthStore, signOut } from '../lib/auth';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
 
 export default function CalculatorScreen(): React.ReactElement {
   const router = useRouter();
-  const user = useAuthStore((state) => state.user);
+  const { user } = useAuthStore();
   const { toggleTheme, isDark } = useTheme();
-  const [showUserMenu, setShowUserMenu] = useState(false);
-
-  const handleUpgradeToPro = async (): Promise<void> => {
-    if (!user) {
-      router.push('/login');
-      return;
-    }
-
-    try {
-      const res = await fetch(`${API_URL}/api/payments/checkout`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ userId: user.id }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        if (Platform.OS === 'web') {
-          window.location.href = data.url;
-        } else {
-          await Linking.openURL(data.url);
-        }
-      } else {
-        console.error('Checkout error:', data.error);
-      }
-    } catch (err) {
-      console.error('Upgrade failed', err);
-    }
-  };
-
-  const handleSignOut = async (): Promise<void> => {
-    try {
-      await signOut();
-      useAuthStore.getState().setUser(null);
-      router.replace('/login');
-    } catch {
-      // Sign out failed — non-critical
-    }
-  };
 
   const {
     display,
     expression,
     isError,
     history,
-    isPro,
     inputDigit,
     inputOperator,
     calculate,
@@ -77,306 +37,543 @@ export default function CalculatorScreen(): React.ReactElement {
     selectHistoryEntry,
   } = useCalculatorStore();
 
-  const bg = isDark ? 'bg-[#0a0a0f]' : 'bg-[#f7f9fb]';
-  const surfaceLowest = isDark ? 'bg-[#141420]' : 'bg-[#ffffff]';
-  const surface = isDark ? 'bg-[#0a0a0f]' : 'bg-[#f7f9fb]';
-  const surfaceLow = isDark ? 'bg-[#1a1a2e]' : 'bg-[#f2f4f6]';
-  const surfaceContainer = isDark ? 'bg-[#141420]' : 'bg-[#eceef0]';
-  const surfaceContainerHigh = isDark ? 'bg-[#1e1e32]' : 'bg-[#e6e8ea]';
-  const surfaceContainerHighest = isDark ? 'bg-[#252540]' : 'bg-[#e0e3e5]';
-  const onSurface = isDark ? 'text-[#e8e8f0]' : 'text-[#191c1e]';
-  const onSurfaceVariant = isDark ? 'text-[#a0a0b8]' : 'text-[#464555]';
-  const primaryText = isDark ? 'text-[#c3c0ff]' : 'text-[#392cc1]';
+  const handleUpgradeToPro = async (): Promise<void> => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    try {
+      const res = await fetch(`${API_URL}/api/payments/checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      const data = await res.json();
+      if (data.url) {
+        if (Platform.OS === 'web') window.location.href = data.url;
+      }
+    } catch {
+      /* non-critical */
+    }
+  };
 
-  const calcBtnBase =
-    'flex items-center justify-center rounded-xl active:scale-95 transition-all font-headline';
-  const calcBtnSecondary = `${surfaceContainerHigh} ${onSurface} font-semibold`;
-  const calcBtnOperator =
-    'bg-gradient-to-br from-[#392cc1] to-[#534ad9] text-white font-bold shadow-lg shadow-primary/30';
-  const calcBtnFunction = `${surfaceLowest} ${primaryText} font-semibold`;
-  const calcBtnMemory = `${surfaceContainerHighest} ${onSurface} font-bold`;
+  const handleSignOut = async (): Promise<void> => {
+    try {
+      await signOut();
+      useAuthStore.getState().setUser(null);
+    } catch {
+      /* non-critical */
+    }
+  };
+
+  const planLabel = user?.plan === 'pro' ? 'PRO' : 'FREE';
+
+  /* ── Color tokens (match web-app exactly) ── */
+  const bg = isDark ? '#0a0a0f' : '#f7f9fb';
+  const surfaceContainer = isDark ? '#1a1a2e' : '#eceef0';
+  const surfaceContainerHigh = isDark ? '#1e1e32' : '#e6e8ea';
+  const surfaceContainerHighest = isDark ? '#252540' : '#e0e3e5';
+  const surfaceLowest = isDark ? '#141420' : '#ffffff';
+  const onSurface = isDark ? '#e8e8f0' : '#191c1e';
+  const onSurfaceVariant = isDark ? '#a0a0b8' : '#464555';
+  const primaryText = isDark ? '#c3c0ff' : '#392cc1';
+  const surfaceLow = isDark ? '#1a1a2e' : '#f2f4f6';
 
   return (
-    <View className={`flex-1 ${bg}`}>
-      {/* Top Bar */}
-      <View className="flex-row justify-between items-center px-6 pt-4 pb-2">
-        <View className="flex-row items-center gap-2">
-          <Text className="text-[#392cc1] dark:text-[#c3c0ff] text-[24px]">⊞</Text>
-          <Text
-            className={`text-[20px] font-extrabold tracking-tighter ${isDark ? 'text-[#c3c0ff]' : 'text-[#392cc1]'} font-headline`}
-          >
+    <View style={{ flex: 1, backgroundColor: bg }}>
+      {/* ── Top Bar ── */}
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingHorizontal: 24,
+          paddingTop: Platform.OS === 'web' ? 16 : 48,
+          paddingBottom: 8,
+        }}
+      >
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Text style={{ fontSize: 24, color: '#392cc1' }}>⊞</Text>
+          <Text style={{ fontSize: 20, fontWeight: '800', letterSpacing: -1, color: primaryText }}>
             OmniCalc
           </Text>
-          {isPro && (
-            <View
-              className={`${isDark ? 'bg-[#2f2ebe]' : 'bg-[#6063ee]'} rounded-full px-2 py-0.5 ml-1`}
+          <View
+            style={{
+              backgroundColor: '#6063ee',
+              borderRadius: 999,
+              paddingHorizontal: 8,
+              paddingVertical: 2,
+              marginLeft: 4,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 9,
+                fontWeight: '700',
+                letterSpacing: 2,
+                textTransform: 'uppercase',
+                color: '#fff',
+              }}
             >
-              <Text className="text-[9px] font-bold tracking-widest uppercase text-white">PRO</Text>
-            </View>
-          )}
+              {planLabel}
+            </Text>
+          </View>
         </View>
-        <View className="flex-row items-center gap-3">
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           {user ? (
-            <View>
-              <Pressable
-                onPress={() => setShowUserMenu(!showUserMenu)}
-                className={`${isDark ? 'bg-[#1a1a2e]' : 'bg-[#eef2ff]'} rounded-full px-3 py-1.5 flex-row items-center gap-1.5`}
+            <>
+              <Text
+                style={{ fontSize: 10, fontWeight: '700', color: primaryText, maxWidth: 80 }}
+                numberOfLines={1}
               >
+                {user.name || user.email}
+              </Text>
+              {user.plan !== 'pro' && (
+                <Pressable onPress={handleUpgradeToPro}>
+                  <Text
+                    style={{
+                      fontSize: 9,
+                      fontWeight: '700',
+                      letterSpacing: 2,
+                      textTransform: 'uppercase',
+                      color: primaryText,
+                    }}
+                  >
+                    Go Pro
+                  </Text>
+                </Pressable>
+              )}
+              <Pressable onPress={handleSignOut}>
+                <Text style={{ fontSize: 10, fontWeight: '600', color: '#ef4444' }}>Sign Out</Text>
+              </Pressable>
+            </>
+          ) : (
+            <>
+              <Pressable onPress={handleUpgradeToPro}>
                 <Text
-                  className={`text-[10px] font-bold ${isDark ? 'text-[#c3c0ff]' : 'text-[#392cc1]'} max-w-[100px]`}
-                  numberOfLines={1}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: '700',
+                    letterSpacing: 2,
+                    textTransform: 'uppercase',
+                    color: primaryText,
+                  }}
                 >
-                  {user.name || user.email}
-                </Text>
-                <Text className={`text-[10px] ${isDark ? 'text-[#a0a0b8]' : 'text-[#464555]'}`}>
-                  {showUserMenu ? '▲' : '▼'}
+                  Go Pro
                 </Text>
               </Pressable>
-              {showUserMenu && (
-                <View
-                  className={`${isDark ? 'bg-[#1e1e32]' : 'bg-[#ffffff]'} rounded-xl p-2 mt-1 shadow-lg`}
-                >
-                  <Pressable
-                    onPress={() => {
-                      setShowUserMenu(false);
-                      handleSignOut();
-                    }}
-                    className="flex-row items-center gap-2 px-3 py-2 rounded-lg active:opacity-60"
-                  >
-                    <Text className="text-[12px]">🚪</Text>
-                    <Text
-                      className={`text-[12px] font-semibold ${isDark ? 'text-[#e8e8f0]' : 'text-[#191c1e]'}`}
-                    >
-                      Sign Out
-                    </Text>
-                  </Pressable>
-                </View>
-              )}
-            </View>
-          ) : (
-            <Pressable
-              onPress={() => router.push('/login')}
-              className={`${isDark ? 'bg-[#1a1a2e]' : 'bg-[#eef2ff]'} rounded-full px-3 py-1.5`}
-            >
-              <Text
-                className={`text-[10px] font-bold ${isDark ? 'text-[#c3c0ff]' : 'text-[#392cc1]'}`}
-              >
-                Sign In
-              </Text>
-            </Pressable>
-          )}
-          {!isPro && user && (
-            <Pressable
-              onPress={handleUpgradeToPro}
-              className={`${isDark ? 'bg-[#1a1a2e]' : 'bg-[#eef2ff]'} rounded-full px-3 py-1`}
-            >
-              <Text
-                className={`text-[9px] font-bold uppercase tracking-widest ${isDark ? 'text-[#c3c0ff]' : 'text-[#392cc1]'}`}
-              >
-                Go Pro
-              </Text>
-            </Pressable>
+              <Pressable onPress={() => router.push('/login')}>
+                <Text style={{ fontSize: 10, fontWeight: '600', color: primaryText }}>Sign In</Text>
+              </Pressable>
+            </>
           )}
           <Pressable
             onPress={toggleTheme}
-            className={`${surfaceContainerHigh} rounded-full w-8 h-8 items-center justify-center`}
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: 999,
+              backgroundColor: surfaceContainerHigh,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
-            <Text className="text-[14px]">{isDark ? '☀️' : '🌙'}</Text>
+            <Text style={{ fontSize: 14 }}>{isDark ? '☀️' : '🌙'}</Text>
           </Pressable>
         </View>
       </View>
 
-      {/* Cloud Tape / History */}
-      <ScrollView
-        className="flex-none px-6 py-4 max-h-[180px]"
-        showsVerticalScrollIndicator={false}
-      >
-        <View className="flex-row justify-between items-center mb-3 opacity-50">
-          <Text className={`text-[10px] font-bold tracking-widest uppercase ${primaryText}`}>
-            Cloud Tape History
-          </Text>
-          {history.length > 0 && (
-            <Pressable onPress={clearHistory}>
-              <Text className="text-[10px] font-bold text-[#ba1a1a] uppercase tracking-wider">
-                Clear
-              </Text>
-            </Pressable>
-          )}
-        </View>
-        {history.length === 0 ? (
-          <View className="py-4">
-            <Text className={`text-[12px] ${onSurfaceVariant}`}>No calculations yet</Text>
+      {/* ── History ── */}
+      <View style={{ maxHeight: 180, paddingHorizontal: 24, paddingVertical: 16 }}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 12,
+              opacity: 0.5,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 10,
+                fontWeight: '700',
+                letterSpacing: 2,
+                textTransform: 'uppercase',
+                color: primaryText,
+              }}
+            >
+              Cloud Tape History
+            </Text>
+            {history.length > 0 && (
+              <Pressable onPress={clearHistory}>
+                <Text
+                  style={{
+                    fontSize: 10,
+                    fontWeight: '700',
+                    color: '#ba1a1a',
+                    letterSpacing: 2,
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  Clear
+                </Text>
+              </Pressable>
+            )}
           </View>
-        ) : (
-          history
-            .slice(-5)
-            .reverse()
-            .map((entry, idx) => (
-              <Pressable
-                key={entry.timestamp}
-                onPress={() => selectHistoryEntry(entry)}
-                className={`py-2 px-3 rounded-xl mb-2 ${idx % 2 === 0 ? surfaceLow : ''}`}
-              >
-                <View className="items-end">
+          {history.length === 0 ? (
+            <Text style={{ fontSize: 12, color: onSurfaceVariant }}>No calculations yet</Text>
+          ) : (
+            history
+              .slice(-5)
+              .reverse()
+              .map((entry, idx) => (
+                <Pressable
+                  key={entry.timestamp}
+                  onPress={() => selectHistoryEntry(entry)}
+                  style={{
+                    paddingVertical: 8,
+                    paddingHorizontal: 12,
+                    borderRadius: 12,
+                    marginBottom: 8,
+                    alignItems: 'flex-end',
+                    backgroundColor: idx % 2 === 0 ? surfaceLow : 'transparent',
+                  }}
+                >
                   <Text
-                    className={`text-[11px] tracking-tight ${onSurfaceVariant}`}
+                    style={{ fontSize: 11, letterSpacing: -0.5, color: onSurfaceVariant }}
                     numberOfLines={1}
                   >
                     {entry.expression}
                   </Text>
-                  <Text className={`text-[16px] font-bold ${primaryText}`}>{entry.result}</Text>
-                </View>
-              </Pressable>
-            ))
-        )}
-      </ScrollView>
-
-      {/* Display */}
-      <View className={`px-6 pt-2 pb-6 items-end ${surface}`}>
-        <View className="items-end w-full">
-          {expression ? (
-            <Text className={`text-[13px] ${onSurfaceVariant} opacity-60 mb-1 tracking-wide`}>
-              {expression}
-            </Text>
-          ) : null}
-          <Text
-            className={`text-[56px] font-extrabold tracking-tighter leading-none ${isError ? 'text-[#DC2626]' : onSurface}`}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-          >
-            {isError ? 'Error' : display}
-          </Text>
-        </View>
+                  <Text style={{ fontSize: 16, fontWeight: '700', color: primaryText }}>
+                    {entry.result}
+                  </Text>
+                </Pressable>
+              ))
+          )}
+        </ScrollView>
       </View>
 
-      {/* Keypad Surface */}
-      <View className={`flex-1 ${surfaceContainer} rounded-t-[40px] px-6 pt-6 pb-4`}>
-        <View className="gap-3">
+      {/* ── Display ── */}
+      <View
+        style={{
+          paddingHorizontal: 24,
+          paddingTop: 8,
+          paddingBottom: 24,
+          alignItems: 'flex-end',
+        }}
+      >
+        {expression ? (
+          <Text
+            style={{
+              fontSize: 13,
+              color: onSurfaceVariant,
+              opacity: 0.6,
+              marginBottom: 4,
+              letterSpacing: 1,
+            }}
+          >
+            {expression}
+          </Text>
+        ) : null}
+        <Text
+          style={{
+            fontSize: 56,
+            fontWeight: '800',
+            letterSpacing: -2,
+            lineHeight: 56,
+            color: isError ? '#DC2626' : onSurface,
+          }}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+        >
+          {isError ? 'Error' : display}
+        </Text>
+      </View>
+
+      {/* ── Keypad ── */}
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: surfaceContainer,
+          borderTopLeftRadius: 40,
+          borderTopRightRadius: 40,
+          paddingHorizontal: 24,
+          paddingTop: 24,
+          paddingBottom: 16,
+        }}
+      >
+        <View style={{ gap: 12 }}>
           {/* Row 1: C, ±, %, ÷ */}
-          <View className="flex-row gap-3">
-            <Pressable onPress={clear} className={`flex-1 h-14 ${calcBtnBase} ${calcBtnFunction}`}>
-              <Text className={`text-[18px] font-bold ${primaryText}`}>C</Text>
-            </Pressable>
-            <Pressable
-              onPress={toggleSign}
-              className={`flex-1 h-14 ${calcBtnBase} ${calcBtnFunction}`}
-            >
-              <Text className={`text-[18px] font-bold ${primaryText}`}>±</Text>
-            </Pressable>
-            <Pressable
-              onPress={percentage}
-              className={`flex-1 h-14 ${calcBtnBase} ${calcBtnFunction}`}
-            >
-              <Text className={`text-[18px] font-bold ${primaryText}`}>%</Text>
-            </Pressable>
+          <View style={{ flexDirection: 'row', gap: 12 }}>
+            {(['C', '±', '%'] as const).map((label) => {
+              const action = label === 'C' ? clear : label === '±' ? toggleSign : percentage;
+              return (
+                <Pressable
+                  key={label}
+                  onPress={action}
+                  style={{
+                    flex: 1,
+                    height: 56,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: 12,
+                    backgroundColor: surfaceLowest,
+                  }}
+                >
+                  <Text style={{ fontSize: 18, fontWeight: '700', color: primaryText }}>
+                    {label}
+                  </Text>
+                </Pressable>
+              );
+            })}
             <Pressable
               onPress={() => inputOperator('/')}
-              className={`flex-1 h-14 ${calcBtnBase} ${calcBtnOperator}`}
+              style={{
+                flex: 1,
+                height: 56,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 12,
+                backgroundColor: '#392cc1',
+                ...Platform.select({
+                  ios: {
+                    shadowColor: '#392cc1',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                  },
+                  android: {
+                    elevation: 6,
+                  },
+                  default: {
+                    shadowColor: '#392cc1',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                  },
+                }),
+              }}
             >
-              <Text className="text-[22px] font-bold text-white">÷</Text>
+              <Text style={{ fontSize: 22, fontWeight: '700', color: '#fff' }}>÷</Text>
             </Pressable>
           </View>
 
           {/* Row 2: 7, 8, 9, × */}
-          <View className="flex-row gap-3">
+          <View style={{ flexDirection: 'row', gap: 12 }}>
             {['7', '8', '9'].map((d) => (
               <Pressable
                 key={d}
                 onPress={() => inputDigit(d)}
-                className={`flex-1 h-14 ${calcBtnBase} ${calcBtnSecondary}`}
+                style={{
+                  flex: 1,
+                  height: 56,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 12,
+                  backgroundColor: surfaceContainerHigh,
+                }}
               >
-                <Text className={`text-[20px] font-bold ${onSurface}`}>{d}</Text>
+                <Text style={{ fontSize: 20, fontWeight: '700', color: onSurface }}>{d}</Text>
               </Pressable>
             ))}
             <Pressable
               onPress={() => inputOperator('*')}
-              className={`flex-1 h-14 ${calcBtnBase} ${calcBtnOperator}`}
+              style={{
+                flex: 1,
+                height: 56,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 12,
+                backgroundColor: '#392cc1',
+                ...Platform.select({
+                  ios: {
+                    shadowColor: '#392cc1',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                  },
+                  android: { elevation: 6 },
+                  default: {
+                    shadowColor: '#392cc1',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                  },
+                }),
+              }}
             >
-              <Text className="text-[22px] font-bold text-white">×</Text>
+              <Text style={{ fontSize: 22, fontWeight: '700', color: '#fff' }}>×</Text>
             </Pressable>
           </View>
 
           {/* Row 3: 4, 5, 6, − */}
-          <View className="flex-row gap-3">
+          <View style={{ flexDirection: 'row', gap: 12 }}>
             {['4', '5', '6'].map((d) => (
               <Pressable
                 key={d}
                 onPress={() => inputDigit(d)}
-                className={`flex-1 h-14 ${calcBtnBase} ${calcBtnSecondary}`}
+                style={{
+                  flex: 1,
+                  height: 56,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 12,
+                  backgroundColor: surfaceContainerHigh,
+                }}
               >
-                <Text className={`text-[20px] font-bold ${onSurface}`}>{d}</Text>
+                <Text style={{ fontSize: 20, fontWeight: '700', color: onSurface }}>{d}</Text>
               </Pressable>
             ))}
             <Pressable
               onPress={() => inputOperator('-')}
-              className={`flex-1 h-14 ${calcBtnBase} ${calcBtnOperator}`}
+              style={{
+                flex: 1,
+                height: 56,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 12,
+                backgroundColor: '#392cc1',
+                ...Platform.select({
+                  ios: {
+                    shadowColor: '#392cc1',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                  },
+                  android: { elevation: 6 },
+                  default: {
+                    shadowColor: '#392cc1',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                  },
+                }),
+              }}
             >
-              <Text className="text-[22px] font-bold text-white">−</Text>
+              <Text style={{ fontSize: 22, fontWeight: '700', color: '#fff' }}>−</Text>
             </Pressable>
           </View>
 
           {/* Row 4: 1, 2, 3, + */}
-          <View className="flex-row gap-3">
+          <View style={{ flexDirection: 'row', gap: 12 }}>
             {['1', '2', '3'].map((d) => (
               <Pressable
                 key={d}
                 onPress={() => inputDigit(d)}
-                className={`flex-1 h-14 ${calcBtnBase} ${calcBtnSecondary}`}
+                style={{
+                  flex: 1,
+                  height: 56,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 12,
+                  backgroundColor: surfaceContainerHigh,
+                }}
               >
-                <Text className={`text-[20px] font-bold ${onSurface}`}>{d}</Text>
+                <Text style={{ fontSize: 20, fontWeight: '700', color: onSurface }}>{d}</Text>
               </Pressable>
             ))}
             <Pressable
               onPress={() => inputOperator('+')}
-              className={`flex-1 h-14 ${calcBtnBase} ${calcBtnOperator}`}
+              style={{
+                flex: 1,
+                height: 56,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 12,
+                backgroundColor: '#392cc1',
+                ...Platform.select({
+                  ios: {
+                    shadowColor: '#392cc1',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                  },
+                  android: { elevation: 6 },
+                  default: {
+                    shadowColor: '#392cc1',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                  },
+                }),
+              }}
             >
-              <Text className="text-[22px] font-bold text-white">+</Text>
+              <Text style={{ fontSize: 22, fontWeight: '700', color: '#fff' }}>+</Text>
             </Pressable>
           </View>
 
           {/* Row 5: 0 (span 2), ., = */}
-          <View className="flex-row gap-3">
+          <View style={{ flexDirection: 'row', gap: 12 }}>
             <Pressable
               onPress={() => inputDigit('0')}
-              className={`flex-[2] h-14 ${calcBtnBase} ${calcBtnSecondary}`}
+              style={{
+                flex: 2,
+                height: 56,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 12,
+                backgroundColor: surfaceContainerHigh,
+              }}
             >
-              <Text className={`text-[20px] font-bold ${onSurface}`}>0</Text>
+              <Text style={{ fontSize: 20, fontWeight: '700', color: onSurface }}>0</Text>
             </Pressable>
             <Pressable
               onPress={() => inputDigit('.')}
-              className={`flex-1 h-14 ${calcBtnBase} ${calcBtnSecondary}`}
+              style={{
+                flex: 1,
+                height: 56,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 12,
+                backgroundColor: surfaceContainerHigh,
+              }}
             >
-              <Text className={`text-[20px] font-bold ${onSurface}`}>.</Text>
+              <Text style={{ fontSize: 20, fontWeight: '700', color: onSurface }}>.</Text>
             </Pressable>
             <Pressable
               onPress={calculate}
-              className={`flex-1 h-14 ${calcBtnBase} ${calcBtnOperator}`}
+              style={{
+                flex: 1,
+                height: 56,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 12,
+                backgroundColor: '#392cc1',
+              }}
             >
-              <Text className="text-[26px] font-bold text-white">=</Text>
+              <Text style={{ fontSize: 26, fontWeight: '700', color: '#fff' }}>=</Text>
             </Pressable>
           </View>
         </View>
 
         {/* Memory row */}
-        <View className="flex-row gap-3 mt-4">
-          <Pressable
-            onPress={memoryClear}
-            className={`flex-1 h-10 ${calcBtnBase} ${calcBtnMemory}`}
-          >
-            <Text className={`text-[12px] font-bold ${onSurface}`}>MC</Text>
-          </Pressable>
-          <Pressable
-            onPress={memoryRecall}
-            className={`flex-1 h-10 ${calcBtnBase} ${calcBtnMemory}`}
-          >
-            <Text className={`text-[12px] font-bold ${onSurface}`}>MR</Text>
-          </Pressable>
-          <Pressable onPress={memoryAdd} className={`flex-1 h-10 ${calcBtnBase} ${calcBtnMemory}`}>
-            <Text className={`text-[12px] font-bold ${onSurface}`}>M+</Text>
-          </Pressable>
-          <Pressable onPress={backspace} className={`flex-1 h-10 ${calcBtnBase} ${calcBtnMemory}`}>
-            <Text className={`text-[12px] font-bold ${onSurface}`}>⌫</Text>
-          </Pressable>
+        <View style={{ flexDirection: 'row', gap: 12, marginTop: 16 }}>
+          {(
+            [
+              { label: 'MC', action: memoryClear },
+              { label: 'MR', action: memoryRecall },
+              { label: 'M+', action: memoryAdd },
+              { label: '⌫', action: backspace },
+            ] as const
+          ).map(({ label, action }) => (
+            <Pressable
+              key={label}
+              onPress={action}
+              style={{
+                flex: 1,
+                height: 40,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 12,
+                backgroundColor: surfaceContainerHighest,
+              }}
+            >
+              <Text style={{ fontSize: 12, fontWeight: '700', color: onSurface }}>{label}</Text>
+            </Pressable>
+          ))}
         </View>
       </View>
     </View>

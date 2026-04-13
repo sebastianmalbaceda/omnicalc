@@ -116,10 +116,14 @@ refactor/calculator-store
 
 ```
 # Shared components → packages/ui/
-# Math logic       → packages/core-math/
-# Database layer   → packages/db/
-# Platform layouts → apps/<platform>/components/
-# API routes       → apps/web/src/routes/
+# Shared types      → packages/shared-types/
+# Math logic        → packages/core-math/
+# Database layer    → packages/db/
+# API routes        → apps/api/src/
+# Marketing pages   → apps/marketing/src/app/
+# Web app pages     → apps/web/src/
+# Mobile screens    → apps/mobile/app/
+# Desktop main      → apps/desktop/main/
 ```
 
 ---
@@ -153,7 +157,7 @@ This project uses [Conventional Commits](https://www.conventionalcommits.org/).
 
 ### Scope (Optional)
 
-Use the package or app name: `core-math`, `ui`, `db`, `web`, `mobile`, `desktop`
+Use the package or app name: `core-math`, `ui`, `shared-types`, `db`, `api`, `marketing`, `web`, `mobile`, `desktop`
 
 ### Examples
 

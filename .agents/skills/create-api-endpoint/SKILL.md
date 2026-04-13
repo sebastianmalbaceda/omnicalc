@@ -1,7 +1,7 @@
 ---
 name: create-api-endpoint
 description: |
-  Trigger when: creating a new API route in apps/web/src/routes/,
+  Trigger when: creating a new API route in apps/api/src/,
   modifying existing endpoints, or adding new webhook handlers.
   Do NOT trigger for: frontend-only changes, database schema changes
   (use database-migration skill), or documentation updates.
@@ -11,93 +11,117 @@ description: |
 
 ## Framework
 
-- **Backend:** Hono 4
-- **Location:** `apps/web/src/routes/`
-- **Validation:** Zod
-- **Auth:** Better Auth middleware
+- **Backend:** NestJS 11
+- **Location:** `apps/api/src/`
+- **Validation:** class-validator + class-transformer
+- **Auth:** JwtAuthGuard (Better Auth session validation)
 
-## Route File Template
+## Module Structure
+
+Each feature module follows this pattern:
+
+```
+apps/api/src/feature-name/
+├── feature-name.module.ts
+├── feature-name.controller.ts
+├── feature-name.service.ts
+└── dto/
+    ├── create-feature.dto.ts
+    └── update-feature.dto.ts
+```
+
+## Controller Template
 
 ```typescript
-import { Hono } from 'hono';
-import { z } from 'zod';
-import { zValidator } from '@hono/zod-validator';
-import { authMiddleware } from '../middleware/auth';
-import { db } from '@omnicalc/db';
+import { Controller, Get, Post, Body, Req, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import { FeatureService } from './feature.service';
+import { CreateFeatureDto } from './dto/create-feature.dto';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 
-const app = new Hono();
+interface AuthenticatedRequest extends Request {
+  user: Record<string, unknown>;
+}
 
-// Input validation schema
-const createCalculationSchema = z.object({
-  expression: z.string().min(1).max(500),
-  result: z.string().min(1).max(100),
-  deviceOrigin: z.enum(['web', 'ios', 'android', 'desktop']),
-});
+@Controller('feature-name')
+@UseGuards(JwtAuthGuard)
+export class FeatureController {
+  constructor(private readonly featureService: FeatureService) {}
 
-// Protected route — requires auth + Pro plan
-app.post(
-  '/calculations',
-  authMiddleware, // Validates session
-  zValidator('json', createCalculationSchema),
-  async (c) => {
-    const user = c.get('user');
-    const data = c.req.valid('json');
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() dto: CreateFeatureDto, @Req() req: AuthenticatedRequest) {
+    return this.featureService.create(req.user.id as string, dto);
+  }
 
-    // Check Pro status
-    if (user.plan !== 'pro') {
-      return c.json({ error: 'Pro plan required' }, 403);
-    }
+  @Get()
+  async findAll(@Req() req: AuthenticatedRequest) {
+    return this.featureService.findAll(req.user.id as string);
+  }
+}
+```
 
-    const calculation = await db.calculation.create({
-      data: {
-        userId: user.id,
-        expression: data.expression,
-        result: data.result,
-        deviceOrigin: data.deviceOrigin,
-      },
-    });
+## DTO Template
 
-    return c.json(calculation, 201);
-  },
-);
+```typescript
+import { IsString, IsOptional, IsIn } from 'class-validator';
 
-export default app;
+export class CreateFeatureDto {
+  @IsString()
+  name: string;
+
+  @IsOptional()
+  @IsIn(['web', 'ios', 'android', 'desktop'])
+  deviceOrigin?: string;
+}
+```
+
+## Module Template
+
+```typescript
+import { Module } from '@nestjs/common';
+import { FeatureController } from './feature.controller';
+import { FeatureService } from './feature.service';
+import { AuthModule } from '../auth/auth.module';
+
+@Module({
+  imports: [AuthModule],
+  controllers: [FeatureController],
+  providers: [FeatureService],
+  exports: [FeatureService],
+})
+export class FeatureModule {}
 ```
 
 ## Checklist
 
 For every new endpoint:
 
-- [ ] Input validation with Zod schema
-- [ ] Auth middleware on protected routes
+- [ ] DTO with class-validator decorators
+- [ ] Auth guard on protected routes (`@UseGuards(JwtAuthGuard)`)
 - [ ] Pro plan check where applicable
 - [ ] Proper HTTP status codes (200, 201, 400, 401, 403, 404, 500)
-- [ ] Error responses follow consistent format: `{ error: string }`
+- [ ] Error responses follow consistent format
 - [ ] No raw SQL — use Prisma client only
-- [ ] Rate limiting considered
+- [ ] Register module in `apps/api/src/app.module.ts`
 - [ ] Update `docs/api.md` with new endpoint
 - [ ] Update `SPEC.md` if this fulfills a requirement
 
 ## Error Response Format
 
 ```typescript
-// Always return structured errors
-return c.json({ error: 'Description of what went wrong' }, 400);
-
-// Never expose internal errors to clients
-try {
-  // ... operation
-} catch (error) {
-  console.error(error);
-  return c.json({ error: 'Internal server error' }, 500);
-}
+// Use NestJS built-in exceptions
+throw new BadRequestException('Invalid input');
+throw new UnauthorizedException('Authentication required');
+throw new ForbiddenException('Pro plan required');
+throw new NotFoundException('Resource not found');
 ```
 
 ## Webhook Endpoints
 
 For Stripe/RevenueCat webhooks:
 
+- Do NOT use `@UseGuards(JwtAuthGuard)` on webhook endpoints
 - Verify webhook signature before processing
 - Use idempotency keys to prevent duplicate processing
 - Log all webhook events for debugging
-- Return 200 immediately, process asynchronously if needed
+- Return 200 immediately

@@ -17,7 +17,9 @@ description: |
 - [ ] Shared components in `packages/ui/` (not in `apps/`)
 - [ ] Math logic in `packages/core-math/` only
 - [ ] No server-only imports in client bundles
-- [ ] API routes in `apps/web/src/routes/` only
+- [ ] API routes in `apps/api/src/` only (NestJS modules)
+- [ ] Marketing pages in `apps/marketing/src/app/`
+- [ ] Web app in `apps/web/src/`
 
 ### 2. TypeScript Strictness
 
@@ -38,12 +40,12 @@ description: |
 ### 4. Security
 
 - [ ] No secrets, API keys, or credentials in code
-- [ ] All API inputs validated with Zod schemas
-- [ ] Auth middleware on protected routes
+- [ ] All API inputs validated with class-validator DTOs
+- [ ] JwtAuthGuard on protected routes
 - [ ] Pro plan check on gated features (server-side)
 - [ ] Webhook signatures verified (Stripe, RevenueCat)
 - [ ] No raw SQL queries (Prisma only)
-- [ ] CORS configured correctly
+- [ ] CORS configured correctly in `apps/api/src/main.ts`
 - [ ] Rate limiting considered
 
 ### 5. Testing

@@ -1,27 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  StyleSheet,
-  useWindowDimensions,
   ScrollView,
   Platform,
 } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { signIn, signUp, useAuthStore, getSession } from '../lib/auth';
+import { useRouter } from 'expo-router';
+import { useAuthStore, storeToken } from '../lib/auth';
 import { useTheme } from '@omnicalc/ui';
-import * as WebBrowser from 'expo-web-browser';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
+
+/* ── Exact Tailwind → RN mappings ── */
+const TW = {
+  gray500: { light: '#6b7280', dark: '#9ca3af' },
+  gray600: { light: '#4b5563', dark: '#9ca3af' },
+  gray200: '#e5e7eb',
+  red50: '#fef2f2',
+  red900_20: 'rgba(127,29,29,0.2)',
+  red600: '#dc2626',
+  red400: '#f87171',
+  white: '#ffffff',
+  bgLight: '#f7f9fb',
+  bgDark: '#0a0a0f',
+  surfaceLight: '#ffffff',
+  surfaceDark: '#141420',
+  textLight: '#191c1e',
+  textDark: '#e8e8f0',
+  primary: { light: '#392cc1', dark: '#c3c0ff' },
+  borderDark: '#252540',
+};
 
 export default function LoginScreen(): React.ReactElement {
   const router = useRouter();
-  const params = useLocalSearchParams();
-  const setUser = useAuthStore((state) => state.setUser);
-  const { height } = useWindowDimensions();
+  const setUser = useAuthStore((s) => s.setUser);
   const { isDark } = useTheme();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
@@ -30,506 +45,309 @@ export default function LoginScreen(): React.ReactElement {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Detect OAuth callback: Better Auth sets a cookie, we just need to check session
-  useEffect(() => {
-    async function checkOAuthCallback(): Promise<void> {
-      try {
-        const session = await getSession();
-        if (session?.user) {
-          setUser(session.user);
-          router.replace('/');
-        }
-      } catch {
-        // No session yet
-      }
-    }
-    checkOAuthCallback();
-  }, []);
-
-  // Listen for postMessage from OAuth callback popup (web only)
-  useEffect(() => {
-    if (Platform.OS !== 'web') return;
-    const handler = (event: MessageEvent) => {
-      if (event.data?.type === 'oauth-success') {
-        getSession().then((session) => {
-          if (session?.user) {
-            setUser(session.user);
-            router.replace('/');
-          }
-        });
-      } else if (event.data?.type === 'oauth-cancel') {
-        setError('You cancelled the sign-in request.');
-      }
-    };
-    window.addEventListener('message', handler);
-    return () => window.removeEventListener('message', handler);
-  }, []);
-
-  const isSmallHeight = height < 600;
+  const c = (light: string, dark: string) => (isDark ? dark : light);
 
   const handleSubmit = async (): Promise<void> => {
     setError('');
     setLoading(true);
-
     try {
-      if (isLogin) {
-        const { user } = await signIn.email({ email, password });
-        setUser(user);
-      } else {
-        const { user } = await signUp.email({
-          email,
-          password,
-          name: name || email.split('@')[0] || 'User',
-        });
-        setUser(user);
+      const endpoint = isLogin ? 'sign-in/email' : 'sign-up/email';
+      const body: Record<string, unknown> = isLogin
+        ? { email, password }
+        : { email, password, name: name || undefined };
+      const res = await fetch(`${API_URL}/api/auth/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || (isLogin ? 'Invalid credentials' : 'Sign up failed'));
+        return;
       }
-
-      router.replace('/');
+      const user = data.user;
+      const token = data.session?.token || data.session?.id || '';
+      if (user) {
+        if (token) await storeToken(token);
+        setUser(user);
+        if (router.canGoBack()) router.back();
+        else router.replace('/');
+      } else {
+        setError('Unexpected response from server');
+      }
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('An unexpected error occurred');
-      }
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoBack = (): void => {
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.replace('/');
-    }
+    if (router.canGoBack()) router.back();
+    else router.replace('/');
   };
 
-  const bg = isDark ? '#0a0a0f' : '#f7f9fb';
-  const surfaceLowest = isDark ? '#141420' : '#ffffff';
-  const surfaceContainerLow = isDark ? '#1a1a2e' : '#f2f4f6';
-  const onSurface = isDark ? '#e8e8f0' : '#191c1e';
-  const onSurfaceVariant = isDark ? '#a0a0b8' : '#464555';
-  const primary = isDark ? '#c3c0ff' : '#392cc1';
+  const handleSocialLogin = (provider: string): void => {
+    const url = `${API_URL}/api/auth/sign-in/${provider}`;
+    if (Platform.OS === 'web') window.location.href = url;
+    else router.replace('/');
+  };
 
   return (
-    <View style={[styles.container, { backgroundColor: bg }]}>
-      {/* Atmospheric Background */}
-      <View style={StyleSheet.absoluteFill} pointerEvents="none">
-        <View
-          style={[
-            styles.atmosphericBlur,
-            {
-              top: '25%',
-              left: -80,
-              backgroundColor: isDark ? 'rgba(195,192,255,0.03)' : 'rgba(57,44,193,0.05)',
-            },
-          ]}
-        />
-        <View
-          style={[
-            styles.atmosphericBlur,
-            {
-              bottom: '25%',
-              right: -80,
-              backgroundColor: isDark ? 'rgba(192,193,255,0.03)' : 'rgba(70,72,212,0.05)',
-            },
-          ]}
-        />
-      </View>
+    <View style={{ flex: 1, backgroundColor: c(TW.bgLight, TW.bgDark) }}>
+      <ScrollView
+        contentContainerStyle={{
+          minHeight: '100%',
+          justifyContent: 'center',
+          paddingHorizontal: 16,
+          paddingVertical: 48,
+        }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={{ width: '100%', maxWidth: 448, alignSelf: 'center' }}>
+          {/* Back button — mb-6 = 24px */}
+          <TouchableOpacity
+            onPress={handleGoBack}
+            style={{ marginBottom: 24, alignSelf: 'flex-start', paddingVertical: 8 }}
+            activeOpacity={0.7}
+          >
+            <Text style={{ fontSize: 14, color: c(TW.gray500.light, TW.gray500.dark) }}>
+              ← Back to calculator
+            </Text>
+          </TouchableOpacity>
 
-      {/* Header with back button */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleGoBack} style={styles.backButton} activeOpacity={0.7}>
-          <Text style={[styles.backButtonText, { color: onSurfaceVariant }]}>←</Text>
-        </TouchableOpacity>
-        <View style={styles.logoContainer}>
-          <Text style={styles.logoIcon}>⊞</Text>
-          <Text style={[styles.logoText, { color: primary }]}>OmniCalc</Text>
-        </View>
-      </View>
-
-      {/* Login form - centered */}
-      <View style={[styles.formWrapper, isSmallHeight && styles.formWrapperSmall]}>
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={[styles.formContainer, { backgroundColor: surfaceLowest }]}>
-            <View style={styles.formInner}>
-              <Text style={[styles.title, { color: onSurface }]}>
-                {isLogin ? 'Welcome Back' : 'Create Your Account'}
-              </Text>
-              <Text style={[styles.subtitle, { color: onSurfaceVariant }]}>
-                {isLogin
-                  ? 'Please enter your details to continue your logic journey.'
-                  : 'Start calculating with ethereal precision today.'}
-              </Text>
-
-              {error ? (
-                <View style={styles.errorContainer}>
-                  <Text style={styles.errorText}>{error}</Text>
-                </View>
-              ) : null}
-
-              <View style={styles.inputContainer}>
-                {!isLogin && (
-                  <View style={styles.inputWrapper}>
-                    <Text style={[styles.inputIcon, { color: onSurfaceVariant }]}>👤</Text>
-                    <TextInput
-                      placeholder="Full Name"
-                      value={name}
-                      onChangeText={setName}
-                      style={[
-                        styles.input,
-                        { color: onSurface, backgroundColor: surfaceContainerLow },
-                      ]}
-                      placeholderTextColor={onSurfaceVariant}
-                    />
-                  </View>
-                )}
-
-                <View style={styles.inputWrapper}>
-                  <Text style={[styles.inputIcon, { color: onSurfaceVariant }]}>✉</Text>
-                  <TextInput
-                    placeholder="name@company.com"
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    style={[
-                      styles.input,
-                      { color: onSurface, backgroundColor: surfaceContainerLow },
-                    ]}
-                    placeholderTextColor={onSurfaceVariant}
-                  />
-                </View>
-
-                <View style={styles.inputWrapper}>
-                  <Text style={[styles.inputIcon, { color: onSurfaceVariant }]}>🔒</Text>
-                  <TextInput
-                    placeholder="••••••••"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
-                    style={[
-                      styles.input,
-                      { color: onSurface, backgroundColor: surfaceContainerLow },
-                    ]}
-                    placeholderTextColor={onSurfaceVariant}
-                  />
-                </View>
-
-                <TouchableOpacity
-                  onPress={handleSubmit}
-                  disabled={loading}
-                  style={[
-                    styles.submitButton,
-                    loading && styles.submitButtonDisabled,
-                    {
-                      backgroundColor: primary,
-                      shadowColor: primary,
-                    },
-                  ]}
-                  activeOpacity={0.8}
-                >
-                  {loading ? (
-                    <ActivityIndicator color="white" />
-                  ) : (
-                    <Text style={styles.submitButtonText}>
-                      {isLogin ? 'Sign In →' : 'Create Account →'}
-                    </Text>
-                  )}
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.dividerContainer}>
-                <View style={[styles.dividerLine, { backgroundColor: surfaceContainerLow }]} />
-                <Text style={[styles.dividerText, { color: onSurfaceVariant }]}>
-                  or continue with
-                </Text>
-                <View style={[styles.dividerLine, { backgroundColor: surfaceContainerLow }]} />
-              </View>
-
-              <View style={styles.socialRow}>
-                <TouchableOpacity
-                  style={[styles.socialButton, { backgroundColor: surfaceContainerLow }]}
-                  activeOpacity={0.7}
-                  onPress={async () => {
-                    try {
-                      const res = await fetch(`${API_URL}/api/auth/sign-in/social`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          provider: 'google',
-                          callbackURL: `${API_URL}/login`,
-                        }),
-                      });
-                      const data = await res.json();
-                      if (!data.url) return;
-                      const win = window.open(data.url, '_blank', 'width=500,height=600');
-                      const poll = setInterval(async () => {
-                        try {
-                          if (win?.closed) {
-                            clearInterval(poll);
-                            const session = await getSession();
-                            if (session?.user) {
-                              setUser(session.user);
-                              router.replace('/');
-                            } else {
-                              setError('You cancelled the sign-in request.');
-                            }
-                          }
-                        } catch {
-                          // Tab still loading
-                        }
-                      }, 500);
-                    } catch (err) {
-                      console.error('Google OAuth error:', err);
-                      setError('Failed to start Google sign-in');
-                    }
-                  }}
-                >
-                  <Text style={styles.socialIcon}>G</Text>
-                  <Text style={[styles.socialText, { color: onSurface }]}>Google</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.socialButton, { backgroundColor: surfaceContainerLow }]}
-                  activeOpacity={0.7}
-                  onPress={async () => {
-                    try {
-                      const res = await fetch(`${API_URL}/api/auth/sign-in/social`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          provider: 'github',
-                          callbackURL: `${API_URL}/login`,
-                        }),
-                      });
-                      const data = await res.json();
-                      if (!data.url) return;
-                      const win = window.open(data.url, '_blank', 'width=500,height=600');
-                      const poll = setInterval(async () => {
-                        try {
-                          if (win?.closed) {
-                            clearInterval(poll);
-                            const session = await getSession();
-                            if (session?.user) {
-                              setUser(session.user);
-                              router.replace('/');
-                            } else {
-                              setError('You cancelled the sign-in request.');
-                            }
-                          }
-                        } catch {
-                          // Tab still loading
-                        }
-                      }, 500);
-                    } catch (err) {
-                      console.error('GitHub OAuth error:', err);
-                      setError('Failed to start GitHub sign-in');
-                    }
-                  }}
-                >
-                  <Text style={styles.socialIcon}>⌘</Text>
-                  <Text style={[styles.socialText, { color: onSurface }]}>GitHub</Text>
-                </TouchableOpacity>
-              </View>
-
-              <TouchableOpacity
-                onPress={() => setIsLogin(!isLogin)}
-                style={styles.switchLink}
-                activeOpacity={0.7}
+          {/* Centered header — text-center mb-8 = 32px */}
+          <View style={{ alignItems: 'center', marginBottom: 32 }}>
+            {/* Logo — inline-flex items-center gap-2 mb-6 = 24px */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 24 }}>
+              <Text style={{ fontSize: 24, color: c(TW.primary.light, TW.primary.dark) }}>⊞</Text>
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: '800',
+                  letterSpacing: -0.5,
+                  color: c(TW.primary.light, TW.primary.dark),
+                }}
               >
-                <Text style={[styles.switchText, { color: onSurfaceVariant }]}>
-                  {isLogin ? "Don't have an account? " : 'Already have an account? '}
-                  <Text style={[styles.switchTextBold, { color: primary }]}>
-                    {isLogin ? 'Sign up' : 'Sign in'}
-                  </Text>
+                OmniCalc
+              </Text>
+            </View>
+
+            {/* Title — text-2xl font-bold */}
+            <Text style={{ fontSize: 24, fontWeight: '700', color: c(TW.textLight, TW.textDark) }}>
+              {isLogin ? 'Welcome back' : 'Create your account'}
+            </Text>
+
+            {/* Subtitle — mt-2 = 8px, text-sm text-gray-600 dark:text-gray-400 */}
+            <Text
+              style={{ fontSize: 14, color: c(TW.gray600.light, TW.gray600.dark), marginTop: 8 }}
+            >
+              {isLogin ? "Don't have an account? " : 'Already have an account? '}
+              <Text
+                style={{ color: c(TW.primary.light, TW.primary.dark) }}
+                onPress={() => {
+                  setIsLogin(!isLogin);
+                  setError('');
+                }}
+              >
+                {isLogin ? 'Sign up' : 'Sign in'}
+              </Text>
+            </Text>
+          </View>
+
+          {/* Form — space-y-4 = gap: 16 */}
+          <View style={{ gap: 16 }}>
+            {error ? (
+              <View
+                style={{ padding: 12, borderRadius: 8, backgroundColor: c(TW.red50, TW.red900_20) }}
+              >
+                <Text style={{ color: c(TW.red600, TW.red400), fontSize: 14, textAlign: 'center' }}>
+                  {error}
                 </Text>
-              </TouchableOpacity>
+              </View>
+            ) : null}
+
+            {!isLogin && (
+              <View style={{ gap: 4 }}>
+                <Text
+                  style={{ fontSize: 14, fontWeight: '500', color: c(TW.textLight, TW.textDark) }}
+                >
+                  Name <Text style={{ opacity: 0.5 }}>(optional)</Text>
+                </Text>
+                <TextInput
+                  style={{
+                    width: '100%',
+                    paddingHorizontal: 16,
+                    paddingVertical: 8,
+                    borderRadius: 8,
+                    borderWidth: 1,
+                    borderColor: c(TW.gray200, TW.borderDark),
+                    backgroundColor: c(TW.surfaceLight, TW.surfaceDark),
+                    color: c(TW.textLight, TW.textDark),
+                    fontSize: 15,
+                  }}
+                  value={name}
+                  onChangeText={setName}
+                  placeholder="John Doe"
+                  placeholderTextColor={c(TW.gray500.light, TW.gray500.dark)}
+                  autoCapitalize="words"
+                />
+              </View>
+            )}
+
+            <View style={{ gap: 4 }}>
+              <Text
+                style={{ fontSize: 14, fontWeight: '500', color: c(TW.textLight, TW.textDark) }}
+              >
+                Email
+              </Text>
+              <TextInput
+                style={{
+                  width: '100%',
+                  paddingHorizontal: 16,
+                  paddingVertical: 8,
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  borderColor: c(TW.gray200, TW.borderDark),
+                  backgroundColor: c(TW.surfaceLight, TW.surfaceDark),
+                  color: c(TW.textLight, TW.textDark),
+                  fontSize: 15,
+                }}
+                value={email}
+                onChangeText={setEmail}
+                placeholder="you@example.com"
+                placeholderTextColor={c(TW.gray500.light, TW.gray500.dark)}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoComplete="email"
+              />
+            </View>
+
+            <View style={{ gap: 4 }}>
+              <Text
+                style={{ fontSize: 14, fontWeight: '500', color: c(TW.textLight, TW.textDark) }}
+              >
+                Password
+              </Text>
+              <TextInput
+                style={{
+                  width: '100%',
+                  paddingHorizontal: 16,
+                  paddingVertical: 8,
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  borderColor: c(TW.gray200, TW.borderDark),
+                  backgroundColor: c(TW.surfaceLight, TW.surfaceDark),
+                  color: c(TW.textLight, TW.textDark),
+                  fontSize: 15,
+                }}
+                value={password}
+                onChangeText={setPassword}
+                placeholder="••••••••"
+                placeholderTextColor={c(TW.gray500.light, TW.gray500.dark)}
+                secureTextEntry
+                autoComplete="password"
+              />
+            </View>
+
+            {/* Submit — py-3 = 12px, rounded-full */}
+            <TouchableOpacity
+              style={{
+                width: '100%',
+                paddingVertical: 12,
+                borderRadius: 9999,
+                backgroundColor: c(TW.primary.light, TW.primary.dark),
+                alignItems: 'center',
+                opacity: loading ? 0.5 : 1,
+              }}
+              onPress={handleSubmit}
+              disabled={loading}
+              activeOpacity={0.8}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={{ color: '#fff', fontSize: 15, fontWeight: '600' }}>
+                  {isLogin ? 'Sign In' : 'Create Account'}
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {/* Divider — mt-6 = 24px */}
+          <View style={{ marginTop: 24, position: 'relative', alignItems: 'center' }}>
+            <View
+              style={{
+                width: '100%',
+                borderTopWidth: 1,
+                borderColor: c(TW.gray200, TW.borderDark),
+              }}
+            />
+            <View
+              style={{
+                position: 'absolute',
+                paddingHorizontal: 8,
+                backgroundColor: c(TW.bgLight, TW.bgDark),
+              }}
+            >
+              <Text style={{ fontSize: 14, color: c(TW.gray500.light, TW.gray500.dark) }}>
+                Or continue with
+              </Text>
             </View>
           </View>
-        </ScrollView>
-      </View>
+
+          {/* Social buttons — mt-6 = 24px, gap-3 = 12px */}
+          <View style={{ flexDirection: 'row', gap: 12, marginTop: 24 }}>
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                paddingHorizontal: 16,
+                paddingVertical: 10,
+                borderWidth: 1,
+                borderColor: c(TW.gray200, TW.borderDark),
+                borderRadius: 8,
+                backgroundColor: c(TW.surfaceLight, TW.surfaceDark),
+              }}
+              onPress={() => handleSocialLogin('google')}
+              activeOpacity={0.7}
+            >
+              <Text
+                style={{ fontSize: 14, fontWeight: '500', color: c(TW.textLight, TW.textDark) }}
+              >
+                Google
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                paddingHorizontal: 16,
+                paddingVertical: 10,
+                borderWidth: 1,
+                borderColor: c(TW.gray200, TW.borderDark),
+                borderRadius: 8,
+                backgroundColor: c(TW.surfaceLight, TW.surfaceDark),
+              }}
+              onPress={() => handleSocialLogin('github')}
+              activeOpacity={0.7}
+            >
+              <Text
+                style={{ fontSize: 14, fontWeight: '500', color: c(TW.textLight, TW.textDark) }}
+              >
+                GitHub
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  atmosphericBlur: {
-    position: 'absolute',
-    width: 384,
-    height: 384,
-    borderRadius: 9999,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 8,
-  },
-  backButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  backButtonText: {
-    fontSize: 22,
-  },
-  logoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginLeft: 12,
-  },
-  logoIcon: {
-    fontSize: 24,
-  },
-  logoText: {
-    fontSize: 20,
-    fontWeight: '800',
-    letterSpacing: -1,
-  },
-  formWrapper: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  formWrapperSmall: {
-    justifyContent: 'flex-start',
-    paddingTop: 20,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-  },
-  formContainer: {
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  formInner: {
-    padding: 32,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: '800',
-    textAlign: 'center',
-    marginBottom: 8,
-    letterSpacing: -0.5,
-  },
-  subtitle: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginBottom: 32,
-  },
-  errorContainer: {
-    backgroundColor: 'rgba(220, 38, 38, 0.1)',
-    padding: 14,
-    borderRadius: 10,
-    marginBottom: 16,
-  },
-  errorText: {
-    color: '#DC2626',
-    textAlign: 'center',
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  inputContainer: {
-    gap: 16,
-  },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
-  inputIcon: {
-    fontSize: 18,
-    marginLeft: 16,
-    position: 'absolute',
-    left: 0,
-    zIndex: 1,
-  },
-  input: {
-    flex: 1,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    paddingLeft: 48,
-    borderRadius: 10,
-    fontSize: 16,
-  },
-  submitButton: {
-    paddingVertical: 16,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 8,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-  submitButtonDisabled: {
-    opacity: 0.7,
-  },
-  submitButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 32,
-    gap: 16,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-  },
-  dividerText: {
-    fontSize: 10,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 2,
-  },
-  socialRow: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  socialButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 10,
-  },
-  socialIcon: {
-    fontSize: 18,
-  },
-  socialText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  switchLink: {
-    marginTop: 24,
-    paddingVertical: 12,
-  },
-  switchText: {
-    fontSize: 14,
-    textAlign: 'center',
-  },
-  switchTextBold: {
-    fontSize: 14,
-    fontWeight: '700',
-  },
-});

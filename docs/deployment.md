@@ -1,38 +1,114 @@
 # OmniCalc — Deployment Guide
 
-> **Web (BFF):** Vercel
+> **Marketing Site:** Vercel (Next.js)
+> **Web App:** Vercel (Vite SPA)
+> **API:** Railway/Render (NestJS)
 > **Mobile:** Expo EAS Build + App Store / Play Store
-> **Desktop:** Electron Forge → GitHub Releases
+> **Desktop:** Electron Builder → GitHub Releases
 > **Database:** Neon Serverless PostgreSQL
 
 ---
 
-## Web Deployment (Vercel)
+## Architecture Overview
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  tudominio.com (Vercel — Next.js)                           │
+│  Landing, Pricing, Downloads, Sign-in, Sign-up              │
+└──────────────────────────────────────────────────────────────┘
+                              │ Auth redirect
+                              ▼
+┌──────────────────────────────────────────────────────────────┐
+│  app.tudominio.com (Vercel — Vite SPA)                      │
+│  Calculator product (browser)                               │
+└──────────────────────────────────────────────────────────────┘
+                              │ API calls
+                              ▼
+┌──────────────────────────────────────────────────────────────┐
+│  api.tudominio.com (Railway — NestJS :3001)                 │
+│  Auth, Calculations, Users, Billing                         │
+└──────────────────────────────────────────────────────────────┘
+                              │ Prisma
+                              ▼
+┌──────────────────────────────────────────────────────────────┐
+│  Neon Serverless PostgreSQL                                  │
+└──────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Marketing Site Deployment (Vercel)
 
 ### Setup
 
 1. Connect GitHub repo to Vercel
-2. Set root directory to `apps/web`
-3. Configure build command: `pnpm build --filter=@omnicalc/web`
-4. Set output directory (framework auto-detected with Hono)
+2. Set root directory to `apps/marketing`
+3. Build command: `pnpm build --filter=@omnicalc/marketing`
+4. Output directory: `.next` (auto-detected)
 
 ### Environment Variables
 
-Set in Vercel dashboard:
+- `NEXT_PUBLIC_API_URL` — `https://api.tudominio.com`
+- `NEXT_PUBLIC_WEB_APP_URL` — `https://app.tudominio.com`
 
-- `DATABASE_URL` — Neon connection string
+### Custom Domain
+
+- Add `tudominio.com` and `www.tudominio.com` in Vercel
+- Configure DNS (A records + CNAME)
+
+---
+
+## Web App Deployment (Vercel)
+
+### Setup
+
+1. Create separate Vercel project for `apps/web`
+2. Set root directory to `apps/web`
+3. Build command: `pnpm build --filter=@omnicalc/web`
+4. Output directory: `dist`
+
+### Environment Variables
+
+- `VITE_API_URL` — `https://api.tudominio.com`
+- `VITE_WEB_MARKETING_URL` — `https://tudominio.com`
+
+### Custom Domain
+
+- Add `app.tudominio.com` in Vercel
+- Configure DNS (CNAME)
+
+---
+
+## API Deployment (Railway/Render)
+
+### Setup (Railway)
+
+1. Connect GitHub repo
+2. Set root directory to `apps/api`
+3. Build command: `pnpm install && pnpm db:generate && pnpm --filter @omnicalc/api run build`
+4. Start command: `pnpm --filter @omnicalc/api run start`
+
+### Environment Variables
+
+- `DATABASE_URL` — Neon production connection string
 - `BETTER_AUTH_SECRET` — Min 32 chars, random
-- `BETTER_AUTH_URL` — `https://api.omnicalc.app`
+- `BETTER_AUTH_URL` — `https://api.tudominio.com`
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`
 - `STRIPE_SECRET_KEY` — Production Stripe key
 - `STRIPE_WEBHOOK_SECRET` — Production webhook secret
-- `RESEND_API_KEY` — Email service key
-- `SENTRY_DSN` — Error monitoring
+- `STRIPE_PRO_MONTHLY_PRICE_ID` — Stripe price ID
+- `STRIPE_PRO_YEARLY_PRICE_ID` — Stripe price ID
+- `WEB_MARKETING_URL` — `https://tudominio.com`
+- `WEB_APP_URL` — `https://app.tudominio.com`
+- `APP_URL` — `https://app.tudominio.com`
 
-### Preview Deployments
+### Stripe Webhook Configuration
 
-- Every PR gets a preview deployment
-- Preview uses the same env vars (or override with Vercel env scoping)
-- Database: use Neon branches for preview environments
+1. In Stripe Dashboard → Developers → Webhooks
+2. Add endpoint: `https://api.tudominio.com/api/payments/webhooks/stripe`
+3. Select events: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.payment_succeeded`, `invoice.payment_failed`
+4. Copy webhook signing secret to `STRIPE_WEBHOOK_SECRET`
 
 ---
 
@@ -48,6 +124,7 @@ npm install -g eas-cli
 eas login
 
 # Configure
+cd apps/mobile
 eas build:configure
 ```
 
@@ -101,16 +178,16 @@ eas update --branch production --message "Fix display bug"
 
 ## Desktop Deployment (Electron)
 
-### Build Tool: Electron Forge
+### Build
 
 ```bash
 cd apps/desktop
 
-# Package for current OS
-pnpm run package
+# Compile TypeScript
+pnpm --filter @omnicalc/desktop run build
 
-# Build distributable
-pnpm run make
+# Package with electron-builder
+pnpm --filter @omnicalc/desktop exec electron-builder
 ```
 
 ### Platforms
@@ -126,14 +203,13 @@ pnpm run make
 Use `electron-updater` with GitHub Releases:
 
 1. Tag a release on GitHub
-2. Electron Forge uploads artifacts
+2. Upload artifacts to release
 3. Running app checks for updates on launch
 4. User prompted to install update
 
 ### CI (GitHub Actions)
 
 ```yaml
-# Build on every tag
 on:
   push:
     tags: ['v*']
@@ -147,11 +223,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: pnpm install
-      - run: pnpm --filter @omnicalc/desktop run make
+      - run: pnpm --filter @omnicalc/desktop run build
+      - run: pnpm --filter @omnicalc/desktop exec electron-builder
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-${{ matrix.os }}
-          path: apps/desktop/out/make/**
+          path: apps/desktop/dist/**
 ```
 
 ---
@@ -181,7 +258,8 @@ pnpm --filter @omnicalc/db exec prisma migrate deploy
 
 ## Monitoring (Sentry)
 
-- **Web:** `@sentry/node` in Hono middleware
+- **API:** `@sentry/node` in NestJS interceptor
+- **Web App:** `@sentry/react` in Vite app
 - **Mobile:** `@sentry/react-native` in Expo
 - **Desktop:** `@sentry/electron` in main process
 
@@ -195,4 +273,4 @@ sentry-cli releases files $VERSION upload-sourcemaps ./dist
 
 ---
 
-_Document version: 0.1.0_
+_Document version: 1.0.0_

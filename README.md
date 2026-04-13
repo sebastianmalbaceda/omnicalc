@@ -24,6 +24,7 @@
 <p align="center">
   <img alt="License" src="https://img.shields.io/badge/license-Proprietary-red.svg" />
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-strict-3178C6.svg?logo=typescript&logoColor=white" />
+  <img alt="NestJS" src="https://img.shields.io/badge/NestJS-v11-E0234E.svg?logo=nestjs&logoColor=white" />
   <img alt="Expo" src="https://img.shields.io/badge/Expo-SDK_52-000020.svg?logo=expo&logoColor=white" />
   <img alt="Electron" src="https://img.shields.io/badge/Electron-v34-47848F.svg?logo=electron&logoColor=white" />
   <img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" />
@@ -65,27 +66,29 @@
 
 ## Tech Stack
 
-| Layer                 | Technology                    |
-| --------------------- | ----------------------------- |
-| **Language**          | TypeScript (strict mode)      |
-| **Mobile + Web**      | Expo + Expo Router            |
-| **Desktop**           | Electron + React              |
-| **UI Framework**      | NativeWind + Gluestack UI     |
-| **State Management**  | Zustand                       |
-| **Data Fetching**     | TanStack Query                |
-| **Backend (BFF)**     | Hono                          |
-| **ORM**               | Prisma                        |
-| **Database**          | PostgreSQL (Neon Serverless)  |
-| **Authentication**    | Better Auth                   |
-| **Payments (Web)**    | Stripe                        |
-| **Payments (Mobile)** | RevenueCat                    |
-| **Math Engine**       | decimal.js                    |
-| **Monorepo**          | Turborepo                     |
-| **Testing**           | Vitest + Playwright + Maestro |
-| **Linting**           | ESLint + Prettier + Husky     |
-| **CI/CD**             | GitHub Actions + Expo EAS     |
-| **Hosting**           | Vercel + Railway              |
-| **Monitoring**        | Sentry                        |
+| Layer                 | Technology                   |
+| --------------------- | ---------------------------- |
+| **Language**          | TypeScript (strict mode)     |
+| **Marketing Site**    | Next.js (SSR/SSG)            |
+| **Web App**           | Vite + React (SPA)           |
+| **Mobile**            | Expo SDK 52 + Expo Router    |
+| **Desktop**           | Electron + React             |
+| **UI Framework**      | NativeWind + Tailwind CSS    |
+| **State Management**  | Zustand                      |
+| **Data Fetching**     | TanStack Query               |
+| **Backend (API)**     | NestJS 11                    |
+| **ORM**               | Prisma                       |
+| **Database**          | PostgreSQL (Neon Serverless) |
+| **Authentication**    | Better Auth                  |
+| **Payments (Web)**    | Stripe                       |
+| **Payments (Mobile)** | RevenueCat                   |
+| **Math Engine**       | decimal.js                   |
+| **Monorepo**          | Turborepo                    |
+| **Testing**           | Vitest + Jest                |
+| **Linting**           | ESLint + Prettier + Husky    |
+| **CI/CD**             | GitHub Actions + Expo EAS    |
+| **Hosting**           | Vercel + Railway             |
+| **Monitoring**        | Sentry                       |
 
 > For detailed architecture decisions, see [ARCHITECTURE.md](ARCHITECTURE.md) and [docs/adr/](docs/adr/).
 
@@ -112,6 +115,9 @@ pnpm install
 # Copy environment variables
 cp .env.example .env.local
 
+# Generate Prisma client
+pnpm db:generate
+
 # Start development (all apps)
 pnpm dev
 ```
@@ -119,17 +125,20 @@ pnpm dev
 ### Platform-Specific Development
 
 ```bash
-# Web only
-pnpm dev:web
+# NestJS API server
+pnpm dev:api              # → http://localhost:3001
 
-# iOS simulator
-pnpm dev:ios
+# Next.js marketing site
+pnpm dev:marketing        # → http://localhost:3000
 
-# Android emulator
-pnpm dev:android
+# Vite web app (product)
+pnpm dev:web              # → http://localhost:3002
 
-# Desktop (Electron)
-pnpm dev:desktop
+# Expo mobile
+pnpm dev:mobile           # → http://localhost:19006
+
+# Electron desktop
+pnpm dev:desktop          # → Desktop window
 ```
 
 ---
@@ -139,22 +148,25 @@ pnpm dev:desktop
 ```
 omnicalc/
 ├── apps/
-│   ├── web/                  # Hono BFF + Landing Page (Vercel)
-│   ├── mobile/               # Expo (iOS + Android)
-│   └── desktop/              # Electron + React
+│   ├── api/              # NestJS central API server (:3001)
+│   ├── marketing/        # Next.js — SEO, landing, pricing, downloads (:3000)
+│   ├── web/              # Vite + React SPA — product (:3002)
+│   ├── mobile/           # Expo — UI source of truth (iOS, Android, Web)
+│   └── desktop/          # Electron — loads web SPA
 ├── packages/
-│   ├── ui/                   # NativeWind + Gluestack shared components
-│   ├── core-math/            # Pure TypeScript math engine (decimal.js)
-│   ├── db/                   # Prisma schema, migrations, client
-│   └── tsconfig/             # Shared TypeScript configurations
-├── docs/                     # Extended documentation
-├── .agents/                  # AI agent skills
-├── .github/                  # CI/CD workflows
-├── SPEC.md                   # Functional requirements
-├── ARCHITECTURE.md           # System architecture
-├── ROADMAP.md                # Project milestones
-├── PLANNING.md               # Current sprint tasks
-└── turbo.json                # Turborepo configuration
+│   ├── ui/               # Shared NativeWind components
+│   ├── shared-types/     # Zod schemas + TS types (frontend ↔ backend contract)
+│   ├── core-math/        # Pure math engine (decimal.js) — NO React deps
+│   ├── db/               # Prisma schema, client, migrations
+│   └── tsconfig/         # Shared TypeScript configs
+├── docs/                 # Extended documentation
+├── .agents/              # AI agent skills
+├── .github/              # CI/CD workflows
+├── SPEC.md               # Functional requirements
+├── ARCHITECTURE.md       # System architecture
+├── ROADMAP.md            # Project milestones
+├── PLANNING.md           # Current sprint tasks
+└── turbo.json            # Turborepo configuration
 ```
 
 ---

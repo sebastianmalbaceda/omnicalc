@@ -135,16 +135,16 @@ user_settings
 
 ## 5. API Contracts
 
-### 5.1 Authentication (Better Auth — managed)
+### 5.1 Authentication (Better Auth — NestJS)
 
-| Endpoint                    | Method | Description                  |
-| --------------------------- | ------ | ---------------------------- |
-| `/api/auth/sign-up`         | POST   | Register with email/password |
-| `/api/auth/sign-in`         | POST   | Login with email/password    |
-| `/api/auth/sign-in/social`  | POST   | OAuth (Google/GitHub)        |
-| `/api/auth/sign-out`        | POST   | End session                  |
-| `/api/auth/forgot-password` | POST   | Send password reset email    |
-| `/api/auth/session`         | GET    | Get current session          |
+| Endpoint                   | Method | Description                  |
+| -------------------------- | ------ | ---------------------------- |
+| `/api/auth/sign-up/email`  | POST   | Register with email/password |
+| `/api/auth/sign-in/email`  | POST   | Login with email/password    |
+| `/api/auth/sign-in/google` | GET    | OAuth (Google)               |
+| `/api/auth/sign-in/github` | GET    | OAuth (GitHub)               |
+| `/api/auth/sign-out`       | POST   | End session                  |
+| `/api/auth/session`        | GET    | Get current session          |
 
 ### 5.2 Calculations (Pro)
 
@@ -154,21 +154,23 @@ user_settings
 | `POST /api/calculations`   | POST   | Required (Pro) | Save a new calculation          |
 | `DELETE /api/calculations` | DELETE | Required (Pro) | Clear all calculation history   |
 
-### 5.3 User Settings
+### 5.3 Users & Settings
 
-| Endpoint              | Method | Auth     | Description             |
-| --------------------- | ------ | -------- | ----------------------- |
-| `GET /api/settings`   | GET    | Required | Get user preferences    |
-| `PATCH /api/settings` | PATCH  | Required | Update user preferences |
+| Endpoint                    | Method | Auth     | Description              |
+| --------------------------- | ------ | -------- | ------------------------ |
+| `GET /api/users/me`         | GET    | Required | Get current user profile |
+| `PATCH /api/users/me`       | PATCH  | Required | Update user profile      |
+| `GET /api/users/settings`   | GET    | Required | Get user preferences     |
+| `PATCH /api/users/settings` | PATCH  | Required | Update user preferences  |
 
 ### 5.4 Payments
 
-| Endpoint                        | Method | Auth     | Description                           |
-| ------------------------------- | ------ | -------- | ------------------------------------- |
-| `POST /api/payments/checkout`   | POST   | Required | Create Stripe Checkout session        |
-| `POST /api/payments/portal`     | POST   | Required | Create Stripe Customer Portal session |
-| `POST /api/webhooks/stripe`     | POST   | —        | Stripe webhook handler                |
-| `POST /api/webhooks/revenuecat` | POST   | —        | RevenueCat webhook handler            |
+| Endpoint                             | Method | Auth     | Description                           |
+| ------------------------------------ | ------ | -------- | ------------------------------------- |
+| `POST /api/payments/checkout`        | POST   | Required | Create Stripe Checkout session        |
+| `POST /api/payments/portal`          | POST   | Required | Create Stripe Customer Portal session |
+| `POST /api/payments/webhooks/stripe` | POST   | —        | Stripe webhook handler                |
+| `POST /api/webhooks/revenuecat`      | POST   | —        | RevenueCat webhook handler            |
 
 ---
 

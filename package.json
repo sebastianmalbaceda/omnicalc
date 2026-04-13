@@ -8,10 +8,11 @@
   },
   "scripts": {
     "dev": "turbo dev",
+    "dev:api": "turbo dev --filter=@omnicalc/api",
+    "dev:marketing": "turbo dev --filter=@omnicalc/marketing",
     "dev:web": "turbo dev --filter=@omnicalc/web",
     "dev:mobile": "turbo dev --filter=@omnicalc/mobile",
     "dev:desktop": "turbo dev --filter=@omnicalc/desktop",
-    "dev:api": "turbo dev --filter=@omnicalc/api",
     "build": "turbo build",
     "test": "turbo test",
     "test:e2e": "turbo test:e2e",
@@ -25,17 +26,18 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "turbo": "^2.5.0",
-    "typescript": "^5.7.0",
-    "eslint": "^9.22.0",
     "@eslint/js": "^9.22.0",
-    "typescript-eslint": "^8.27.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint": "^9.22.0",
     "eslint-plugin-jsx-a11y": "^6.10.0",
-    "prettier": "^3.5.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^17.5.0",
     "husky": "^9.1.0",
     "lint-staged": "^15.4.0",
-    "rimraf": "^6.0.0"
+    "prettier": "^3.5.0",
+    "rimraf": "^6.0.0",
+    "turbo": "^2.5.0",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.27.0"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

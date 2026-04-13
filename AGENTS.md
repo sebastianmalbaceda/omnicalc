@@ -3,21 +3,22 @@
 ## Build & Test
 
 ```bash
-pnpm install          # Install all dependencies
-pnpm dev              # Start all apps in development mode
-pnpm dev:api          # Start NestJS API server (:3001)
-pnpm dev:web          # Start Next.js web app (:3000)
-pnpm dev:mobile       # Start Expo dev server (mobile + web on :19006)
-pnpm dev:desktop      # Start Electron desktop app
-pnpm build            # Build all packages and apps
-pnpm test             # Run all tests (Vitest + Jest)
-pnpm lint             # Lint (ESLint) and format (Prettier)
-pnpm lint:fix         # Auto-fix lint issues
-pnpm type-check       # TypeScript type checking
-pnpm db:generate      # Generate Prisma client
-pnpm db:migrate       # Run Prisma migrations
-pnpm db:studio        # Open Prisma Studio
-pnpm clean            # Remove all build artifacts
+pnpm install              # Install all dependencies
+pnpm dev                  # Start all apps in development mode
+pnpm dev:api              # Start NestJS API server (:3001)
+pnpm dev:marketing        # Start Next.js marketing site (:3000)
+pnpm dev:web              # Start Vite web app SPA (:3002)
+pnpm dev:mobile           # Start Expo dev server (mobile + web on :19006)
+pnpm dev:desktop          # Start Electron desktop app
+pnpm build                # Build all packages and apps
+pnpm test                 # Run all tests (Vitest + Jest)
+pnpm lint                 # Lint (ESLint) and format (Prettier)
+pnpm lint:fix             # Auto-fix lint issues
+pnpm type-check           # TypeScript type checking
+pnpm db:generate          # Generate Prisma client
+pnpm db:migrate           # Run Prisma migrations
+pnpm db:studio            # Open Prisma Studio
+pnpm clean                # Remove all build artifacts
 ```
 
 ## Stack
@@ -26,11 +27,12 @@ pnpm clean            # Remove all build artifacts
 - **Runtime:** Node.js 22 LTS
 - **Package Manager:** pnpm 9+
 - **Monorepo:** Turborepo
-- **Web (SaaS & Landing):** Next.js (App Router)
+- **Marketing Site:** Next.js (App Router, SSR/SSG for SEO)
+- **Web App (Product):** Vite + React (SPA)
 - **Mobile:** Expo SDK 52 + Expo Router (iOS, Android, Web)
-- **Desktop:** Electron 34 + React
+- **Desktop:** Electron 34 (loads web SPA)
 - **Backend (API):** NestJS 11
-- **UI Shared:** NativeWind 4 (Tailwind for React Native) + Shadcn UI (web)
+- **UI Shared:** NativeWind 4 (Tailwind for React Native) + Tailwind CSS (web)
 - **State:** Zustand 5 (local) + TanStack Query (API data)
 - **Forms:** React Hook Form + Zod
 - **ORM:** Prisma 6
@@ -47,10 +49,11 @@ pnpm clean            # Remove all build artifacts
 ```
 omnicalc/
 ├── apps/
-│   ├── api/              # NestJS central API server
-│   ├── web/              # Next.js App Router (SaaS + Landing)
+│   ├── api/              # NestJS central API server (:3001)
+│   ├── marketing/        # Next.js — SEO, landing, pricing, downloads (:3000)
+│   ├── web/              # Vite + React SPA — product (:3002)
 │   ├── mobile/           # Expo — UI source of truth (iOS, Android, Web)
-│   └── desktop/          # Electron + React
+│   └── desktop/          # Electron — loads web SPA
 ├── packages/
 │   ├── ui/               # Shared NativeWind components
 │   ├── shared-types/     # Zod schemas + TS types (frontend ↔ backend contract)
@@ -64,45 +67,27 @@ omnicalc/
 
 ## Architecture
 
-**Mobile is the single source of truth for UI.** All visual components live in `apps/mobile/`.
-The API server (`apps/api/`) is the central backend serving all platforms.
+**Marketing vs Product separation** follows industry standards (Spotify, Discord, Slack):
 
-```
-┌──────────────────────────────────────────────────────┐
-│                 apps/mobile/                          │
-│            (Expo — UI Source of Truth)                │
-│  ┌──────────────────────────────────────────────┐    │
-│  │  React Native + Expo Router                  │    │
-│  │  • Calculator screen                         │    │
-│  │  • Login/Register screens                    │    │
-│  │  • Zustand stores + TanStack Query           │    │
-│  └──────────────────────────────────────────────┘    │
-│         │                    │                       │
-│         │ expo export        │ API calls             │
-│         ▼                    ▼                       │
-│  ┌──────────────┐    ┌──────────────┐               │
-│  │  mobile/dist │    │  apps/api/   │               │
-│  │  (SPA)       │    │  (NestJS)    │               │
-│  └──────────────┘    └──────────────┘               │
-│         │                    │                       │
-│    ┌────┴─────┐         ┌───┴────┐                  │
-│    ▼          ▼         ▼        ▼                  │
-│  Web       Desktop    Stripe   Neon DB              │
-│  (Next.js) (Electron)  RevCat  (PostgreSQL)         │
-└──────────────────────────────────────────────────────┘
-```
+- `apps/marketing/` → tudominio.com (SEO, discovery, conversion)
+- `apps/web/` → app.tudominio.com (actual product)
+- `apps/mobile/` → App Store / Google Play
+- `apps/desktop/` → .exe / .dmg (wraps web SPA)
+- `apps/api/` → api.tudominio.com (central NestJS backend)
 
 ## Conventions
 
 ### File Organization
 
-- **All UI** → `apps/mobile/app/` (Expo Router screens)
+- **Marketing** → `apps/marketing/src/app/` (Next.js App Router)
+- **Product Web** → `apps/web/src/` (Vite + React SPA)
+- **Mobile UI** → `apps/mobile/app/` (Expo Router screens)
 - **Shared UI components** → `packages/ui/src/` (NativeWind)
 - **Shared types/schemas** → `packages/shared-types/src/` (Zod + TS)
 - **Math logic** → `packages/core-math/src/` (pure TypeScript, zero UI deps)
 - **Database** → `packages/db/` (Prisma schema + client)
 - **API routes** → `apps/api/src/` (NestJS modules)
-- **Stores** → `apps/mobile/stores/`
+- **Stores** → `apps/mobile/stores/`, `apps/web/src/stores/`
 - **Electron main** → `apps/desktop/main/`
 
 ### Naming
@@ -169,8 +154,8 @@ When different behavior is needed per platform, use Expo's file extensions:
 
 - Before adding new production dependencies
 - Before modifying the Prisma schema
-- Before changing the monorepo structure
-- Before modifying CI/CD workflows
+- Before modifying the monorepo structure
+- Before changing CI/CD workflows
 - Before changing authentication or payment flows
 
 ### Never Do

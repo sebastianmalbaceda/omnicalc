@@ -1,13 +1,13 @@
 # OmniCalc — Roadmap
 
-> **Version:** 0.5.0
-> **Last Updated:** 2026-04-06
+> **Version:** 1.0.0
+> **Last Updated:** 2026-04-13
 
 ---
 
 ## Vision
 
-Deliver a production-ready, multiplatform SaaS calculator with a professional 2026 TypeScript architecture — NestJS API, Next.js web, Expo mobile, and Electron desktop — all sharing a single codebase.
+Deliver a production-ready, multiplatform SaaS calculator with a professional 2026 TypeScript architecture — NestJS API, Next.js marketing, Vite web app, Expo mobile, and Electron desktop — all sharing a single codebase.
 
 ---
 
@@ -16,7 +16,7 @@ Deliver a production-ready, multiplatform SaaS calculator with a professional 20
 - [x] Turborepo monorepo with pnpm workspaces
 - [x] `packages/tsconfig` — shared TypeScript configurations
 - [x] `packages/core-math` — math engine with `decimal.js`
-  - [x] Basic operations (+, −, ×, ÷, %, ±)
+  - [x] Basic operations (+, −, ×, ÷, %)
   - [x] Memory functions (M+, M−, MR, MC)
   - [x] Expression parser
   - [x] Error handling (division by zero, overflow, precision limits)
@@ -56,20 +56,23 @@ Deliver a production-ready, multiplatform SaaS calculator with a professional 20
   - [x] Initial migration
 - [x] `packages/shared-types` — Zod schemas + TS types (frontend ↔ backend contract)
 - [x] `apps/api` — NestJS central API server
-  - [x] Auth module (Better Auth integration)
-  - [x] Calculations module
-  - [x] Users module
-  - [x] Billing module (Stripe webhooks)
+  - [x] Auth module (Better Auth integration, email/password, OAuth)
+  - [x] Calculations module (CRUD with auth guards)
+  - [x] Users module (profile, settings management)
+  - [x] Billing module (Stripe checkout, portal, webhooks)
   - [x] Swagger docs at `/api/docs`
-- [x] `apps/web` — Hono unified server (mobile SPA + API)
-  - [x] Better Auth integration (email + Google + GitHub OAuth)
-  - [x] Stripe checkout + portal + webhooks
-  - [x] Serves `apps/mobile/dist` as SPA
-  - [x] Auth middleware and session management
-  - [x] Token-based session persistence
-- [x] Auth screens (Login, Register)
-- [x] Cloud Tape sync
-- [x] Pro feature gating
+  - [x] JWT auth guard for protected routes
+- [x] `apps/marketing` — Next.js marketing site
+  - [x] Landing page with hero, features, platforms, CTA
+  - [x] Pricing page with plan comparison
+  - [x] Downloads page for all platforms
+  - [x] Sign-in / Sign-up pages with OAuth
+  - [x] SEO-optimized metadata
+- [x] `apps/web` — Vite + React SPA (product)
+  - [x] Calculator interface
+  - [x] Auth integration
+  - [x] Cloud Tape history
+  - [x] Theme system
 
 ---
 
@@ -88,20 +91,11 @@ Deliver a production-ready, multiplatform SaaS calculator with a professional 20
 
 ## Phase 5: Desktop, Launch ✅ COMPLETE
 
-- [x] `apps/desktop` — Electron app (thin shell loading unified server)
-- [x] Unified architecture: mobile → web export → Hono server → Electron
-- [x] All 3 platforms share identical UI from `apps/mobile/`
+- [x] `apps/desktop` — Electron app (loads web SPA)
+- [x] All platforms share identical UI from `apps/mobile/`
 - [x] Architecture documentation updated
-- [x] Session persistence across Stripe redirect (token-based auth)
-
-### Exit Criteria
-
-- [x] Desktop app loads from unified server
-- [x] All three platforms functional with identical UI
-- [x] Architecture documented and verified
-- [x] CI pipeline passing (lint + type-check + test)
+- [x] Session persistence across platforms
 - [x] Auth flow working end-to-end (register, login, session persistence)
-- [x] Stripe checkout generating payment URLs
 
 ---
 
@@ -118,10 +112,15 @@ Deliver a production-ready, multiplatform SaaS calculator with a professional 20
 ### Production Infrastructure
 
 - [ ] Deploy NestJS API to Railway/Render
-- [ ] Deploy Next.js web to Vercel
-- [ ] Configure custom domain + SSL
+- [ ] Deploy Next.js marketing to Vercel
+- [ ] Deploy Vite web app to Vercel/Netlify
+- [ ] Configure custom domains + SSL
+  - `tudominio.com` → Marketing
+  - `app.tudominio.com` → Web App
+  - `api.tudominio.com` → API
 - [ ] Set up production Neon database branch
 - [ ] Configure Stripe production keys + webhooks
+- [ ] Set up CI/CD for automated deployments
 
 ### Deferred Services (Planned)
 
@@ -147,10 +146,10 @@ Deliver a production-ready, multiplatform SaaS calculator with a professional 20
 - 💱 Currency and unit conversion
 - 🤖 AI-powered math assistant
 - 📋 Calculation sharing (public links)
-- ⌨️ Keyboard shortcuts (desktop)
+- ⌨️ Keyboard shortcuts (desktop/web)
 - 🔌 Plugin/extension system
 - 👥 Team/organization plans
 
 ---
 
-_Document version: 0.5.0 — Standard 2026 Architecture, all core phases complete_
+_Document version: 1.0.0 — Production-Ready Multiplatform SaaS Architecture_
