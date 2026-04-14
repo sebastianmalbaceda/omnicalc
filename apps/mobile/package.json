@@ -10,7 +10,7 @@
     "web": "expo start --web",
     "type-check": "tsc --noEmit",
     "clean": "rimraf .expo",
-    "postinstall": "pnpm --filter @omnicalc/core-math build && pnpm --filter @omnicalc/ui build"
+    "postinstall": "pnpm --filter @omnicalc/core-math build"
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",

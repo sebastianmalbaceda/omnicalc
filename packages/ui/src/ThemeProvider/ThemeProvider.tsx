@@ -20,9 +20,13 @@ interface ThemeProviderProps {
 
 function getInitialMode(defaultMode: ThemeMode): ThemeMode {
   if (typeof window === 'undefined') return defaultMode;
-  const saved = localStorage.getItem('theme-mode');
-  if (saved === 'light' || saved === 'dark' || saved === 'system') {
-    return saved;
+  try {
+    const saved = localStorage.getItem('theme-mode');
+    if (saved === 'light' || saved === 'dark' || saved === 'system') {
+      return saved;
+    }
+  } catch {
+    // localStorage not available (React Native)
   }
   return defaultMode;
 }
@@ -49,7 +53,11 @@ export function ThemeProvider({
 
   useEffect(() => {
     applyThemeToDOM(resolvedTheme);
-    localStorage.setItem('theme-mode', mode);
+    try {
+      localStorage.setItem('theme-mode', mode);
+    } catch {
+      // localStorage not available (React Native)
+    }
   }, [resolvedTheme, mode]);
 
   const toggleTheme = useCallback(() => {
